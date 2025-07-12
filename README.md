@@ -1,5 +1,35 @@
 # React + TypeScript + Vite
 
+*******Project rule*******
+## 🎨 Tailwind Design Rules
+- Sử dụng class Tailwind ưu tiên `utility-first`, tránh viết CSS custom nếu không cần.
+- Không override màu gốc của Tailwind (gray, blue...) nếu không có lý do rõ ràng.
+- Chỉ mở rộng màu trong `tailwind.config.ts`, ví dụ:
+  
+  ## 🧼 Code Conventions
+- Trang mới: Tạo folder trong features/, thêm vào AdminRoutes và NavLink để hiển thị.
+  ( layout hiện tại đã có sẵn, khi code chỉ cần thêm vào trong AdminRoutes và tạo thêm 1 Item trong navItems để điều hướng )
+- Tên file: Dùng PascalCase cho component, kebab-case cho asset/hình ảnh.
+- Import: Sử dụng alias, ví dụ import { Button } from "@/components/ui/Button";.
+- Quản lý asset: Import vào assets.ts trước, sau đó dùng trong file.
+- Folder features: Dùng CamelCase cho tên folder (ví dụ: reportList, companyList).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
