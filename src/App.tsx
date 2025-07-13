@@ -1,5 +1,9 @@
+import AdminLayout from "./layouts/AdminLayout";
+
 function App() {
-  return <></>;
+  return <>
+    <AdminLayout/>
+  </>;
 }
 
 export default App;

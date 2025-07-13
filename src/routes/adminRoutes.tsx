@@ -1,0 +1,18 @@
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import DashboardPage from '../features/dashboard/pages/DashboardPage'
+import CompanyList from '../features/companylist/pages/CompanyList';
+import ReportList from '../features/reportlist/pages/ReportList';
+
+
+const AdminRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<DashboardPage />} />
+      <Route path="/listReport" element={<ReportList />} />
+      <Route path="/companyList" element={<CompanyList />} />
+    </Routes>
+  );
+};
+
+export default AdminRoutes
