@@ -29,18 +29,23 @@ const Sidebar = () => {
       <div
         className={`
           fixed top-0 left-0 min-h-full w-64 bg-white border-r p-4 py-8 z-40 border-gray-300 
-          flex-col gap-6 shadow-lg transition-transform duration-300
+          flex-col gap-4 shadow-lg transition-transform duration-300
           ${open ? "flex translate-x-0" : "translate-x-[-100%]"}
           md:translate-x-0 md:flex md:static md:shadow-none
         `}
       >
         {/* Logo & nút đóng (mobile) */}
-        <div className="flex items-center justify-between mb-4 md:mb-6">
-          <img
-            src={assets.logoTitle}
-            className="object-contain w-[50%] md:w-[80%] md:h-[60px]"
-            alt=""
-          />
+        <div className="flex items-end justify-between mb-4 md:mb-6">
+          <div className="flex items-end">
+            <img
+              src={assets.logoTitle}
+              className="object-contain w-[50%] md:w-[78%] md:h-[58px]"
+              alt=""
+            />
+            <h2 className="ml-[2px] text-blue-700 text-md font-medium md:text-2xl md:font-bold mb-[1px]">
+              Admin
+            </h2>
+          </div>
           <button
             className="md:hidden"
             onClick={() => setOpen(false)}
@@ -51,7 +56,7 @@ const Sidebar = () => {
         </div>
 
         {/* Nav items */}
-        <nav className="flex flex-col gap-4 font-medium text-md">
+        <nav className="flex flex-col gap-[12px] font-medium text-md">
           {navItems.map(({ to, label, icon }) => (
             <NavLink
               key={to}
