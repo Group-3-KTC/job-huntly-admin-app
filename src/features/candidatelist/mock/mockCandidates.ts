@@ -1,7 +1,7 @@
-// src/features/candidatelist/mock/mockCandidates.ts
+
 
 export interface Candidate {
-  id: string;
+  id: number;
   name: string;
   avatarUrl: string;
   username: string;
@@ -12,7 +12,7 @@ export interface Candidate {
 
 export const mockCandidates: Candidate[] = [
   {
-    id: "00001",
+    id: 1,
     name: "Võ Hoàng Phúc",
     avatarUrl: "https://randomuser.me/api/portraits/men/3.jpg",
     username: "annv",
@@ -21,7 +21,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00002",
+    id: 2,
     name: "Trần Thị Bình",
     avatarUrl: "https://randomuser.me/api/portraits/women/3.jpg",
     username: "binhtt",
@@ -30,7 +30,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
   },
   {
-    id: "00003",
+    id: 3,
     name: "Nguyễn Văn Hùng",
     avatarUrl: "https://randomuser.me/api/portraits/men/4.jpg",
     username: "hungnv",
@@ -39,7 +39,7 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
   },
   {
-    id: "00004",
+    id: 4,
     name: "Phạm Thị Hoa",
     avatarUrl: "https://randomuser.me/api/portraits/women/4.jpg",
     username: "hoapt",
@@ -48,7 +48,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00005",
+    id: 5,
     name: "Lê Quốc Tuấn",
     avatarUrl: "https://randomuser.me/api/portraits/men/5.jpg",
     username: "tuanlq",
@@ -57,7 +57,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
   },
   {
-    id: "00006",
+    id: 6,
     name: "Đặng Minh Châu",
     avatarUrl: "https://randomuser.me/api/portraits/women/5.jpg",
     username: "chaudm",
@@ -66,7 +66,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00007",
+    id: 7,
     name: "Ngô Văn Kiên",
     avatarUrl: "https://randomuser.me/api/portraits/men/6.jpg",
     username: "kiennv",
@@ -75,7 +75,7 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
   },
   {
-    id: "00008",
+    id: 8,
     name: "Vũ Thị Mai",
     avatarUrl: "https://randomuser.me/api/portraits/women/6.jpg",
     username: "maivt",
@@ -84,7 +84,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00009",
+    id: 9,
     name: "Trịnh Hoàng Sơn",
     avatarUrl: "https://randomuser.me/api/portraits/men/7.jpg",
     username: "sonth",
@@ -93,7 +93,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
   },
   {
-    id: "00010",
+    id: 10,
     name: "Nguyễn Thị Hồng",
     avatarUrl: "https://randomuser.me/api/portraits/women/7.jpg",
     username: "hongnt",
@@ -102,7 +102,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00011",
+    id: 11,
     name: "Đỗ Văn Dũng",
     avatarUrl: "https://randomuser.me/api/portraits/men/8.jpg",
     username: "dungdv",
@@ -111,7 +111,7 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
   },
   {
-    id: "00012",
+    id: 12,
     name: "Phạm Thị Lan",
     avatarUrl: "https://randomuser.me/api/portraits/women/8.jpg",
     username: "lanpt",
@@ -120,7 +120,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
   },
   {
-    id: "00013",
+    id: 13,
     name: "Lương Minh Tuấn",
     avatarUrl: "https://randomuser.me/api/portraits/men/9.jpg",
     username: "tuanlm",
@@ -129,7 +129,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00014",
+    id: 14,
     name: "Trần Thị Yến",
     avatarUrl: "https://randomuser.me/api/portraits/women/9.jpg",
     username: "yentt",
@@ -138,7 +138,7 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
   },
   {
-    id: "00015",
+    id: 15,
     name: "Hoàng Văn Lâm",
     avatarUrl: "https://randomuser.me/api/portraits/men/10.jpg",
     username: "lamhv",
@@ -147,7 +147,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
   },
   {
-    id: "00016",
+    id: 16,
     name: "Bùi Thị Hằng",
     avatarUrl: "https://randomuser.me/api/portraits/women/10.jpg",
     username: "hangbt",
@@ -156,7 +156,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
   },
   {
-    id: "00017",
+    id: 17,
     name: "Nguyễn Văn An",
     avatarUrl: "https://randomuser.me/api/portraits/men/11.jpg",
     username: "annv2",
