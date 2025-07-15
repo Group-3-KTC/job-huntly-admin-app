@@ -35,9 +35,9 @@ export const Table = <T,>({
   if (loading) {
     return (
       <>
-        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-          {/*<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>*/}
-          <div className="loader mx-auto"></div>
+        <div className="p-8 text-center bg-white rounded-lg shadow-sm">
+          {/*<div className="w-8 h-8 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>*/}
+          <div className="mx-auto loader"></div>
           <p className="mt-2 text-gray-500">Đang tải...</p>
         </div>
       </>
@@ -46,7 +46,7 @@ export const Table = <T,>({
 
   if (data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+      <div className="p-8 text-center bg-white rounded-lg shadow-sm">
         <p className="text-gray-500">{emptyMessage}</p>
       </div>
     );
@@ -58,7 +58,7 @@ export const Table = <T,>({
     >
       <table className="w-full whitespace-nowrap">
         <thead>
-          <tr className="text-left bg-gray-50 text-gray-600 uppercase text-xs font-medium">
+          <tr className="text-xs font-medium text-left text-gray-600 uppercase bg-gray-50">
             {columns.map((column, index) => (
               <th
                 key={index}

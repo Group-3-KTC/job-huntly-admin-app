@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ChartBar, List, Buildings, X } from "@phosphor-icons/react";
+import { ChartBar, List, Buildings, X, UsersFour } from "@phosphor-icons/react";
 import { useState } from "react";
 import { assets } from "../../assets/assets";
 
@@ -10,7 +10,7 @@ const navItems = [
   {
     to: "/candidateList",
     label: "Candidate List",
-    icon: <Buildings size={20} />,
+    icon: <UsersFour size={20} />,
   },
 ];
 
@@ -33,7 +33,7 @@ const Sidebar = () => {
       {/* Sidebar chính */}
       <div
         className={`
-          fixed top-0 left-0 min-h-full w-64 bg-white border-r p-4 py-8 z-40 border-gray-300 
+          fixed top-0 left-0 min-h-full min-w-64 bg-white border-r p-4 py-8 z-40 border-gray-300 
           flex-col gap-4 shadow-lg transition-transform duration-300
           ${open ? "flex translate-x-0" : "translate-x-[-100%]"}
           md:translate-x-0 md:flex md:static md:shadow-none 

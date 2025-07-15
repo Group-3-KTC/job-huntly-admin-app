@@ -1,11 +1,10 @@
-import {
-  Briefcase,
-  Buildings,
-  ReadCvLogo,
-  User,
-} from "@phosphor-icons/react";;
+import { Briefcase, Buildings, ReadCvLogo, User } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
+import Chart from "../../../components/ui/ChartReuse";
+import ChartUserGrowth from "../components/ChartUserGrowth";
+import ChartApplications from "../components/ChartApplications";
+import ChartReportedJobs from "../components/ChartReportedJobs";
 
 const DashboardPage = () => {
   const statisticData: StatisticCardProps[] = [
@@ -56,10 +55,21 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="flex flex-wrap justify-between gap-4 px-4">
-      {statisticData.map((item, index) => (
-        <StatisCard key={index} {...item} />
-      ))}
+    <div className="w-full px-2 md:px-4">
+      <h1 className="font-extrabold text-2xl my-4">DashBoard</h1>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {statisticData.map((item, index) => (
+          <StatisCard key={index} {...item} />
+        ))}
+      </div>
+      {/* Chart */}
+      <div className="mt-4 mb-6">
+        <ChartUserGrowth />
+      </div>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 my-14">
+        <ChartApplications />
+        <ChartReportedJobs />
+      </div>
     </div>
   );
 };

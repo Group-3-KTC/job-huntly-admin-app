@@ -17,7 +17,7 @@ const StatisCard: React.FC<StatisticCardProps> = ({
   colorScheme = "green",
 }) => {
   return (
-    <div className="w-full sm:w-[48%] md:w-[24%] bg-white rounded-2xl shadow-sm p-4 flex flex-col gap-3">
+    <div className="flex flex-col gap-3 p-4 bg-white rounded-2xl shadow-md">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-gray-500">{label}</span>
         <div className={`rounded-full p-2 text-xl ${colorMap[colorScheme]}`}>

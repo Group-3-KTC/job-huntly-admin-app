@@ -1,9 +1,9 @@
-
-import { Route, Routes } from "react-router-dom";
-import DashboardPage from "../features/dashboard/pages/DashboardPage";
-import CompanyList from "../features/companylist/pages/CompanyList";
-import ReportList from "../features/reportlist/pages/ReportList";
-import { CandidateListPage } from "../features/candidatelist/pages/CandidateListPage";
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import DashboardPage from '../features/dashboard/pages/DashboardPage';
+import CompanyList from '../features/companylist/pages/CompanyList';
+import ReportList from '../features/reportlist/pages/ReportList';
+import { CandidateListPage } from '../features/candidatelist/pages/CandidateListPage';
 
 const AdminRoutes = () => {
   return (
@@ -18,5 +18,4 @@ const AdminRoutes = () => {
 };
   
 export default AdminRoutes;
-
 
