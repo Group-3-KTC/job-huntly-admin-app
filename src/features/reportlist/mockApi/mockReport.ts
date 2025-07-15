@@ -8,16 +8,6 @@ export interface Reports {
     status: "True" | "False";
 }
 
-export interface Reports {
-    id: number;
-    reportType: "Report Company" | "Report User" | "Report Post";
-    description: string;
-    userId: number;
-    reportedContentId: number;
-    createAt: Date;
-    status: "True" | "False";
-}
-
 export const mockReport: Reports[] = [
     {
         id: 1,

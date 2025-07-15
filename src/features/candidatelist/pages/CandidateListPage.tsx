@@ -36,8 +36,8 @@ export const CandidateListPage = () => {
     .sort((a, b) => {
       if (sortOrder === "asc") return a.name.localeCompare(b.name);
       if (sortOrder === "desc") return b.name.localeCompare(a.name);
-      if (sortOrder === "id") return parseInt(a.id) - parseInt(b.id);
-      if (sortOrder === "recent") return parseInt(b.id) - parseInt(a.id);
+      if (sortOrder === "id") return a.id - b.id;
+      if (sortOrder === "recent") return b.id - a.id;
       return 0;
     });
 
