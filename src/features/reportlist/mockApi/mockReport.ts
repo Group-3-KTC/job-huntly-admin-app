@@ -79,7 +79,7 @@ export const mockReport: Reports[] = [
         userId: 18,
         reportedContentId: 6,
         createAt: new Date(),
-        status: "False"
+        status: "True"
     },
     {
         id: 9,
@@ -97,7 +97,7 @@ export const mockReport: Reports[] = [
         userId: 13,
         reportedContentId: 9,
         createAt: new Date(),
-        status: "False"
+        status: "True"
     },
     {
         id: 11,
@@ -124,7 +124,7 @@ export const mockReport: Reports[] = [
         userId: 23,
         reportedContentId: 14,
         createAt: new Date(),
-        status: "False"
+        status: "True"
     },
     {
         id: 14,
@@ -133,7 +133,7 @@ export const mockReport: Reports[] = [
         userId: 24,
         reportedContentId: 2,
         createAt: new Date(),
-        status: "False"
+        status: "True"
     },
     {
         id: 15,
