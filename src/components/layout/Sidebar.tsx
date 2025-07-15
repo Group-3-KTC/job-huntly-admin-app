@@ -4,7 +4,7 @@ import { useState } from "react";
 import { assets } from "../../assets/assets"
 
 const navItems = [
-  { to: "/", label: "Dashboard", icon: <ChartBar size={20} /> },
+  { to: "/dashboard", label: "Dashboard", icon: <ChartBar size={20} /> },
   { to: "/listReport", label: "Report List", icon: <List size={20} /> },
   { to: "/companyList", label: "Company List", icon: <Buildings size={20} /> },
 ];
@@ -31,7 +31,7 @@ const Sidebar = () => {
           fixed top-0 left-0 min-h-full w-64 bg-white border-r p-4 py-8 z-40 border-gray-300 
           flex-col gap-4 shadow-lg transition-transform duration-300
           ${open ? "flex translate-x-0" : "translate-x-[-100%]"}
-          md:translate-x-0 md:flex md:static md:shadow-none
+          md:translate-x-0 md:flex md:static md:shadow-none 
         `}
       >
         {/* Logo & nút đóng (mobile) */}

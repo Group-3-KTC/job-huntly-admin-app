@@ -3,10 +3,7 @@ import {
   Buildings,
   ReadCvLogo,
   User,
-  UserCircleIcon,
-} from "@phosphor-icons/react";
-import { BuildingsIcon } from "@phosphor-icons/react/dist/ssr";
-import React from "react";
+} from "@phosphor-icons/react";;
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
 
