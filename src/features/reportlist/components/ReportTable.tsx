@@ -7,7 +7,6 @@ const ReportTable = () => {
   const [searchField, setSearchField] = useState("reportType");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Lọc dữ liệu theo trường được chọn
   const filteredData = mockReport.filter((report) => {
     const fieldValue = String(
       report[searchField as keyof Reports]
@@ -15,7 +14,6 @@ const ReportTable = () => {
     return fieldValue.includes(searchQuery.toLowerCase());
   });
 
-  // Định nghĩa cột
   const columns: TableColumn<Reports>[] = [
     {
       key: "id",
@@ -69,7 +67,6 @@ const ReportTable = () => {
 
   return (
     <div className="p-4 space-y-4">
-      {/* 📌 Bọc thanh search trong thẻ có nền trắng */}
       <div className="bg-white p-4 rounded-md shadow flex flex-wrap gap-4 items-center w-full">
         <select
           value={searchField}
@@ -96,8 +93,6 @@ const ReportTable = () => {
           Search
         </button>
       </div>
-
-      {/* 📌 Hiển thị bảng dữ liệu */}
       <Table
         columns={columns}
         data={filteredData}
