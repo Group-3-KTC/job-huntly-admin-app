@@ -45,7 +45,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         <img
           src={url}
           alt="avatar"
-          className="w-10 h-10 rounded-full object-cover"
+          className="object-cover w-10 h-10 rounded-full"
         />
       ),
       align: "center",
@@ -157,7 +157,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         emptyMessage="Không có ứng viên nào"
       />
       {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 border-t">
+        <div className="flex items-center justify-between px-6 py-3 border-t ">
           <div className="text-sm text-gray-500">
             Hiển thị {(pagination.page - 1) * pagination.pageSize + 1}–
             {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
@@ -167,7 +167,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <button
               disabled={pagination.page === 1}
               onClick={() => pagination.onPageChange(pagination.page - 1)}
-              className="border px-3 py-1 rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50"
             >
               &lt;
             </button>
@@ -177,7 +177,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                 Math.ceil(pagination.total / pagination.pageSize)
               }
               onClick={() => pagination.onPageChange(pagination.page + 1)}
-              className="border px-3 py-1 rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50"
             >
               &gt;
             </button>

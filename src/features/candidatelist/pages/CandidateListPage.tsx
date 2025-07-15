@@ -53,23 +53,18 @@ export const CandidateListPage = () => {
 
   return (
     <>
-      <div className="p-6 bg-black">
-        <h1 className="text-2xl font-semibold text-white">
-          Welcome to the Candidate List
-        </h1>
-      </div>
-      <div className="p-6">
-        <div className="flex items-center mb-6 justify-end">
+      <div className="w-full p-6 hide-scrollbar">
+        <div className="flex items-center justify-end mb-6">
           <div className="flex gap-2 ">
             <button
               onClick={handleAddCandidate}
-              className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
             >
               <Plus size={16} className="mr-2" /> Thêm Ứng Viên
             </button>
             <button
               onClick={handleExportExcel}
-              className="flex items-center bg-green-500 px-4 py-2 rounded hover:bg-gray-300"
+              className="flex items-center px-4 py-2 bg-green-500 rounded hover:bg-gray-300"
             >
               <FileXls size={16} className="mr-2" /> Xuất Excel
             </button>
@@ -77,11 +72,11 @@ export const CandidateListPage = () => {
         </div>
         <div className="p-6 space-y-6">
           {/* Bộ lọc */}
-          <div className="flex flex-wrap gap-4 items-center justify-end">
+          <div className="flex flex-wrap items-center justify-end gap-4">
             <input
               type="text"
               placeholder="Tìm theo tên hoặc username"
-              className="border border-gray-300 px-4 py-2 rounded"
+              className="px-4 py-2 border border-gray-300 rounded"
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);
@@ -94,7 +89,7 @@ export const CandidateListPage = () => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="border border-gray-300 px-4 py-2 rounded"
+              className="px-4 py-2 border border-gray-300 rounded"
             >
               <option value="">Tất cả trạng thái</option>
               <option value="active">Hoạt động</option>
@@ -107,7 +102,7 @@ export const CandidateListPage = () => {
                 setSortOrder(e.target.value);
                 setPage(1);
               }}
-              className="border border-gray-300 px-4 py-2 rounded"
+              className="px-4 py-2 border border-gray-300 rounded"
             >
               <option value="">Sắp xếp</option>
               <option value="id">ID tăng dần</option>
@@ -122,7 +117,7 @@ export const CandidateListPage = () => {
                 setSortOrder("");
                 setPage(1);
               }}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
             >
               Đặt lại
             </button>

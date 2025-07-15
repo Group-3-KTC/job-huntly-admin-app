@@ -1,0 +1,18 @@
+{
+  "title": "User Growth",
+  "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+  "datasets": [
+    {
+      "label": "Candidate",
+      "data": [0, 20, 80, 160, 220, 250, 280, 300],
+      "borderColor": "#3B82F6",
+      "backgroundColor": "#3B82F6"
+    },
+    {
+      "label": "Company",
+      "data": [0, 10, 40, 100, 150, 180, 200, 240],
+      "borderColor": "#F97316",
+      "backgroundColor": "#F97316"
+    }
+  ]
+}
