@@ -1,12 +1,17 @@
 import { NavLink } from "react-router-dom";
 import { ChartBar, List, Buildings, X } from "@phosphor-icons/react";
 import { useState } from "react";
-import { assets } from "../../assets/assets"
+import { assets } from "../../assets/assets";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: <ChartBar size={20} /> },
   { to: "/listReport", label: "Report List", icon: <List size={20} /> },
   { to: "/companyList", label: "Company List", icon: <Buildings size={20} /> },
+  {
+    to: "/candidateList",
+    label: "Candidate List",
+    icon: <Buildings size={20} />,
+  },
 ];
 
 const Sidebar = () => {
