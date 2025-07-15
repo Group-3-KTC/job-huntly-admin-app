@@ -1,4 +1,4 @@
-// src/features/candidatelist/mock/mockCandidates.ts
+
 
 export interface Candidate {
   id: number;

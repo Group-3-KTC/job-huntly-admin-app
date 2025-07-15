@@ -1,6 +1,6 @@
 export interface JobPost {
   id: number;
-  workType: ("On-site" | "Remote" | "Hybrid")[]; // CHO PHÉP CHỌN NHIỀU
+  workType: ("On-site" | "Remote" | "Hybrid")[];
   level: ("Intern" | "Fresher" | "Middle" | "Senior" | "Associate")[];
   majors: ("IT" | "Marketing" | "Sales" | "HR")[];
   categories: ("Front-end" | "Back-end" | "DevOps" | "Sales" | "DA" | "BA")[];
@@ -16,7 +16,7 @@ export interface JobPost {
     | "Đà Nẵng"
     | "Cần Thơ"
     | "Nha Trang"
-  )[]; // CHO PHÉP CHỌN NHIỀU
+  )[];
   location_ward: string;
   expired_date: Date;
 }

@@ -4,7 +4,7 @@ export interface Company {
     description: string;
     address: string;
     quantity_employee: number;
-    location_city: ("Hồ Chí Minh" | "Hà Nội" | "Đà Nẵng" | "Cần Thơ" | "Nha Trang")[]; // CHO PHÉP CHỌN NHIỀU
+    location_city: ("Hồ Chí Minh" | "Hà Nội" | "Đà Nẵng" | "Cần Thơ" | "Nha Trang")[];
     location_ward: string;
     userId: number;
     status: "active" | "blocked" | "pending";

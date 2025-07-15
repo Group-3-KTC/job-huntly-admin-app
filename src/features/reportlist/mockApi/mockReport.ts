@@ -3,7 +3,7 @@ export interface Reports {
     reportType: "Report Company" | "Report User" | "Report Post";
     description: string;
     userId: number;
-    targetId: number; // ID của nội dung bị report
+    reportedContentId: number;
     createAt: Date;
     status: "True" | "False";
 }
@@ -13,7 +13,7 @@ export interface Reports {
     reportType: "Report Company" | "Report User" | "Report Post";
     description: string;
     userId: number;
-    targetId: number;
+    reportedContentId: number;
     createAt: Date;
     status: "True" | "False";
 }
@@ -24,7 +24,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Post",
         description: "Đây là bài tuyển dụng lừa đảo",
         userId: 10,
-        targetId: 5,
+        reportedContentId: 5,
         createAt: new Date(),
         status: "False"
     },
@@ -33,7 +33,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Company",
         description: "Công ty không minh bạch trong quá trình tuyển dụng",
         userId: 12,
-        targetId: 3,
+        reportedContentId: 3,
         createAt: new Date(),
         status: "False"
     },
@@ -42,7 +42,7 @@ export const mockReport: Reports[] = [
         reportType: "Report User",
         description: "Người dùng spam tin nhắn",
         userId: 11,
-        targetId: 21,
+        reportedContentId: 21,
         createAt: new Date(),
         status: "False"
     },
@@ -51,7 +51,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Post",
         description: "Bài viết chứa thông tin giả mạo",
         userId: 15,
-        targetId: 8,
+        reportedContentId: 8,
         createAt: new Date(),
         status: "False"
     },
@@ -60,7 +60,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Company",
         description: "Công ty không trả lương đúng hạn",
         userId: 16,
-        targetId: 7,
+        reportedContentId: 7,
         createAt: new Date(),
         status: "False"
     },
@@ -69,7 +69,7 @@ export const mockReport: Reports[] = [
         reportType: "Report User",
         description: "Người này có hành vi quấy rối",
         userId: 14,
-        targetId: 25,
+        reportedContentId: 25,
         createAt: new Date(),
         status: "False"
     },
@@ -78,7 +78,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Post",
         description: "Bài đăng sai mô tả công việc",
         userId: 17,
-        targetId: 11,
+        reportedContentId: 11,
         createAt: new Date(),
         status: "False"
     },
@@ -87,7 +87,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Company",
         description: "Công ty yêu cầu ứng viên đóng phí",
         userId: 18,
-        targetId: 6,
+        reportedContentId: 6,
         createAt: new Date(),
         status: "False"
     },
@@ -96,7 +96,7 @@ export const mockReport: Reports[] = [
         reportType: "Report User",
         description: "Người dùng sử dụng lời lẽ không phù hợp",
         userId: 19,
-        targetId: 30,
+        reportedContentId: 30,
         createAt: new Date(),
         status: "False"
     },
@@ -105,7 +105,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Post",
         description: "Thông tin không đúng sự thật",
         userId: 13,
-        targetId: 9,
+        reportedContentId: 9,
         createAt: new Date(),
         status: "False"
     },
@@ -114,7 +114,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Company",
         description: "Công ty không liên hệ lại sau phỏng vấn",
         userId: 20,
-        targetId: 4,
+        reportedContentId: 4,
         createAt: new Date(),
         status: "False"
     },
@@ -123,7 +123,7 @@ export const mockReport: Reports[] = [
         reportType: "Report User",
         description: "Người dùng đăng bài sai chuyên mục",
         userId: 22,
-        targetId: 27,
+        reportedContentId: 27,
         createAt: new Date(),
         status: "False"
     },
@@ -132,7 +132,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Post",
         description: "Nội dung không liên quan đến việc làm",
         userId: 23,
-        targetId: 14,
+        reportedContentId: 14,
         createAt: new Date(),
         status: "False"
     },
@@ -141,7 +141,7 @@ export const mockReport: Reports[] = [
         reportType: "Report Company",
         description: "Bị từ chối phỏng vấn không rõ lý do",
         userId: 24,
-        targetId: 2,
+        reportedContentId: 2,
         createAt: new Date(),
         status: "False"
     },
@@ -150,7 +150,7 @@ export const mockReport: Reports[] = [
         reportType: "Report User",
         description: "Người này lạm dụng chức năng hệ thống",
         userId: 25,
-        targetId: 35,
+        reportedContentId: 35,
         createAt: new Date(),
         status: "False"
     }
