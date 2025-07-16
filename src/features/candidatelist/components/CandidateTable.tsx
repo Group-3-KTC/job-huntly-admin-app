@@ -263,12 +263,13 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           className="object-cover w-10 h-10 rounded-full"
         />
       ),
-      align: "center",
+      align: "right",
       width: "80px",
     },
     {
       key: "username",
       title: "Username",
+      align: "center",
     },
     {
       key: "email",
@@ -288,6 +289,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           {statusLabel[status].text}
         </span>
       ),
+      align: "center"
     },
     {
       key: "actions",

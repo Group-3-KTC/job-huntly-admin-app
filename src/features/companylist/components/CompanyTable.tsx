@@ -33,7 +33,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
   const columns: TableColumn<Company>[] = [
     { key: "id", title: "ID", width: "80px" },
     { key: "email", title: "Email" },
-    { key: "address", title: "Địa chỉ" },
+    { key: "address", title: "Địa chỉ", align: "left" },
     {
       key: "location_city",
       title: "Thành phố",
@@ -48,6 +48,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
     {
       key: "status",
       title: "Trạng thái",
+      align: "center",
       render: (status: keyof typeof statusLabel) => (
         <span
           className={`px-2 py-1 ${statusLabel[status].style} rounded-full text-xs`}
