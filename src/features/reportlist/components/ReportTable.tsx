@@ -58,12 +58,12 @@ const ReportTable = () => {
       key: "id",
       title: "ID",
       width: "80px",
-      align: "center",
+      align: "left",
     },
     {
       key: "reportType",
       title: "Report Type",
-      align: "center",
+      align: "left",
     },
     {
       key: "description",
@@ -120,7 +120,7 @@ const ReportTable = () => {
   ];
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 max-w-full">
       <div className="bg-white p-4 rounded-md shadow-lg flex gap-4 items-center justify-between w-full h-[80px] min-h-[80px] overflow-hidden box-border">
         <select
           value={searchField}

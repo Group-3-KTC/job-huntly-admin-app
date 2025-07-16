@@ -40,14 +40,10 @@ const CompanyListPage = () => {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="w-full p-6">
-      <div className="p-6 bg-black">
-        <h1 className="text-2xl font-semibold text-white">
-          Welcome to the Company List
-        </h1>
-      </div>
+    <div className="w-full">
+      <h1 className="font-extrabold text-2xl mx-6 my-4">Company List</h1>
       <div className="flex items-center justify-end mb-6 mt-5">
-        <div className="flex gap-2">
+        <div className="flex gap-2 mr-6">
           <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             <PlusIcon size={16} className="mr-2" /> Thêm Công Ty
           </button>
@@ -57,7 +53,7 @@ const CompanyListPage = () => {
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="mx-6 space-y-6">
         <div className="flex flex-wrap items-center justify-end gap-4">
           <input
             type="text"

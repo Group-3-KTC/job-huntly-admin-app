@@ -7,9 +7,11 @@ const AdminLayout = () => {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <main className="flex-1 px-4 py-16 bg-gray-200 md:p-4">
-        <Header/>
-        <AdminRoutes />
+      <main className="flex-1 bg-gray-200">
+        <Header />
+        <div className="p-4">
+          <AdminRoutes />
+        </div>
       </main>
     </div>
   );
