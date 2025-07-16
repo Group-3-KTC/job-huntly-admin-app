@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { Reports } from "../mockApi/mockReport";
 import { mockReport } from "../mockApi/mockReport";
@@ -9,7 +9,7 @@ const ReportTable = () => {
 
   const filteredData = mockReport.filter((report) => {
     const fieldValue = String(
-      report[searchField as keyof Reports]
+      report[searchField as keyof Reports],
     ).toLowerCase();
     return fieldValue.includes(searchQuery.toLowerCase());
   });
