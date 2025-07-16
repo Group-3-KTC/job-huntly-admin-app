@@ -53,7 +53,7 @@ export const CandidateListPage = () => {
 
   return (
     <>
-      <div className="w-full p-6 hide-scrollbar">
+      <div className="w-full p-6">
         <div className="flex items-center justify-end mb-6">
           <div className="flex gap-2 ">
             <button

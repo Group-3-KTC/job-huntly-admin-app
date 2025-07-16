@@ -1,7 +1,6 @@
 import { Briefcase, Buildings, ReadCvLogo, User } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
-import Chart from "../../../components/ui/ChartReuse";
 import ChartUserGrowth from "../components/ChartUserGrowth";
 import ChartApplications from "../components/ChartApplications";
 import ChartReportedJobs from "../components/ChartReportedJobs";
@@ -62,7 +61,6 @@ const DashboardPage = () => {
           <StatisCard key={index} {...item} />
         ))}
       </div>
-      {/* Chart */}
       <div className="mt-4 mb-6">
         <ChartUserGrowth />
       </div>
