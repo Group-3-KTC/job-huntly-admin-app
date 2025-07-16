@@ -3,12 +3,16 @@ import { useEffect, useState } from "react";
 import { CandidateTable } from "../components/CandidateTable";
 import { type Candidate, mockCandidates } from "../mock/mockCandidates";
 import { FileXls, Plus } from "@phosphor-icons/react";
+import {
+  FilterBar,
+  type FilterField,
+} from "../../../components/common/FilterBar";
 
 export const CandidateListPage = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filter/Search/Sort state
+  // filter state
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
@@ -16,7 +20,6 @@ export const CandidateListPage = () => {
   const pageSize = 5;
 
   useEffect(() => {
-    // Giả lập gọi API mất 2 giây
     const timer = setTimeout(() => {
       setCandidates(mockCandidates);
       setLoading(false);
@@ -25,6 +28,23 @@ export const CandidateListPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const candidateFilters: FilterField[] = [
+    { key: "searchText", label: "Tìm tên/username", type: "text" },
+    {
+      key: "status",
+      label: "Trạng thái",
+      type: "select",
+      options: ["active", "blocked", "pending"],
+    },
+    {
+      key: "sort",
+      label: "Sắp xếp",
+      type: "select",
+      options: ["id", "asc", "desc", "recent"],
+    },
+  ];
+
+  // filter + sort
   const filtered = candidates
     .filter((c) => {
       const matchSearch =
@@ -48,14 +68,39 @@ export const CandidateListPage = () => {
   };
 
   const handleExportExcel = () => {
-    alert("Xuat excel");
+    alert("Xuất Excel");
   };
 
   return (
     <>
-      <div className="w-full">
-        <div className="flex items-center justify-end mb-6">
-          <div className="flex gap-2 mr-6">
+      <div className="w-full p-6">
+        <h1 className="font-extrabold text-2xl mb-4">Candidate List</h1>
+
+        {/* Bộ lọc dùng FilterBar */}
+        <FilterBar
+          filters={candidateFilters}
+          initialValues={{
+            searchText,
+            status: statusFilter,
+            sort: sortOrder,
+          }}
+          onFilterChange={(filters) => {
+            setSearchText(filters.searchText || "");
+            setStatusFilter(filters.status || "");
+            setSortOrder(filters.sort || "");
+            setPage(1);
+          }}
+          onReset={() => {
+            setSearchText("");
+            setStatusFilter("");
+            setSortOrder("");
+            setPage(1);
+          }}
+        />
+
+        {/* Action buttons */}
+        <div className="flex items-center justify-end my-6">
+          <div className="flex gap-2">
             <button
               onClick={handleAddCandidate}
               className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
@@ -70,71 +115,18 @@ export const CandidateListPage = () => {
             </button>
           </div>
         </div>
-        <div className="p-6 space-y-6">
-          {/* Bộ lọc */}
-          <div className="flex flex-wrap items-center justify-end gap-4">
-            <input
-              type="text"
-              placeholder="Tìm theo tên hoặc username"
-              className="px-4 py-2 border border-gray-300 rounded"
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-                setPage(1);
-              }}
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="px-4 py-2 border border-gray-300 rounded"
-            >
-              <option value="">Tất cả trạng thái</option>
-              <option value="active">Hoạt động</option>
-              <option value="blocked">Đã khóa</option>
-              <option value="pending">Chờ xác nhận</option>
-            </select>
-            <select
-              value={sortOrder}
-              onChange={(e) => {
-                setSortOrder(e.target.value);
-                setPage(1);
-              }}
-              className="px-4 py-2 border border-gray-300 rounded"
-            >
-              <option value="">Sắp xếp</option>
-              <option value="id">ID tăng dần</option>
-              <option value="asc">Tên A-Z</option>
-              <option value="desc">Tên Z-A</option>
-              <option value="recent">Mới nhất</option>
-            </select>
-            <button
-              onClick={() => {
-                setSearchText("");
-                setStatusFilter("");
-                setSortOrder("");
-                setPage(1);
-              }}
-              className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
-            >
-              Đặt lại
-            </button>
-          </div>
 
-          {/* This CandidateTable component now uses the generic Table component internally */}
-          <CandidateTable
-            candidates={paginated}
-            loading={loading}
-            pagination={{
-              page,
-              pageSize,
-              total: filtered.length,
-              onPageChange: setPage,
-            }}
-          />
-        </div>
+        {/* Bảng dữ liệu */}
+        <CandidateTable
+          candidates={paginated}
+          loading={loading}
+          pagination={{
+            page,
+            pageSize,
+            total: filtered.length,
+            onPageChange: setPage,
+          }}
+        />
       </div>
     </>
   );
