@@ -45,10 +45,10 @@ const CompanyListPage = () => {
       <div className="flex items-center justify-end mb-6 mt-5">
         <div className="flex gap-2 mr-6">
           <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-            <PlusIcon size={16} className="mr-2" /> Thêm Công Ty
+            <PlusIcon size={16} className="mr-2" /> Add Company
           </button>
           <button className="flex items-center px-4 py-2 bg-green-500 rounded hover:bg-gray-300">
-            <FileXlsIcon size={16} className="mr-2" /> Xuất Excel
+            <FileXlsIcon size={16} className="mr-2" /> Export to Excel
           </button>
         </div>
       </div>
@@ -57,7 +57,7 @@ const CompanyListPage = () => {
         <div className="flex flex-wrap items-center justify-end gap-4">
           <input
             type="text"
-            placeholder="Tìm theo email công ty"
+            placeholder="Find follow by email's company"
             className="px-4 py-2 border border-gray-300 rounded"
             value={searchText}
             onChange={(e) => {
@@ -73,10 +73,10 @@ const CompanyListPage = () => {
             }}
             className="px-4 py-2 border border-gray-300 rounded"
           >
-            <option value="">Tất cả trạng thái</option>
-            <option value="active">Hoạt động</option>
-            <option value="blocked">Đã khóa</option>
-            <option value="pending">Chờ xác nhận</option>
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+            <option value="pending">Pending Confirmation</option>
           </select>
           <select
             value={sortOrder}
@@ -86,11 +86,11 @@ const CompanyListPage = () => {
             }}
             className="px-4 py-2 border border-gray-300 rounded"
           >
-            <option value="">Sắp xếp</option>
-            <option value="id">ID tăng dần</option>
+            <option value="">Sort</option>
+            <option value="id">ID Ascending</option>
             <option value="asc">Email A-Z</option>
             <option value="desc">Email Z-A</option>
-            <option value="recent">Mới nhất</option>
+            <option value="recent">Recent</option>
           </select>
           <button
             onClick={() => {

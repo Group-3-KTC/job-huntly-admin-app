@@ -22,9 +22,12 @@ interface Props {
 }
 
 const statusLabel = {
-  active: { text: "Hoạt động", style: "bg-green-100 text-green-700" },
-  blocked: { text: "Đã khóa", style: "bg-red-100 text-red-700" },
-  pending: { text: "Chờ xác nhận", style: "bg-purple-100 text-purple-700" },
+  active: { text: "	Active", style: "bg-green-100 text-green-700" },
+  blocked: { text: "Blocked", style: "bg-red-100 text-red-700" },
+  pending: {
+    text: "Pending Confirmation",
+    style: "bg-purple-100 text-purple-700",
+  },
 };
 
 export const CompanyTable = ({ companies, loading, pagination }: Props) => {
@@ -33,21 +36,21 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
   const columns: TableColumn<Company>[] = [
     { key: "id", title: "ID", width: "80px" },
     { key: "email", title: "Email" },
-    { key: "address", title: "Địa chỉ", align: "left" },
+    { key: "address", title: "Address", align: "left" },
     {
       key: "location_city",
-      title: "Thành phố",
+      title: "City",
       render: (cities) => cities.join(", "),
     },
-    { key: "location_ward", title: "Phường" },
+    { key: "location_ward", title: "Ward" },
     {
       key: "quantity_employee",
-      title: "Nhân sự",
+      title: "Employee",
       align: "center",
     },
     {
       key: "status",
-      title: "Trạng thái",
+      title: "Status",
       align: "center",
       render: (status: keyof typeof statusLabel) => (
         <span
@@ -59,13 +62,13 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
     },
     {
       key: "actions",
-      title: "Thao tác",
+      title: "Actions",
       align: "center",
       render: (_, record) => (
         <div className="flex justify-center space-x-2 text-sm">
           <button
             className="text-blue-500 hover:text-blue-700"
-            title="Xem chi tiết"
+            title="Detail of Company"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedCompany(record);
@@ -75,7 +78,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
           </button>
           <button
             className="text-gray-500 hover:text-gray-700"
-            title="Sửa"
+            title="Edit"
             onClick={(e) => {
               e.stopPropagation();
               alert("Sửa thông tin công ty");
@@ -85,10 +88,10 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
           </button>
           <button
             className="text-yellow-500 hover:text-yellow-700"
-            title="Khóa"
+            title="	Blocked"
             onClick={(e) => {
               e.stopPropagation();
-              alert("Khóa công ty");
+              alert("	Blocked Success");
             }}
           >
             <ProhibitIcon size={18} />
