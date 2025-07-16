@@ -7,6 +7,7 @@ const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: <ChartBar size={20} /> },
   { to: "/listReport", label: "Report List", icon: <List size={20} /> },
   { to: "/companyList", label: "Company List", icon: <Buildings size={20} /> },
+  { to: "/jobList", label: "Job List" },
   {
     to: "/candidateList",
     label: "Candidate List",
