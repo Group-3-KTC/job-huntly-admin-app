@@ -54,7 +54,7 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="w-full px-2 md:px-4">
+    <div className="w-full px-2 md:px-6">
       <h1 className="font-extrabold text-2xl my-4">DashBoard</h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statisticData.map((item, index) => (

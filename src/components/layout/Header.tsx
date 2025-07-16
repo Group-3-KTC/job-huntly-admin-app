@@ -1,18 +1,9 @@
-
-import { Bell, MagnifyingGlass } from "@phosphor-icons/react";
+import { Bell } from "@phosphor-icons/react";
 
 const Header = () => {
   return (
-    <div className="flex items-center justify-between mx-4 px-4 py-3 bg-white shadow-sm rounded-md">
-      {/* Search input */}
-      <div className="flex items-center w-full max-w-sm bg-gray-100 px-3 py-2 rounded-full">
-        <MagnifyingGlass size={20} className="text-gray-500 mr-2" />
-        <input
-          type="text"
-          placeholder="Search charts..."
-          className="bg-transparent outline-none text-sm w-full"
-        />
-      </div>
+    <div className="flex items-center justify-between px-4 py-3 bg-white shadow-sm">
+
 
       {/* Right actions */}
       <div className="flex items-center gap-5 ml-4">

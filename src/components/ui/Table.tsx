@@ -56,22 +56,26 @@ export const Table = <T,>({
     <div
       className={`overflow-x-auto bg-white rounded-lg shadow-sm ${className}`}
     >
-      <table className="w-full whitespace-nowrap">
+      <table className="min-w-full whitespace-nowrap">
         <thead>
-          <tr className="text-xs font-medium text-left text-gray-600 uppercase bg-gray-50">
+          <tr className="text-xs font-medium text-gray-600 uppercase bg-gray-50">
             {columns.map((column, index) => (
               <th
                 key={index}
-                className={`px-6 py-4 ${
-                  column.align === "center"
-                    ? "text-center"
-                    : column.align === "right"
-                      ? "text-right"
-                      : ""
-                }`}
+                className="px-4 py-4"
                 style={{ width: column.width }}
               >
-                {column.title}
+                <div
+                  className={`flex items-center ${
+                    column.align === "center"
+                      ? "justify-center"
+                      : column.align === "right"
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  {column.title}
+                </div>
               </th>
             ))}
           </tr>
@@ -91,18 +95,30 @@ export const Table = <T,>({
                   ? column.render(value, record, index)
                   : value;
 
+                const isImage =
+                  typeof cellContent === "object" &&
+                  cellContent !== null &&
+                  "type" in cellContent &&
+                  (cellContent.type === "img" || cellContent.type === "Image");
+
                 return (
                   <td
                     key={colIndex}
-                    className={`px-6 py-4 ${
+                    className={`px-4 py-4 ${
                       column.align === "center"
-                        ? "text-center"
+                        ? isImage
+                          ? "" // bỏ text-center nếu là ảnh
+                          : "text-center"
                         : column.align === "right"
-                          ? "text-right"
-                          : ""
+                        ? "text-right"
+                        : ""
                     }`}
                   >
-                    {cellContent}
+                    {isImage ? (
+                      <div className="flex justify-center">{cellContent}</div>
+                    ) : (
+                      cellContent
+                    )}
                   </td>
                 );
               })}
