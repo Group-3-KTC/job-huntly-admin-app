@@ -8,6 +8,7 @@ const routeTitleMap: Record<string, string> = {
   "/candidateList": "Candidate List",
   "/companyList": "Company List",
   "/listReport": "Report List",
+  "/jobList": "Job List"
 };
 
 export const PageTracker = () => {
