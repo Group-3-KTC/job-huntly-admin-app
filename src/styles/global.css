@@ -23,11 +23,18 @@
     100% {background-position:    0% 100%,100% 100%,200% 100%}
 }
 
-.hide-scrollbar {
-  scrollbar-width: none; /* Firefox */
+/* ẩn scroll bar */
+* {
   -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+/* Ẩn thanh cuộn cho Chrome, Safari và Opera */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Đảm bảo vẫn giữ được chức năng cuộn mượt */
+* {
+  -webkit-overflow-scrolling: touch; /* Cho iOS */
 }

@@ -53,7 +53,7 @@ const ChartReuse: React.FC<Props> = ({
             },
             y: {
               stacked,
-              ticks: { stepSize: 100 },
+              ticks: { stepSize: 10 },
             },
           }
         : undefined,

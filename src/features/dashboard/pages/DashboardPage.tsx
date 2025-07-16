@@ -61,7 +61,6 @@ const DashboardPage = () => {
           <StatisCard key={index} {...item} />
         ))}
       </div>
-      {/* Chart */}
       <div className="mt-4 mb-6">
         <ChartUserGrowth />
       </div>

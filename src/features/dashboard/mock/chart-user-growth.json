@@ -1,18 +1,187 @@
 {
-  "title": "User Growth",
-  "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
-  "datasets": [
-    {
-      "label": "Candidate",
-      "data": [0, 20, 80, 160, 220, 250, 280, 300],
-      "borderColor": "#3B82F6",
-      "backgroundColor": "#3B82F6"
+  "default": {
+    "title": "User Growth",
+    "labels": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "series": [
+      {
+        "name": "Candidate",
+        "values": [50, 80, 100, 160, 220, 250, 270, 290, 310, 330, 350, 380]
+      },
+      {
+        "name": "Company",
+        "values": [30, 60, 80, 120, 150, 180, 200, 220, 240, 260, 280, 300]
+      }
+    ]
+  },
+  "byMonth": {
+    "0": {
+      "title": "User Growth (Jan)",
+      "labels": ["Jan"],
+      "series": [
+        { "name": "Candidate", "values": [50] },
+        { "name": "Company", "values": [30] }
+      ]
     },
-    {
-      "label": "Company",
-      "data": [0, 10, 40, 100, 150, 180, 200, 240],
-      "borderColor": "#F97316",
-      "backgroundColor": "#F97316"
+    "1": {
+      "title": "User Growth (Feb)",
+      "labels": ["Feb"],
+      "series": [
+        { "name": "Candidate", "values": [80] },
+        { "name": "Company", "values": [60] }
+      ]
+    },
+    "2": {
+      "title": "User Growth (Mar)",
+      "labels": ["Mar"],
+      "series": [
+        { "name": "Candidate", "values": [100] },
+        { "name": "Company", "values": [80] }
+      ]
+    },
+    "3": {
+      "title": "User Growth (Apr)",
+      "labels": ["Apr"],
+      "series": [
+        { "name": "Candidate", "values": [160] },
+        { "name": "Company", "values": [120] }
+      ]
+    },
+    "4": {
+      "title": "User Growth (May)",
+      "labels": ["May"],
+      "series": [
+        { "name": "Candidate", "values": [220] },
+        { "name": "Company", "values": [150] }
+      ]
+    },
+    "5": {
+      "title": "User Growth (Jun)",
+      "labels": ["Jun"],
+      "series": [
+        { "name": "Candidate", "values": [250] },
+        { "name": "Company", "values": [180] }
+      ]
+    },
+    "6": {
+      "title": "User Growth (Jul)",
+      "labels": ["Jul"],
+      "series": [
+        { "name": "Candidate", "values": [270] },
+        { "name": "Company", "values": [200] }
+      ]
+    },
+    "7": {
+      "title": "User Growth (Aug)",
+      "labels": ["Aug"],
+      "series": [
+        { "name": "Candidate", "values": [290] },
+        { "name": "Company", "values": [220] }
+      ]
+    },
+    "8": {
+      "title": "User Growth (Sep)",
+      "labels": ["Sep"],
+      "series": [
+        { "name": "Candidate", "values": [310] },
+        { "name": "Company", "values": [240] }
+      ]
+    },
+    "9": {
+      "title": "User Growth (Oct)",
+      "labels": ["Oct"],
+      "series": [
+        { "name": "Candidate", "values": [330] },
+        { "name": "Company", "values": [260] }
+      ]
+    },
+    "10": {
+      "title": "User Growth (Nov)",
+      "labels": ["Nov"],
+      "series": [
+        { "name": "Candidate", "values": [350] },
+        { "name": "Company", "values": [280] }
+      ]
+    },
+    "11": {
+      "title": "User Growth (Dec)",
+      "labels": ["Dec"],
+      "series": [
+        { "name": "Candidate", "values": [380] },
+        { "name": "Company", "values": [300] }
+      ]
     }
-  ]
+  },
+  "byCategory": {
+    "IT": {
+      "title": "User Growth (IT)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [20, 30, 40, 50, 60, 70, 80] },
+        { "name": "Company", "values": [10, 15, 20, 25, 30, 35, 40] }
+      ]
+    },
+    "Marketing": {
+      "title": "User Growth (Marketing)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [15, 25, 35, 45, 55, 65, 75] },
+        { "name": "Company", "values": [8, 12, 16, 20, 24, 28, 32] }
+      ]
+    },
+    "Finance": {
+      "title": "User Growth (Finance)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [10, 20, 30, 40, 50, 60, 70] },
+        { "name": "Company", "values": [5, 10, 15, 20, 25, 30, 35] }
+      ]
+    },
+    "HR": {
+      "title": "User Growth (HR)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [5, 15, 25, 35, 45, 55, 65] },
+        { "name": "Company", "values": [3, 8, 12, 16, 20, 24, 28] }
+      ]
+    }
+  },
+  "byRegion": {
+    "HCM": {
+      "title": "User Growth (HCM)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [25, 35, 45, 55, 65, 75, 85] },
+        { "name": "Company", "values": [15, 20, 25, 30, 35, 40, 45] }
+      ]
+    },
+    "HN": {
+      "title": "User Growth (HN)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [20, 30, 40, 50, 60, 70, 80] },
+        { "name": "Company", "values": [10, 15, 20, 25, 30, 35, 40] }
+      ]
+    },
+    "DN": {
+      "title": "User Growth (DN)",
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "series": [
+        { "name": "Candidate", "values": [15, 25, 35, 45, 55, 65, 75] },
+        { "name": "Company", "values": [8, 12, 16, 20, 24, 28, 32] }
+      ]
+    }
+  }
 }

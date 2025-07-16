@@ -29,17 +29,6 @@ const config: Config = {
     },
   },
   plugins: [
-    plugin(function ({ addUtilities }) {
-      addUtilities({
-        ".hide-scrollbar": {
-          "scrollbar-width": "none" /* Firefox */,
-          "-ms-overflow-style": "none" /* IE/Edge */,
-        },
-        ".hide-scrollbar::-webkit-scrollbar": {
-          display: "none" /* Chrome, Safari, Edge */,
-        },
-      });
-    }),
   ],
 };
 export default config;
