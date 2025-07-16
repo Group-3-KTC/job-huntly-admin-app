@@ -1,5 +1,4 @@
-// src/context/AuthContext.tsx
-import React, { createContext, useState, type ReactNode,  } from "react";
+import { createContext, useState, type ReactNode } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -8,12 +7,12 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("admin_token")
+    !!localStorage.getItem("admin_token"),
   ); // Kiểm tra token khi khởi tạo
 
   const login = () => setIsAuthenticated(true);
