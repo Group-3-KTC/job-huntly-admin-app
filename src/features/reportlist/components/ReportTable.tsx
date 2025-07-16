@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { Reports } from "../mockApi/mockReport";
 import { mockReport } from "../mockApi/mockReport";

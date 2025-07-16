@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Bell, MagnifyingGlass } from "@phosphor-icons/react";
 
 const Header = () => {
