@@ -1,9 +1,8 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import DashboardPage from '../features/dashboard/pages/DashboardPage';
-import CompanyList from '../features/companylist/pages/CompanyList';
-import ReportList from '../features/reportlist/pages/ReportList';
-import { CandidateListPage } from '../features/candidatelist/pages/CandidateListPage';
+import { Route, Routes } from "react-router-dom";
+import DashboardPage from "../features/dashboard/pages/DashboardPage";
+import CompanyList from "../features/companylist/pages/CompanyList";
+import ReportList from "../features/reportlist/pages/ReportList";
+import { CandidateListPage } from "../features/candidatelist/pages/CandidateListPage";
 
 const AdminRoutes = () => {
   return (
@@ -12,10 +11,9 @@ const AdminRoutes = () => {
       <Route path="/listReport" element={<ReportList />} />
       <Route path="/companyList" element={<CompanyList />} />
       <Route path="/candidateList" element={<CandidateListPage />} />
-      <Route path="/" element={<DashboardPage />} /> {/* Chuyển hướng mặc định đến dashboard */}
+      <Route path="/" element={<DashboardPage />} />{" "}
     </Routes>
   );
 };
-  
-export default AdminRoutes;
 
+export default AdminRoutes;
