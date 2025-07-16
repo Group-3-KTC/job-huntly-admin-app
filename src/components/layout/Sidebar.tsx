@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ChartBar, List, Buildings, X, UsersFour } from "@phosphor-icons/react";
+import { ChartBar, List, Buildings, X, UsersFour, ReadCvLogo } from "@phosphor-icons/react";
 import { useState } from "react";
 import { assets } from "../../assets/assets";
 
@@ -7,7 +7,7 @@ const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: <ChartBar size={20} /> },
   { to: "/listReport", label: "Report List", icon: <List size={20} /> },
   { to: "/companyList", label: "Company List", icon: <Buildings size={20} /> },
-  { to: "/jobList", label: "Job List" },
+  { to: "/jobList", label: "Job List", icon:<ReadCvLogo size={20} /> },
   {
     to: "/candidateList",
     label: "Candidate List",
