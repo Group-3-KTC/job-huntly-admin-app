@@ -54,7 +54,6 @@ export const CandidateListPage = () => {
   return (
     <>
       <div className="w-full">
-        <h1 className="font-extrabold text-2xl my-4 ml-6">Candidate List</h1>
         <div className="flex items-center justify-end mb-6">
           <div className="flex gap-2 mr-6">
             <button
