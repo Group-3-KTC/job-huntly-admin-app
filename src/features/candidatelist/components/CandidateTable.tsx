@@ -360,7 +360,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Danh sách ứng viên</h2>
+        <div></div>
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded flex items-center gap-2"
           onClick={handleAddCandidate}
@@ -393,22 +393,30 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             >
               &lt;
             </button>
-            
+
             {/* Hiển thị các nút số trang */}
             {(() => {
-              const totalPages = Math.ceil(pagination.total / pagination.pageSize);
+              const totalPages = Math.ceil(
+                pagination.total / pagination.pageSize
+              );
               const pages = [];
               const maxVisible = 5;
-              
-              let startPage = Math.max(1, pagination.page - Math.floor(maxVisible / 2));
-              const initialEndPage = Math.min(totalPages, startPage + maxVisible - 1);
-              
+
+              let startPage = Math.max(
+                1,
+                pagination.page - Math.floor(maxVisible / 2)
+              );
+              const initialEndPage = Math.min(
+                totalPages,
+                startPage + maxVisible - 1
+              );
+
               if (initialEndPage - startPage + 1 < maxVisible) {
                 startPage = Math.max(1, initialEndPage - maxVisible + 1);
               }
-              
+
               const endPage = Math.min(totalPages, startPage + maxVisible - 1);
-              
+
               // Hiển thị nút trang đầu và "..." nếu cần
               if (startPage > 1) {
                 pages.push(
@@ -420,7 +428,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                     1
                   </button>
                 );
-                
+
                 if (startPage > 2) {
                   pages.push(
                     <span key="dots1" className="px-3 py-1">
@@ -429,7 +437,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                   );
                 }
               }
-              
+
               // Hiển thị các trang giữa
               for (let i = startPage; i <= endPage; i++) {
                 pages.push(
@@ -446,7 +454,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                   </button>
                 );
               }
-              
+
               // Hiển thị "..." và nút trang cuối nếu cần
               if (endPage < totalPages) {
                 if (endPage < totalPages - 1) {
@@ -456,7 +464,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                     </span>
                   );
                 }
-                
+
                 pages.push(
                   <button
                     key="last"
@@ -467,10 +475,10 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                   </button>
                 );
               }
-              
+
               return pages;
             })()}
-            
+
             <button
               disabled={
                 pagination.page ===

@@ -41,7 +41,6 @@ const CompanyListPage = () => {
 
   return (
     <div className="w-full">
-      <h1 className="font-extrabold text-2xl mx-6 my-4">Company List</h1>
       <div className="flex items-center justify-end mb-6 mt-5">
         <div className="flex gap-2 mr-6">
           <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
