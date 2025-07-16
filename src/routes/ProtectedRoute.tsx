@@ -1,20 +1,17 @@
-// src/components/ProtectedRoute.tsx
 import { Navigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import type { RootState } from "../app/store.ts";
+import { useSelector } from "react-redux";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const authContext = useContext(AuthContext);
+  const { isAuthenticated, authInitialized } = useSelector(
+    (state: RootState) => state.auth,
+  );
 
-  if (!authContext) {
-    throw new Error("AuthContext must be used within an AuthProvider");
-  }
-
-  const { isAuthenticated } = authContext;
+  if (!authInitialized) return null;
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
