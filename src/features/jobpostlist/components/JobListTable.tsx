@@ -16,14 +16,12 @@ const JobListTable = () => {
   const sortedAndFilteredData = useMemo(() => {
     let temp = [...mockJob];
 
-    // Sắp xếp
     if (sortOrder === "recent") {
       temp.sort((a, b) => b.id - a.id);
     } else if (sortOrder === "oldest") {
       temp.sort((a, b) => a.id - b.id);
     }
 
-    // Lọc
     const query = searchQuery.toLowerCase();
     return temp.filter((job) => {
       const fieldValue = String(job[searchField] ?? "").toLowerCase();
@@ -77,7 +75,6 @@ const JobListTable = () => {
 
   return (
     <div className="space-y-4 max-w-full">
-      {/* Toolbar */}
       <div className="bg-white p-4 rounded-md shadow-lg flex flex-wrap gap-4 items-center justify-between w-full box-border">
         <select
           value={searchField}
@@ -129,7 +126,6 @@ const JobListTable = () => {
         </select>
       </div>
 
-      {/* Bảng dữ liệu */}
       <Table
         columns={columns}
         data={paginatedData}
