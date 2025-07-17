@@ -57,7 +57,7 @@ export const Table = <T,>({
       className={` bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}
     >
       <div className="overflow-x-auto scroll-x-only">
-        <table className="min-w-[900px]  whitespace-nowrap">
+        <table className="min-w-full  whitespace-nowrap">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               {columns.map((column, index) => (
@@ -71,8 +71,8 @@ export const Table = <T,>({
                       column.align === "center"
                         ? "justify-center"
                         : column.align === "right"
-                        ? "justify-end"
-                        : "justify-start"
+                          ? "justify-end"
+                          : "justify-start"
                     }`}
                   >
                     {column.title}
@@ -112,8 +112,8 @@ export const Table = <T,>({
                             ? "" // bỏ text-center nếu là ảnh
                             : "text-center"
                           : column.align === "right"
-                          ? "text-right"
-                          : ""
+                            ? "text-right"
+                            : ""
                       }`}
                     >
                       {isImage ? (
