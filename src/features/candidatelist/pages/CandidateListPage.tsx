@@ -7,6 +7,17 @@ import {
   FilterBar,
   type FilterField,
 } from "../../../components/common/FilterBar";
+import CandidateStatistics from "../components/CandidateStatistics";
+
+interface FilterValues {
+  searchText: string;
+  status: string;
+  sort: string;
+  skills: string[];
+  location_city: string[];
+  created_from: string;
+  created_to: string;
+}
 
 export const CandidateListPage = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -14,7 +25,7 @@ export const CandidateListPage = () => {
   const [page, setPage] = useState(1);
   const pageSize = 5;
   // filter state
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({
+  const [filterValues, setFilterValues] = useState<FilterValues>({
     searchText: "",
     status: "",
     sort: "",
@@ -127,16 +138,19 @@ export const CandidateListPage = () => {
   return (
     <>
       <div className="w-full p-6">
+        {/* Thống kê nhanh */}
+        <CandidateStatistics candidates={candidates} />
+        
         {/* Bộ lọc dùng FilterBar */}
         <FilterBar
           filters={candidateFilters}
           initialValues={filterValues}
           onFilterChange={(filters) => {
-            setFilterValues(filters);
+            setFilterValues(filters as unknown as FilterValues);
             setPage(1); // reset về trang đầu khi filter
           }}
           onReset={() => {
-            const reset = {
+            const reset: FilterValues = {
               searchText: "",
               status: "",
               sort: "",
