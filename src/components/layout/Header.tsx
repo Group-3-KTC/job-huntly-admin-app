@@ -1,6 +1,7 @@
 import { Bell } from "@phosphor-icons/react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../app/store.ts";
+import UserMenu from "../common/UserMenu.tsx";
 
 const Header = () => {
   const pageTitle = useSelector((state: RootState) => state.page.title);
@@ -13,7 +14,7 @@ const Header = () => {
         {/* Right actions */}
         <div className="flex items-center gap-5">
           {/* Notification */}
-          <div className="relative cursor-pointer">
+          <div className="relative min-w-[24px] !overflow-visible cursor-pointer">
             <Bell size={22} className="text-blue-500" />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
               9
@@ -32,6 +33,9 @@ const Header = () => {
               className="w-8 h-8 rounded-full object-cover"
             />
           </div>
+
+          {/* User Menu */}
+          <UserMenu />
         </div>
       </div>
     </>
