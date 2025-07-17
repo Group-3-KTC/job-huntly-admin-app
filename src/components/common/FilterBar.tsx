@@ -38,7 +38,7 @@ export const FilterBar = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 flex items-center justify-between">
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filters.map((field) => {
           const value = values[field.key] ?? "";
@@ -103,7 +103,7 @@ export const FilterBar = ({
                           onClick={() =>
                             handleChange(
                               field.key,
-                              value.filter((v: string) => v !== val),
+                              value.filter((v: string) => v !== val)
                             )
                           }
                           className="ml-2 text-red-500 hover:text-red-700"
@@ -142,7 +142,7 @@ export const FilterBar = ({
       {onReset && (
         <button
           onClick={handleReset}
-          className="mt-4 px-4 py-2.5 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+          className="mt-4 px-4 py-2.5 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors self-end"
         >
           Đặt lại
         </button>

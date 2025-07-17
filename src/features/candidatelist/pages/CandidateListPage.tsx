@@ -81,6 +81,7 @@ export const CandidateListPage = () => {
       type: "select",
       options: ["id", "asc", "desc", "recent"],
       placeholder: "Chọn cách sắp xếp",
+      prefixLabel: "Sắp xếp:",
     },
   ];
 
