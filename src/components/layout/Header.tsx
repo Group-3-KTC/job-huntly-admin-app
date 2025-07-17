@@ -1,6 +1,7 @@
 import { Bell } from "@phosphor-icons/react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../app/store.ts";
+import UserMenu from "../common/UserMenu.tsx";
 
 const Header = () => {
   const pageTitle = useSelector((state: RootState) => state.page.title);
@@ -32,6 +33,9 @@ const Header = () => {
               className="w-8 h-8 rounded-full object-cover"
             />
           </div>
+          
+          {/* User Menu */}
+          <UserMenu />
         </div>
       </div>
     </>
