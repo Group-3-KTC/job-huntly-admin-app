@@ -71,8 +71,8 @@ const ConfirmModal = ({
   onConfirm,
   title,
   message,
-  confirmText = "Xác nhận",
-  cancelText = "Hủy",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   type = "danger",
 }: ConfirmModalProps) => {
   if (!isOpen) return null;
@@ -132,9 +132,9 @@ interface Props {
 }
 
 const statusLabel = {
-  active: { text: "Hoạt động", style: "bg-green-100 text-green-700" },
-  blocked: { text: "Đã khóa", style: "bg-red-100 text-red-700" },
-  pending: { text: "Chờ xác nhận", style: "bg-purple-100 text-purple-700" },
+  active: { text: "Active", style: "bg-green-100 text-green-700" },
+  blocked: { text: "Blocked", style: "bg-red-100 text-red-700" },
+  pending: { text: "Pending", style: "bg-purple-100 text-purple-700" },
 };
 
 export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
@@ -232,8 +232,8 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     // TODO: Thực hiện block/unblock ứng viên
     console.log(
       selectedCandidate.status === "blocked"
-        ? "Mở khóa ứng viên:"
-        : "Khóa ứng viên:",
+        ? "Unlock candidate"
+        : "Block candidate",
       selectedCandidate.id,
     );
   };
@@ -252,12 +252,12 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     },
     {
       key: "name",
-      title: "Họ tên",
+      title: "Name",
       render: (value) => <span className="font-medium">{value}</span>,
     },
     {
       key: "avatarUrl",
-      title: "Ảnh đại diện",
+      title: "Avatar",
       render: (url: string) => (
         <img
           src={url}
@@ -279,11 +279,11 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     },
     {
       key: "phone",
-      title: "Số điện thoại",
+      title: "Phone",
     },
     {
       key: "status",
-      title: "Trạng thái",
+      title: "Status",
       render: (status: keyof typeof statusLabel) => (
         <span
           className={`px-2 py-1 ${statusLabel[status].style} rounded-full text-xs`}
@@ -295,7 +295,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     },
     {
       key: "skills",
-      title: "Kỹ năng",
+      title: "Skills",
       render: (skills: string[]) => (
         <div className="flex flex-wrap gap-1">
           {skills.map((skill) => (
@@ -312,18 +312,18 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
 
     {
       key: "location_city",
-      title: "Thành phố",
+      title: "City",
     },
 
     {
       key: "actions",
-      title: "Thao tác",
+      title: "Actions",
       align: "center",
       render: (_, record) => (
         <div className="flex justify-center space-x-2 text-sm">
           <button
             className="text-blue-500 hover:text-blue-700"
-            title="Xem chi tiết"
+            title="View details"
             onClick={(e) => {
               e.stopPropagation();
               handleViewDetails(record);
@@ -333,7 +333,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-blue-500 hover:text-blue-700"
-            title="Xem CV"
+            title="View CV"
             onClick={(e) => {
               e.stopPropagation();
               handleViewCV(record);
@@ -343,7 +343,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-gray-500 hover:text-gray-700"
-            title="Sửa"
+            title="Edit"
             onClick={(e) => {
               e.stopPropagation();
               handleEditCandidate(record);
@@ -353,7 +353,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-yellow-500 hover:text-yellow-700"
-            title={record.status === "blocked" ? "Mở khóa" : "Khóa"}
+            title={record.status === "blocked" ? "Unlock" : "Block"}
             onClick={(e) => {
               e.stopPropagation();
               handleBlockCandidate(record);
@@ -363,7 +363,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-red-500 hover:text-red-700"
-            title="Xóa"
+            title="Delete"
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteCandidate(record);
@@ -390,7 +390,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           onClick={handleAddCandidate}
         >
           <Plus size={16} weight="bold" />
-          Thêm ứng viên
+          Add candidate
         </button>
       </div>
 
@@ -400,14 +400,14 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         keyExtractor={(candidate) => candidate.id}
         onRowClick={handleRowClick}
         loading={loading}
-        emptyMessage="Không có ứng viên nào"
+        emptyMessage="No candidate found"
       />
       {pagination && (
         <div className="flex items-center justify-between px-6 py-3 border-t ">
           <div className="text-sm text-gray-500">
-            Hiển thị {(pagination.page - 1) * pagination.pageSize + 1}–
+            Display {(pagination.page - 1) * pagination.pageSize + 1}–
             {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
-            trên {pagination.total} ứng viên
+            of {pagination.total} candidates
           </div>
           <div className="flex gap-1">
             <button
@@ -521,7 +521,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       <Modal
         isOpen={viewModalOpen}
         onClose={() => setViewModalOpen(false)}
-        title="Thông tin ứng viên"
+        title="Candidate information"
         size="lg"
       >
         {selectedCandidate && (
@@ -543,11 +543,11 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                 <p>{selectedCandidate.email}</p>
               </div>
               <div className="space-y-2">
-                <p className="font-semibold">Số điện thoại:</p>
+                <p className="font-semibold">Phone:</p>
                 <p>{selectedCandidate.phone}</p>
               </div>
               <div className="space-y-2">
-                <p className="font-semibold">Trạng thái:</p>
+                <p className="font-semibold">Status:</p>
                 <p>
                   <span
                     className={`px-2 py-1 ${
@@ -571,13 +571,13 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                 }}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
-                Xem CV
+                View CV
               </button>
               <button
                 onClick={() => setViewModalOpen(false)}
                 className="px-4 py-2 border rounded hover:bg-gray-100"
               >
-                Đóng
+                Close
               </button>
             </div>
           </div>
@@ -588,13 +588,13 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       <Modal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
-        title="Thêm ứng viên mới"
+        title="Add new candidate"
         size="lg"
       >
         <form onSubmit={handleAddSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block mb-1 text-sm font-medium">Họ tên</label>
+              <label className="block mb-1 text-sm font-medium">Name</label>
               <input
                 type="text"
                 name="name"
@@ -628,7 +628,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             </div>
             <div>
               <label className="block mb-1 text-sm font-medium">
-                Số điện thoại
+                Phone
               </label>
               <input
                 type="text"
@@ -641,7 +641,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             </div>
             <div>
               <label className="block mb-1 text-sm font-medium">
-                Trạng thái
+                Status
               </label>
               <select
                 name="status"
@@ -650,14 +650,14 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                 className="w-full px-3 py-2 border rounded"
                 required
               >
-                <option value="active">Hoạt động</option>
-                <option value="pending">Chờ xác nhận</option>
-                <option value="blocked">Đã khóa</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="blocked">Blocked</option>
               </select>
             </div>
             <div>
               <label className="block mb-1 text-sm font-medium">
-                Ảnh đại diện
+                Avatar
               </label>
               <input type="file" className="w-full px-3 py-2 border rounded" />
             </div>
@@ -668,13 +668,13 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
               onClick={() => setAddModalOpen(false)}
               className="px-4 py-2 border rounded hover:bg-gray-100"
             >
-              Hủy
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Thêm mới
+              Add new
             </button>
           </div>
         </form>
@@ -684,14 +684,14 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       <Modal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        title="Chỉnh sửa thông tin ứng viên"
+        title="Edit candidate information"
         size="lg"
       >
         {selectedCandidate && (
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block mb-1 text-sm font-medium">Họ tên</label>
+                <label className="block mb-1 text-sm font-medium">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -727,7 +727,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium">
-                  Số điện thoại
+                  Phone
                 </label>
                 <input
                   type="text"
@@ -740,7 +740,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium">
-                  Trạng thái
+                  Status
                 </label>
                 <select
                   name="status"
@@ -749,14 +749,14 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                   className="w-full px-3 py-2 border rounded"
                   required
                 >
-                  <option value="active">Hoạt động</option>
-                  <option value="pending">Chờ xác nhận</option>
-                  <option value="blocked">Đã khóa</option>
+                  <option value="active">Active</option>
+                  <option value="pending">Pending</option>
+                  <option value="blocked">Blocked</option>
                 </select>
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium">
-                  Ảnh đại diện
+                  Avatar
                 </label>
                 <div className="flex items-center space-x-2">
                   <img
@@ -777,13 +777,13 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                 onClick={() => setEditModalOpen(false)}
                 className="px-4 py-2 border rounded hover:bg-gray-100"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
-                Lưu thay đổi
+                Save changes
               </button>
             </div>
           </form>
@@ -797,17 +797,17 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         onConfirm={handleConfirmBlock}
         title={
           selectedCandidate?.status === "blocked"
-            ? "Mở khóa tài khoản"
-            : "Khóa tài khoản"
+            ? "Unlock account"
+            : "Block account"
         }
         message={
           selectedCandidate?.status === "blocked"
-            ? `Bạn có chắc chắn muốn mở khóa tài khoản của "${selectedCandidate?.name}"?`
-            : `Bạn có chắc chắn muốn khóa tài khoản của "${selectedCandidate?.name}"?`
+            ? `Are you sure you want to unlock the account of "${selectedCandidate?.name}"?`
+            : `Are you sure you want to block the account of "${selectedCandidate?.name}"?`
         }
         type={selectedCandidate?.status === "blocked" ? "success" : "warning"}
         confirmText={
-          selectedCandidate?.status === "blocked" ? "Mở khóa" : "Khóa"
+          selectedCandidate?.status === "blocked" ? "Unlock" : "Block"
         }
       />
 
@@ -816,8 +816,8 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Xóa tài khoản"
-        message={`Bạn có chắc chắn muốn xóa tài khoản "${selectedCandidate?.name}"? Hành động này không thể hoàn tác.`}
+        title="Delete account"
+        message={`Are you sure you want to delete the account of "${selectedCandidate?.name}"? This action cannot be undone.`}
         type="danger"
       />
 
@@ -825,7 +825,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       <Modal
         isOpen={cvModalOpen}
         onClose={() => setCvModalOpen(false)}
-        title="CV của ứng viên"
+        title="Candidate CV"
         size="xl"
       >
         {selectedCandidate && (
@@ -843,10 +843,10 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <div className="border rounded p-4 min-h-[400px] bg-gray-50">
               <div className="text-center py-10">
                 <p className="text-gray-500">
-                  Đây là nơi hiển thị CV của ứng viên.
+                  This is where the candidate's CV is displayed.
                 </p>
                 <p className="text-gray-500 mt-2">
-                  (Mẫu CV của {selectedCandidate.name})
+                  (CV of {selectedCandidate.name})
                 </p>
               </div>
             </div>
@@ -854,17 +854,17 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
               <button
                 onClick={() => {
                   // TODO: Tải xuống CV
-                  console.log("Tải xuống CV của:", selectedCandidate.id);
+                  console.log("Download CV of:", selectedCandidate.id);
                 }}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
-                Tải xuống
+                Download
               </button>
               <button
                 onClick={() => setCvModalOpen(false)}
                 className="px-4 py-2 border rounded hover:bg-gray-100"
               >
-                Đóng
+                Close
               </button>
             </div>
           </div>
