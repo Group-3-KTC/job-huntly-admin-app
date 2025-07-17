@@ -39,18 +39,24 @@ const JobListTable = () => {
     const filtered = mockJob.filter((job) => {
       return Object.entries(otherFilters).every(([key, value]) => {
         const jobValue = job[key as keyof JobPost];
-        if (Array.isArray(value)) {
-          return value.every((val) => (jobValue as string[]).includes(val));
-        } else {
-          return String(jobValue).includes(value);
-        }
+
+        if (!jobValue) return false;
+
+        const jobValues = Array.isArray(jobValue)
+          ? jobValue.map((v) => v.toString().toLowerCase())
+          : [jobValue.toString().toLowerCase()];
+
+        const filterValues = Array.isArray(value)
+          ? value.map((v) => v.toString().toLowerCase())
+          : [value.toString().toLowerCase()];
+
+        return filterValues.every((val) => jobValues.includes(val));
       });
     });
 
     setJobs(filtered);
     setCurrentPage(1);
   };
-
   const filterFields: FilterField[] = [
     {
       key: "workType",
@@ -71,6 +77,12 @@ const JobListTable = () => {
       options: ["Intern", "Fresher", "Middle", "Senior", "Associate"],
     },
     {
+      key: "company",
+      label: "Company",
+      type: "select",
+      options: ["FPT", "CMC", "Like Lion", "Viettel", "VNPT"],
+    },
+    {
       key: "location_city",
       label: "City",
       type: "select",
@@ -78,7 +90,7 @@ const JobListTable = () => {
     },
     {
       key: "sort",
-      label: "Sắp xếp",
+      label: "Sort",
       type: "select",
       options: ["Oldest", "Newest"],
     },
@@ -175,20 +187,42 @@ const JobListTable = () => {
 
       {selectedJob.length > 0 && (
         <div className="fixed inset-0 bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md space-y-4 shadow-2xl border border-gray-300">
-            <h2 className="text-lg font-semibold">Chi tiết công việc</h2>
-            <div className="space-y-2 text-sm max-h-[400px] overflow-y-auto">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-5xl space-y-6 shadow-xl border border-gray-200">
+            <h2 className="text-2xl font-bold text-center text-gray-800 border-b pb-2">
+              Job Detail
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm">
               {Object.entries(selectedJob[0]).map(([key, value]) => (
-                <div key={key}>
-                  <strong>{key}:</strong>{" "}
-                  {Array.isArray(value) ? value.join(", ") : String(value)}
+                <div key={key} className="flex flex-col">
+                  <label className="text-gray-600 font-medium mb-1 capitalize">
+                    {key.replaceAll("_", " ")}:
+                  </label>
+                  {typeof value === "string" && value.length > 100 ? (
+                    <textarea
+                      readOnly
+                      value={value}
+                      className="border rounded px-3 py-2 bg-gray-100 resize-none text-gray-800"
+                      rows={Math.min(6, Math.ceil(value.length / 50))}
+                    />
+                  ) : (
+                    <input
+                      readOnly
+                      type="text"
+                      value={
+                        Array.isArray(value) ? value.join(", ") : String(value)
+                      }
+                      className="border rounded px-3 py-2 bg-gray-100 text-gray-800"
+                    />
+                  )}
                 </div>
               ))}
             </div>
-            <div className="flex justify-end gap-2">
+
+            <div className="flex justify-end">
               <button
                 onClick={() => setSelectedJob([])}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
               >
                 Đóng
               </button>
