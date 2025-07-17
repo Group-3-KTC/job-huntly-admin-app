@@ -8,6 +8,7 @@ const CompanyListPage = () => {
   const [loading, setLoading] = useState(true);
 
   const [searchText, setSearchText] = useState("");
+  const [searchField, setSearchField] = useState("email");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const [page, setPage] = useState(1);
@@ -23,7 +24,15 @@ const CompanyListPage = () => {
 
   const filtered = companies
     .filter((c) => {
-      const matchSearch = c.email
+      const searchTarget =
+        searchField === "email"
+          ? c.email
+          : searchField === "city"
+          ? c.location_city.join(", ")
+          : searchField === "employees"
+          ? c.quantity_employee.toString()
+          : "";
+      const matchSearch = searchTarget
         .toLowerCase()
         .includes(searchText.toLowerCase());
       const matchStatus = statusFilter ? c.status === statusFilter : true;
@@ -40,50 +49,70 @@ const CompanyListPage = () => {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-end mb-6 mt-5">
-        <div className="flex gap-2 mr-6">
-          <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-            <PlusIcon size={16} className="mr-2" /> Add Company
-          </button>
-          <button className="flex items-center px-4 py-2 bg-green-500 rounded hover:bg-gray-300">
-            <FileXlsIcon size={16} className="mr-2" /> Export to Excel
-          </button>
+    <div className="w-full px-6">
+      <div className="bg-white p-4 rounded shadow space-y-4">
+        <div className="flex items-center justify-end flex-wrap gap-4">
+          <div className="flex gap-2">
+            <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+              <PlusIcon size={16} className="mr-2" /> Add Company
+            </button>
+            <button className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+              <FileXlsIcon size={16} className="mr-2" /> Export to Excel
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="mx-6 space-y-6">
-        <div className="flex flex-wrap items-center justify-end gap-4">
-          <input
-            type="text"
-            placeholder="Find follow by email's company"
-            className="px-4 py-2 border border-gray-300 rounded"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              setPage(1);
-            }}
-          />
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-2 border border-gray-300 rounded"
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="blocked">Blocked</option>
-            <option value="pending">Pending Confirmation</option>
-          </select>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-1 gap-2">
+            <select
+              value={searchField}
+              onChange={(e) => {
+                setSearchField(e.target.value);
+                setSearchText("");
+              }}
+              className="px-3 py-2 border rounded text-black"
+            >
+              <option value="email">Email</option>
+              <option value="city">City</option>
+              <option value="employees">Employees</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+                setPage(1);
+              }}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded"
+            />
+            <button
+              onClick={() => setPage(1)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Search
+            </button>
+            <button
+              onClick={() => {
+                setSearchText("");
+                setStatusFilter("");
+                setSortOrder("");
+                setSearchField("email");
+                setPage(1);
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              Reset
+            </button>
+          </div>
+
           <select
             value={sortOrder}
             onChange={(e) => {
               setSortOrder(e.target.value);
               setPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 rounded"
+            className="px-3 py-2 border rounded text-black"
           >
             <option value="">Sort</option>
             <option value="id">ID Ascending</option>
@@ -91,19 +120,10 @@ const CompanyListPage = () => {
             <option value="desc">Email Z-A</option>
             <option value="recent">Recent</option>
           </select>
-          <button
-            onClick={() => {
-              setSearchText("");
-              setStatusFilter("");
-              setSortOrder("");
-              setPage(1);
-            }}
-            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
-          >
-            Đặt lại
-          </button>
         </div>
+      </div>
 
+      <div className="mt-6">
         <CompanyTable
           companies={paginated}
           loading={loading}

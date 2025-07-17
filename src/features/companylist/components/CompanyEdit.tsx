@@ -68,7 +68,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
             </div>
             <div>
               <label className="font-medium">
-                Thành phố (phân cách bởi dấu phẩy):
+                Thành phố:
               </label>
               <input
                 type="text"
