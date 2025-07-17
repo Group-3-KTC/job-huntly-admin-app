@@ -13,9 +13,9 @@ const CompanyListPage = () => {
   const [loading, setLoading] = useState(true);
 
   const [searchText, setSearchText] = useState("");
-  const [searchField] = useState("email");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
+  const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
@@ -30,7 +30,7 @@ const CompanyListPage = () => {
   const filters: FilterField[] = [
     {
       key: "searchText",
-      label: "Search",
+      label: "Search (ID, Email, Employees)",
       type: "text",
     },
     {
@@ -45,23 +45,30 @@ const CompanyListPage = () => {
       type: "select",
       options: ["id", "asc", "desc", "recent"],
     },
+    {
+      key: "location_city",
+      label: "Thành phố",
+      type: "multiselect",
+      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
+      placeholder: "Chọn thành phố",
+    },
   ];
 
   const filtered = companies
     .filter((c) => {
-      const searchTarget =
-        searchField === "email"
-          ? c.email
-          : searchField === "city"
-          ? c.location_city.join(", ")
-          : searchField === "employees"
-          ? c.quantity_employee.toString()
-          : c.email;
-      const matchSearch = searchTarget
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
+      const matchSearch =
+        c.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        c.id.toString().includes(searchText) ||
+        c.quantity_employee.toString().includes(searchText);
+
       const matchStatus = statusFilter ? c.status === statusFilter : true;
-      return matchSearch && matchStatus;
+
+      const matchCity =
+        selectedCities.length > 0
+          ? c.location_city.some((city) => selectedCities.includes(city))
+          : true;
+
+      return matchSearch && matchStatus && matchCity;
     })
     .sort((a, b) => {
       if (sortOrder === "asc") return a.email.localeCompare(b.email);
@@ -81,22 +88,25 @@ const CompanyListPage = () => {
           searchText,
           status: statusFilter,
           sort: sortOrder,
+          location_city: selectedCities,
         }}
         onFilterChange={(values) => {
           setSearchText(values.searchText || "");
           setStatusFilter(values.status || "");
           setSortOrder(values.sort || "");
+          setSelectedCities(values.location_city || []);
           setPage(1);
         }}
         onReset={() => {
           setSearchText("");
           setStatusFilter("");
           setSortOrder("");
+          setSelectedCities([]);
           setPage(1);
         }}
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-4">
         <div className="flex gap-2">
           <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             <PlusIcon size={16} className="mr-2" /> Add Company

@@ -12,7 +12,7 @@ import CompanyDetailModal from "./CompanyDetail";
 import CompanyEditModal from "./CompanyEdit";
 
 interface Props {
-  companies: Company[];
+  companies: Company[]; 
   loading?: boolean;
   pagination?: {
     page: number;
@@ -141,7 +141,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
         emptyMessage="No companies found"
       />
       {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 border-t ">
+        <div className="flex items-center justify-between px-6 py-3 border-t mt-5 ">
           <div className="text-sm text-gray-500">
             Hiển thị {(pagination.page - 1) * pagination.pageSize + 1}–
             {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
