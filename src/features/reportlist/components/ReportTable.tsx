@@ -3,25 +3,103 @@ import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { Reports } from "../mockApi/mockReport";
 import { mockReport } from "../mockApi/mockReport";
 import { Trash, PencilSimpleLine } from "phosphor-react";
+import {
+  FilterBar,
+  type FilterField,
+} from "../../../components/common/FilterBar";
 
 const ReportTable = () => {
   const [searchField, setSearchField] = useState("reportType");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortOrder, setSortOrder] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState("desc");
   const [selectedReport, setSelectedReport] = useState<Reports | null>(null);
-  const [updatedStatus, setUpdatedStatus] = useState<Reports["status"]>("Process");
+  const [updatedStatus, setUpdatedStatus] =
+    useState<Reports["status"]>("Process");
   const [data, setData] = useState<Reports[]>(mockReport);
-  const pageSize = 10;
+  const [showDetail, setShowDetail] = useState(false);
+  const pageSize = 5;
+
+  const uniqueReportTypes = [...new Set(mockReport.map((r) => r.reportType))];
+  const uniqueStatuses = [...new Set(mockReport.map((r) => r.status))];
+
+  useEffect(() => {
+  setLoading(true);
+  const timeout = setTimeout(() => {
+    setData(mockReport);
+    setLoading(false);
+  }, 2000); // 2 giây
+
+  return () => clearTimeout(timeout);
+}, []);
+
+  const filters: FilterField[] = [
+    {
+      key: "reportType",
+      label: "Report Type",
+      type: "select",
+      options: uniqueReportTypes,
+    },
+    {
+      key: "status",
+      label: "Status",
+      type: "select",
+      options: uniqueStatuses,
+    },
+    {
+      key: "sortOrder",
+      label: "Sort",
+      type: "select",
+      options: ["Oldest", "Newest"],
+    },
+  ];
+
+  const handleFilterChange = (filterValues: Record<string, any>) => {
+    let filtered = [...mockReport];
+
+    if (filterValues.reportType) {
+      filtered = filtered.filter(
+        (r) => r.reportType === filterValues.reportType
+      );
+    }
+
+    if (filterValues.status) {
+      filtered = filtered.filter((r) => r.status === filterValues.status);
+    }
+
+    if (filterValues.sortOrder) {
+      setSortOrder(filterValues.sortOrder);
+    }
+
+    setData(filtered);
+  };
+
+  useEffect(() => {
+    setData((prev) => {
+      const sorted = [...prev];
+      if (sortOrder === "asc") {
+        sorted.sort((a, b) => a.id - b.id);
+      } else {
+        sorted.sort((a, b) => b.id - a.id);
+      }
+      return sorted;
+    });
+  }, [sortOrder]);
 
   const filteredData = data.filter((report) => {
-    const fieldValue = String(report[searchField as keyof Reports]).toLowerCase();
+    const fieldValue = String(
+      report[searchField as keyof Reports]
+    ).toLowerCase();
     return fieldValue.includes(searchQuery.toLowerCase());
   });
 
   const total = filteredData.length;
   const totalPages = Math.ceil(total / pageSize);
-  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const statusStyle = {
     Done: "bg-green-100 text-green-700",
@@ -30,24 +108,17 @@ const ReportTable = () => {
   } as const;
 
   const handleUpdate = (report: Reports) => {
+    setShowDetail(false);
     setSelectedReport(report);
     setUpdatedStatus(report.status);
   };
 
-  useEffect(() => {
-    let sorted = [...mockReport];
-    if (sortOrder === "recent") {
-      sorted.sort((a, b) => b.id - a.id);
-    } else if (sortOrder === "oldest") {
-      sorted.sort((a, b) => a.id - b.id);
-    }
-    setData(sorted);
-  }, [sortOrder]);
-
   const confirmUpdate = () => {
     if (selectedReport) {
       setData((prev) =>
-        prev.map((r) => (r.id === selectedReport.id ? { ...r, status: updatedStatus } : r))
+        prev.map((r) =>
+          r.id === selectedReport.id ? { ...r, status: updatedStatus } : r
+        )
       );
       setSelectedReport(null);
     }
@@ -91,7 +162,11 @@ const ReportTable = () => {
       title: "Status",
       align: "center",
       render: (value: Reports["status"]) => (
-        <span className={`px-2 py-1 text-xs rounded font-medium ${statusStyle[value]}`}>{value}</span>
+        <span
+          className={`px-2 py-1 text-xs rounded font-medium ${statusStyle[value]}`}
+        >
+          {value}
+        </span>
       ),
     },
     {
@@ -120,75 +195,61 @@ const ReportTable = () => {
   ];
 
   return (
-    <div className="space-y-4 max-w-full">
-      <div className="bg-white p-4 rounded-md shadow-lg flex gap-4 items-center justify-between w-full h-[80px] min-h-[80px] overflow-hidden box-border">
-        <select
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-2 h-full"
-        >
-          <option value="id">ID</option>
-          <option value="reportType">Report Type</option>
-          <option value="description">Description</option>
-          <option value="userId">User ID</option>
-          <option value="reportedContentId">Content Report ID</option>
-          <option value="status">Status</option>
-        </select>
-
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="border border-gray-300 rounded px-3 py-2 flex-1 min-w-[200px] h-full"
-        />
-
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 h-full">
-          Search
-        </button>
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 h-full"
-          onClick={() => window.location.reload()}
-        >
-          Reset
-        </button>
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded"
-          >
-            <option value="">Sắp xếp</option>
-            <option value="recent">Mới nhất</option>
-            <option value="oldest">Cũ nhất</option>
-          </select>
-      </div>
+    <div className="space-y-4 max-w-full mt-2">
+      <FilterBar
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onReset={() => {
+          setData(mockReport);
+          setSortOrder("desc");
+        }}
+      />
 
       <Table
         columns={columns}
         data={paginatedData}
         keyExtractor={(report) => report.id}
+        loading={loading}
         emptyMessage="Không có báo cáo nào"
       />
 
       {selectedReport && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md space-y-4 shadow-2xl border border-gray-300">
-            <h2 className="text-lg font-semibold">Cập nhật trạng thái báo cáo</h2>
+        <div className="fixed inset-0 bg-opacity-40 flex justify-center items-center z-50">
+          {/* Popup chính */}
+          <div className="relative bg-white p-6 rounded-xl w-full max-w-md space-y-4 shadow-2xl border border-gray-300">
+            <h2 className="text-lg font-semibold">
+              Cập nhật trạng thái báo cáo
+            </h2>
             <div className="space-y-2 text-sm">
-              <div><strong>ID:</strong> {selectedReport.id}</div>
-              <div><strong>Report Type:</strong> {selectedReport.reportType}</div>
-              <div><strong>Description:</strong> {selectedReport.description}</div>
-              <div><strong>User ID:</strong> {selectedReport.userId}</div>
-              <div><strong>Content Report ID:</strong> {selectedReport.reportedContentId}</div>
-              <div><strong>Created At:</strong> {new Date(selectedReport.createAt).toLocaleString()}</div>
+              <div>
+                <strong>ID:</strong> {selectedReport.id}
+              </div>
+              <div>
+                <strong>Report Type:</strong> {selectedReport.reportType}
+              </div>
+              <div>
+                <strong>Description:</strong> {selectedReport.description}
+              </div>
+              <div>
+                <strong>User ID:</strong> {selectedReport.userId}
+              </div>
+              <div className="flex items-center gap-2">
+                <strong>Content Report ID:</strong>{" "}
+                {selectedReport.reportedContentId}
+                <button
+                  onClick={() => setShowDetail(true)}
+                  className="text-blue-500 underline text-sm hover:text-blue-700"
+                >
+                  Show
+                </button>
+              </div>
               <div>
                 <label className="font-semibold">Status:</label>
                 <select
                   value={updatedStatus}
-                  onChange={(e) => setUpdatedStatus(e.target.value as Reports["status"])}
+                  onChange={(e) =>
+                    setUpdatedStatus(e.target.value as Reports["status"])
+                  }
                   className="ml-2 border px-2 py-1 rounded"
                 >
                   <option value="Process">Process</option>
@@ -211,6 +272,13 @@ const ReportTable = () => {
                 Xác nhận
               </button>
             </div>
+
+            {/* Popup phụ */}
+            {showDetail && (
+              <div className="absolute top-0 right-[-320px] w-72 bg-white border shadow-lg rounded-xl p-4">
+                <h1 className="text-lg font-bold">Detail...</h1>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -218,7 +286,8 @@ const ReportTable = () => {
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-3 border-t">
           <div className="text-sm text-gray-500">
-            Hiển thị {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, total)} trên {total} báo cáo
+            Hiển thị {(currentPage - 1) * pageSize + 1}–
+            {Math.min(currentPage * pageSize, total)} trên {total} báo cáo
           </div>
           <div className="flex gap-1">
             <button
@@ -231,7 +300,10 @@ const ReportTable = () => {
             {(() => {
               const pages = [];
               const maxVisible = 5;
-              let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+              let startPage = Math.max(
+                1,
+                currentPage - Math.floor(maxVisible / 2)
+              );
               let endPage = Math.min(totalPages, startPage + maxVisible - 1);
               if (endPage - startPage + 1 < maxVisible) {
                 startPage = Math.max(1, endPage - maxVisible + 1);
@@ -247,14 +319,22 @@ const ReportTable = () => {
                   </button>
                 );
                 if (startPage > 2)
-                  pages.push(<span key="dots1" className="px-3 py-1">...</span>);
+                  pages.push(
+                    <span key="dots1" className="px-3 py-1">
+                      ...
+                    </span>
+                  );
               }
               for (let i = startPage; i <= endPage; i++) {
                 pages.push(
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i)}
-                    className={`px-3 py-1 border rounded ${currentPage === i ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+                    className={`px-3 py-1 border rounded ${
+                      currentPage === i
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-100"
+                    }`}
                   >
                     {i}
                   </button>
@@ -262,7 +342,11 @@ const ReportTable = () => {
               }
               if (endPage < totalPages) {
                 if (endPage < totalPages - 1)
-                  pages.push(<span key="dots2" className="px-3 py-1">...</span>);
+                  pages.push(
+                    <span key="dots2" className="px-3 py-1">
+                      ...
+                    </span>
+                  );
                 pages.push(
                   <button
                     key="last"

@@ -11,13 +11,18 @@ import {
 export const CandidateListPage = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // filter state
-  const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [sortOrder, setSortOrder] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 5;
+  // filter state
+  const [filterValues, setFilterValues] = useState<Record<string, any>>({
+    searchText: "",
+    status: "",
+    sort: "",
+    skills: [],
+    location_city: [],
+    created_from: "",
+    created_to: "",
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,35 +34,82 @@ export const CandidateListPage = () => {
   }, []);
 
   const candidateFilters: FilterField[] = [
-    { key: "searchText", label: "Tìm tên/username", type: "text" },
+    {
+      key: "searchText",
+      label: "Tìm kiếm",
+      type: "text",
+      placeholder: "Tìm theo tên hoặc username",
+    },
     {
       key: "status",
       label: "Trạng thái",
       type: "select",
       options: ["active", "blocked", "pending"],
+      placeholder: "Chọn trạng thái",
+    },
+    {
+      key: "skills",
+      label: "Kỹ năng",
+      type: "multiselect",
+      options: ["Java", "Python", "React", "SQL"],
+      placeholder: "Chọn kỹ năng",
+    },
+    {
+      key: "location_city",
+      label: "Thành phố",
+      type: "multiselect",
+      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
+      placeholder: "Chọn thành phố",
+    },
+    {
+      key: "created_from",
+      label: "Ngày tạo",
+      type: "date",
+      placeholder: "Từ ngày",
+      prefixLabel: "Từ:",
+    },
+    {
+      key: "created_to",
+      label: "Ngày tạo",
+      type: "date",
+      placeholder: "Đến ngày",
+      prefixLabel: "Đến:",
     },
     {
       key: "sort",
       label: "Sắp xếp",
       type: "select",
       options: ["id", "asc", "desc", "recent"],
+      placeholder: "Chọn cách sắp xếp",
     },
   ];
 
   // filter + sort
   const filtered = candidates
     .filter((c) => {
+      const { searchText, status, skills, location_city } = filterValues;
       const matchSearch =
         c.name.toLowerCase().includes(searchText.toLowerCase()) ||
         c.username.toLowerCase().includes(searchText.toLowerCase());
-      const matchStatus = statusFilter ? c.status === statusFilter : true;
-      return matchSearch && matchStatus;
+
+      const matchStatus = status ? c.status === status : true;
+
+      const matchSkills = skills.length
+        ? skills.every((s: string) => c.skills?.includes(s))
+        : true;
+
+      const matchLocation = location_city.length
+        ? location_city.includes(c.location_city)
+        : true;
+
+      return matchSearch && matchStatus && matchSkills && matchLocation;
     })
     .sort((a, b) => {
-      if (sortOrder === "asc") return a.name.localeCompare(b.name);
-      if (sortOrder === "desc") return b.name.localeCompare(a.name);
-      if (sortOrder === "id") return a.id - b.id;
-      if (sortOrder === "recent") return b.id - a.id;
+      const sort = filterValues.sort;
+      if (sort === "asc") return a.name.localeCompare(b.name);
+      if (sort === "desc") return b.name.localeCompare(a.name);
+      if (sort === "id") return a.id - b.id;
+      if (sort === "recent") return b.id - a.id;
       return 0;
     });
 
@@ -74,31 +126,29 @@ export const CandidateListPage = () => {
   return (
     <>
       <div className="w-full p-6">
-        <h1 className="font-extrabold text-2xl mb-4">Candidate List</h1>
-
         {/* Bộ lọc dùng FilterBar */}
         <FilterBar
           filters={candidateFilters}
-          initialValues={{
-            searchText,
-            status: statusFilter,
-            sort: sortOrder,
-          }}
+          initialValues={filterValues}
           onFilterChange={(filters) => {
-            setSearchText(filters.searchText || "");
-            setStatusFilter(filters.status || "");
-            setSortOrder(filters.sort || "");
-            setPage(1);
+            setFilterValues(filters);
+            setPage(1); // reset về trang đầu khi filter
           }}
           onReset={() => {
-            setSearchText("");
-            setStatusFilter("");
-            setSortOrder("");
+            const reset = {
+              searchText: "",
+              status: "",
+              sort: "",
+              skills: [],
+              location_city: [],
+              created_from: "",
+              created_to: "",
+            };
+            setFilterValues(reset);
             setPage(1);
           }}
         />
 
-        {/* Action buttons */}
         <div className="flex items-center justify-end my-6">
           <div className="flex gap-2">
             <button

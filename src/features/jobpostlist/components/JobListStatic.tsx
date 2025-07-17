@@ -1,23 +1,24 @@
-import {
-  Files,
-  CheckCircle,
-  Hourglass,
-  XCircle
-} from "@phosphor-icons/react";
-import { mockReport } from "../mockApi/mockReport";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
+import { mockJob } from "../mockApi/mockJob";
+import { Files, City } from "@phosphor-icons/react";
 
-const ReportItem = () => {
-  const totalReports = mockReport.length;
-  const doneReports = mockReport.filter((r) => r.status === "Done").length;
-  const processReports = mockReport.filter((r) => r.status === "Process").length;
-  const cancelReports = mockReport.filter((r) => r.status === "Cancel").length;
+const JobListStatic = () => {
+  const totalJob = mockJob.length;
+  const HCMJob = mockJob.filter((r) =>
+    r.location_city.includes("Hồ Chí Minh")
+  ).length;
+  const HNJob = mockJob.filter((r) =>
+    r.location_city.includes("Hà Nội")
+  ).length;
+  const DNJob = mockJob.filter((r) =>
+    r.location_city.includes("Đà Nẵng")
+  ).length;
 
   const statisticData: StatisticCardProps[] = [
     {
-      label: "Total Reports",
-      value: totalReports.toString(),
+      label: "Total Jobs",
+      value: totalJob.toString(),
       icon: <Files size={24} />,
       change: {
         percentage: "8.5%",
@@ -27,9 +28,9 @@ const ReportItem = () => {
       colorScheme: "blue",
     },
     {
-      label: "Done Reports",
-      value: doneReports.toString(),
-      icon: <CheckCircle size={24} />,
+      label: "Hồ Chí Minh Jobs",
+      value: HCMJob.toString(),
+      icon: <City size={24} />,
       change: {
         percentage: "5.2%",
         direction: "up",
@@ -38,9 +39,9 @@ const ReportItem = () => {
       colorScheme: "green",
     },
     {
-      label: "Processing Reports",
-      value: processReports.toString(),
-      icon: <Hourglass size={24} />,
+      label: "Hà nội Jobs",
+      value: HNJob.toString(),
+      icon: <City size={24} />,
       change: {
         percentage: "2.1%",
         direction: "down",
@@ -49,9 +50,9 @@ const ReportItem = () => {
       colorScheme: "orange",
     },
     {
-      label: "Cancelled Reports",
-      value: cancelReports.toString(),
-      icon: <XCircle size={24} />,
+      label: "Đà Nẵng Jobs",
+      value: DNJob.toString(),
+      icon: <City size={24} />,
       change: {
         percentage: "1.3%",
         direction: "down",
@@ -70,4 +71,4 @@ const ReportItem = () => {
   );
 };
 
-export default ReportItem;
+export default JobListStatic;
