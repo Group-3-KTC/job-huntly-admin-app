@@ -9,116 +9,13 @@ import {
   Trash,
   Plus,
 } from "@phosphor-icons/react";
-
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
-}
-
-const Modal = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  size = "md",
-}: ModalProps) => {
-  if (!isOpen) return null;
-
-  const sizeClass = {
-    sm: "max-w-sm",
-    md: "max-w-md",
-    lg: "max-w-lg",
-    xl: "max-w-xl",
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className={`bg-white rounded-lg shadow-lg ${sizeClass[size]} w-full mx-4`}
-      >
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-medium">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </div>
-        <div className="p-4">{children}</div>
-      </div>
-    </div>
-  );
-};
-
-interface ConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  type?: "danger" | "warning" | "success";
-}
-
-const ConfirmModal = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
-  type = "danger",
-}: ConfirmModalProps) => {
-  if (!isOpen) return null;
-
-  const buttonClass = {
-    danger: "bg-red-500 hover:bg-red-600 text-white",
-    warning: "bg-yellow-500 hover:bg-yellow-600 text-white",
-    success: "bg-green-500 hover:bg-green-600 text-white",
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-medium">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </div>
-        <div className="p-4">
-          <p className="mb-4">{message}</p>
-          <div className="flex justify-end space-x-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              {cancelText}
-            </button>
-            <button
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
-              className={`px-4 py-2 rounded ${buttonClass[type]}`}
-            >
-              {confirmText}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { 
+  ConfirmModal, 
+  CandidateDetailsModal,
+  CandidateAddModal,
+  CandidateEditModal,
+  CandidateCVModal
+} from "./modals";
 
 interface Props {
   candidates: Candidate[];
@@ -517,280 +414,37 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         </div>
       )}
 
-      {/* Modal xem chi tiết */}
-      <Modal
+      {/* Sử dụng các modal đã tách */}
+      <CandidateDetailsModal
         isOpen={viewModalOpen}
         onClose={() => setViewModalOpen(false)}
-        title="Candidate information"
-        size="lg"
-      >
-        {selectedCandidate && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <img
-                src={selectedCandidate.avatarUrl}
-                alt="avatar"
-                className="object-cover w-20 h-20 rounded-full"
-              />
-              <div>
-                <h3 className="text-xl font-bold">{selectedCandidate.name}</h3>
-                <p className="text-gray-500">{selectedCandidate.username}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <p className="font-semibold">Email:</p>
-                <p>{selectedCandidate.email}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Phone:</p>
-                <p>{selectedCandidate.phone}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Status:</p>
-                <p>
-                  <span
-                    className={`px-2 py-1 ${
-                      statusLabel[selectedCandidate.status].style
-                    } rounded-full text-xs`}
-                  >
-                    {statusLabel[selectedCandidate.status].text}
-                  </span>
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">ID:</p>
-                <p>{selectedCandidate.id}</p>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2 pt-4">
-              <button
-                onClick={() => {
-                  setViewModalOpen(false);
-                  handleViewCV(selectedCandidate);
-                }}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                View CV
-              </button>
-              <button
-                onClick={() => setViewModalOpen(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
+        candidate={selectedCandidate}
+        onViewCV={handleViewCV}
+      />
 
-      {/* Modal thêm ứng viên */}
-      <Modal
+      <CandidateAddModal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
-        title="Add new candidate"
-        size="lg"
-      >
-        <form onSubmit={handleAddSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block mb-1 text-sm font-medium">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Phone
-              </label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Status
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              >
-                <option value="active">Active</option>
-                <option value="pending">Pending</option>
-                <option value="blocked">Blocked</option>
-              </select>
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Avatar
-              </label>
-              <input type="file" className="w-full px-3 py-2 border rounded" />
-            </div>
-          </div>
-          <div className="flex justify-end space-x-2 pt-4">
-            <button
-              type="button"
-              onClick={() => setAddModalOpen(false)}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Add new
-            </button>
-          </div>
-        </form>
-      </Modal>
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleAddSubmit}
+      />
 
-      {/* Modal chỉnh sửa ứng viên */}
-      <Modal
+      <CandidateEditModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        title="Edit candidate information"
-        size="lg"
-      >
-        {selectedCandidate && (
-          <form onSubmit={handleEditSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block mb-1 text-sm font-medium">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Phone
-                </label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Status
-                </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                >
-                  <option value="active">Active</option>
-                  <option value="pending">Pending</option>
-                  <option value="blocked">Blocked</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Avatar
-                </label>
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={selectedCandidate.avatarUrl}
-                    alt="avatar"
-                    className="object-cover w-10 h-10 rounded-full"
-                  />
-                  <input
-                    type="file"
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2 pt-4">
-              <button
-                type="button"
-                onClick={() => setEditModalOpen(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Save changes
-              </button>
-            </div>
-          </form>
-        )}
-      </Modal>
+        candidate={selectedCandidate}
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleEditSubmit}
+      />
 
-      {/* Modal xác nhận block/unblock */}
+      <CandidateCVModal
+        isOpen={cvModalOpen}
+        onClose={() => setCvModalOpen(false)}
+        candidate={selectedCandidate}
+      />
+
       <ConfirmModal
         isOpen={blockModalOpen}
         onClose={() => setBlockModalOpen(false)}
@@ -811,7 +465,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         }
       />
 
-      {/* Modal xác nhận xóa */}
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
@@ -820,56 +473,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         message={`Are you sure you want to delete the account of "${selectedCandidate?.name}"? This action cannot be undone.`}
         type="danger"
       />
-
-      {/* Modal xem CV */}
-      <Modal
-        isOpen={cvModalOpen}
-        onClose={() => setCvModalOpen(false)}
-        title="Candidate CV"
-        size="xl"
-      >
-        {selectedCandidate && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold">{selectedCandidate.name}</h3>
-              <span
-                className={`px-2 py-1 ${
-                  statusLabel[selectedCandidate.status].style
-                } rounded-full text-xs`}
-              >
-                {statusLabel[selectedCandidate.status].text}
-              </span>
-            </div>
-            <div className="border rounded p-4 min-h-[400px] bg-gray-50">
-              <div className="text-center py-10">
-                <p className="text-gray-500">
-                  This is where the candidate's CV is displayed.
-                </p>
-                <p className="text-gray-500 mt-2">
-                  (CV of {selectedCandidate.name})
-                </p>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => {
-                  // TODO: Tải xuống CV
-                  console.log("Download CV of:", selectedCandidate.id);
-                }}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Download
-              </button>
-              <button
-                onClick={() => setCvModalOpen(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
     </>
   );
 };
