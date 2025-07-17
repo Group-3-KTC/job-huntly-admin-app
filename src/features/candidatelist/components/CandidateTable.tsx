@@ -140,7 +140,7 @@ const statusLabel = {
 export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
   // State cho các modal
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
-    null
+    null,
   );
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -156,6 +156,8 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     email: "",
     phone: "",
     status: "active",
+    skills: [],
+    location_city: "Hồ Chí Minh",
   });
 
   const handleViewDetails = (candidate: Candidate) => {
@@ -202,7 +204,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
   };
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -232,7 +234,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       selectedCandidate.status === "blocked"
         ? "Mở khóa ứng viên:"
         : "Khóa ứng viên:",
-      selectedCandidate.id
+      selectedCandidate.id,
     );
   };
 
@@ -289,8 +291,30 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           {statusLabel[status].text}
         </span>
       ),
-      align: "center"
+      align: "center",
     },
+    {
+      key: "skills",
+      title: "Kỹ năng",
+      render: (skills: string[]) => (
+        <div className="flex flex-wrap gap-1">
+          {skills.map((skill) => (
+            <span
+              key={skill}
+              className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded"
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      ),
+    },
+
+    {
+      key: "location_city",
+      title: "Thành phố",
+    },
+
     {
       key: "actions",
       title: "Thao tác",
@@ -397,18 +421,18 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             {/* Hiển thị các nút số trang */}
             {(() => {
               const totalPages = Math.ceil(
-                pagination.total / pagination.pageSize
+                pagination.total / pagination.pageSize,
               );
               const pages = [];
               const maxVisible = 5;
 
               let startPage = Math.max(
                 1,
-                pagination.page - Math.floor(maxVisible / 2)
+                pagination.page - Math.floor(maxVisible / 2),
               );
               const initialEndPage = Math.min(
                 totalPages,
-                startPage + maxVisible - 1
+                startPage + maxVisible - 1,
               );
 
               if (initialEndPage - startPage + 1 < maxVisible) {
@@ -426,14 +450,14 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     1
-                  </button>
+                  </button>,
                 );
 
                 if (startPage > 2) {
                   pages.push(
                     <span key="dots1" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 }
               }
@@ -451,7 +475,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                     }`}
                   >
                     {i}
-                  </button>
+                  </button>,
                 );
               }
 
@@ -461,7 +485,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                   pages.push(
                     <span key="dots2" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 }
 
@@ -472,7 +496,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     {totalPages}
-                  </button>
+                  </button>,
                 );
               }
 
