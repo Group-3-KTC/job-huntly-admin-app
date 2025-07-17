@@ -35,7 +35,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
 
         <div className="relative bg-white rounded-lg shadow-xl w-full max-w-xl mx-auto z-50 p-6">
           <Dialog.Title className="text-xl font-bold mb-4">
-            Chỉnh sửa công ty
+            Edit for Company
           </Dialog.Title>
 
           <div className="space-y-4">
@@ -67,9 +67,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
               />
             </div>
             <div>
-              <label className="font-medium">
-                Thành phố:
-              </label>
+              <label className="font-medium">Thành phố:</label>
               <input
                 type="text"
                 value={form.location_city.join(", ")}
