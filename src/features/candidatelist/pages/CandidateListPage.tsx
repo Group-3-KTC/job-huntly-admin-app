@@ -74,8 +74,6 @@ export const CandidateListPage = () => {
   return (
     <>
       <div className="w-full p-6">
-        <h1 className="font-extrabold text-2xl mb-4">Candidate List</h1>
-
         {/* Bộ lọc dùng FilterBar */}
         <FilterBar
           filters={candidateFilters}
