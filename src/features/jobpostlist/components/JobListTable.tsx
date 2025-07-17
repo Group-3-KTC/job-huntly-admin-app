@@ -1,20 +1,91 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { JobPost } from "../mockApi/mockJob";
 import { mockJob } from "../mockApi/mockJob";
 import { PencilSimpleLine } from "phosphor-react";
+import {
+  FilterBar,
+  type FilterField,
+} from "../../../components/common/FilterBar";
 
 const JobListTable = () => {
   const [searchField, setSearchField] = useState<keyof JobPost>("title");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("");
-  const [selectedJob, setSelectedJob] = useState<JobPost | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [jobs, setJobs] = useState<JobPost[]>([]);
 
   const pageSize = 5;
 
+  useEffect(() => {
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      setJobs(mockJob);
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const handleFilter = (filters: Record<string, string | string[]>) => {
+    const { sort, ...otherFilters } = filters;
+
+    if (typeof sort === "string") {
+      setSortOrder(sort === "Newest" ? "recent" : "oldest");
+    }
+
+    const filtered = mockJob.filter((job) => {
+      return Object.entries(otherFilters).every(([key, value]) => {
+        const jobValue = job[key as keyof JobPost];
+        if (Array.isArray(value)) {
+          return value.every((val) => (jobValue as string[]).includes(val));
+        } else {
+          return String(jobValue).includes(value);
+        }
+      });
+    });
+
+    setJobs(filtered);
+    setCurrentPage(1);
+  };
+
+  const filterFields: FilterField[] = [
+    {
+      key: "workType",
+      label: "Work Type",
+      type: "select",
+      options: ["On-site", "Remote", "Hybrid"],
+    },
+    {
+      key: "majors",
+      label: "Majors",
+      type: "select",
+      options: ["IT", "Marketing", "Sales", "HR"],
+    },
+    {
+      key: "level",
+      label: "Level",
+      type: "select",
+      options: ["Intern", "Fresher", "Middle", "Senior", "Associate"],
+    },
+    {
+      key: "location_city",
+      label: "City",
+      type: "select",
+      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
+    },
+    {
+      key: "sort",
+      label: "Sắp xếp",
+      type: "select",
+      options: ["Oldest", "Newest"],
+    },
+  ];
+
   const sortedAndFilteredData = useMemo(() => {
-    let temp = [...mockJob];
+    let temp = [...jobs];
 
     if (sortOrder === "recent") {
       temp.sort((a, b) => b.id - a.id);
@@ -27,7 +98,7 @@ const JobListTable = () => {
       const fieldValue = String(job[searchField] ?? "").toLowerCase();
       return fieldValue.includes(query);
     });
-  }, [searchQuery, searchField, sortOrder]);
+  }, [searchQuery, searchField, sortOrder, jobs]);
 
   const total = sortedAndFilteredData.length;
   const totalPages = Math.ceil(total / pageSize);
@@ -47,8 +118,18 @@ const JobListTable = () => {
       align: "center",
       render: (value) => new Date(value).toLocaleDateString(),
     },
-    { key: "description", title: "Description", align: "left" },
-    { key: "salary", title: "Salary", align: "center" },
+    {
+      key: "location_city",
+      title: "City",
+      align: "center",
+      render: (value: string[]) => value.join(", "),
+    },
+    {
+      key: "majors",
+      title: "Majors",
+      align: "center",
+      render: (value: string[]) => value.join(", "),
+    },
     {
       key: "expired_date",
       title: "Expired Date",
@@ -62,7 +143,7 @@ const JobListTable = () => {
       render: (_, record) => (
         <div className="flex justify-center gap-2">
           <button
-            onClick={() => setSelectedJob(record)}
+            onClick={() => setSelectedJob([record])}
             className="text-blue-500 hover:text-blue-700"
             title="Chi tiết"
           >
@@ -74,72 +155,30 @@ const JobListTable = () => {
   ];
 
   return (
-    <div className="space-y-4 max-w-full">
-      <div className="bg-white p-4 rounded-md shadow-lg flex flex-wrap gap-4 items-center justify-between w-full box-border">
-        <select
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value as keyof JobPost)}
-          className="border border-gray-300 rounded px-3 py-2 h-[40px]"
-        >
-          <option value="title">Title</option>
-          <option value="company">Company</option>
-          <option value="description">Description</option>
-          <option value="location_city">Location City</option>
-          <option value="location_ward">Location Ward</option>
-        </select>
-
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="border border-gray-300 rounded px-3 py-2 flex-1 min-w-[200px] h-[40px]"
-        />
-
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 h-[40px]">
-          Search
-        </button>
-
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 h-[40px]"
-          onClick={() => {
-            setSearchQuery("");
-            setSearchField("title");
-            setSortOrder("");
-            setCurrentPage(1);
-          }}
-        >
-          Reset
-        </button>
-
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded h-[40px]"
-        >
-          <option value="">Sắp xếp</option>
-          <option value="recent">Mới nhất</option>
-          <option value="oldest">Cũ nhất</option>
-        </select>
-      </div>
+    <div className="space-y-4 max-w-full mt-2">
+      <FilterBar
+        filters={filterFields}
+        onFilterChange={handleFilter}
+        onReset={() => {
+          setJobs(mockJob);
+          setSortOrder("desc");
+        }}
+      />
 
       <Table
         columns={columns}
         data={paginatedData}
         keyExtractor={(job) => job.id}
+        loading={loading}
         emptyMessage="Không có công việc nào"
       />
 
-      {/* Chi tiết công việc */}
-      {selectedJob && (
+      {selectedJob.length > 0 && (
         <div className="fixed inset-0 bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl w-full max-w-md space-y-4 shadow-2xl border border-gray-300">
             <h2 className="text-lg font-semibold">Chi tiết công việc</h2>
             <div className="space-y-2 text-sm max-h-[400px] overflow-y-auto">
-              {Object.entries(selectedJob).map(([key, value]) => (
+              {Object.entries(selectedJob[0]).map(([key, value]) => (
                 <div key={key}>
                   <strong>{key}:</strong>{" "}
                   {Array.isArray(value) ? value.join(", ") : String(value)}
@@ -148,7 +187,7 @@ const JobListTable = () => {
             </div>
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setSelectedJob(null)}
+                onClick={() => setSelectedJob([])}
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
               >
                 Đóng
@@ -157,6 +196,7 @@ const JobListTable = () => {
           </div>
         </div>
       )}
+
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-3 border-t">
           <div className="text-sm text-gray-500">

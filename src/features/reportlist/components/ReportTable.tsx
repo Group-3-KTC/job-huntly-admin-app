@@ -12,6 +12,7 @@ const ReportTable = () => {
   const [searchField, setSearchField] = useState("reportType");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("desc");
   const [selectedReport, setSelectedReport] = useState<Reports | null>(null);
   const [updatedStatus, setUpdatedStatus] =
@@ -22,6 +23,16 @@ const ReportTable = () => {
 
   const uniqueReportTypes = [...new Set(mockReport.map((r) => r.reportType))];
   const uniqueStatuses = [...new Set(mockReport.map((r) => r.status))];
+
+  useEffect(() => {
+  setLoading(true);
+  const timeout = setTimeout(() => {
+    setData(mockReport);
+    setLoading(false);
+  }, 2000); // 2 giây
+
+  return () => clearTimeout(timeout);
+}, []);
 
   const filters: FilterField[] = [
     {
@@ -198,6 +209,7 @@ const ReportTable = () => {
         columns={columns}
         data={paginatedData}
         keyExtractor={(report) => report.id}
+        loading={loading}
         emptyMessage="Không có báo cáo nào"
       />
 
