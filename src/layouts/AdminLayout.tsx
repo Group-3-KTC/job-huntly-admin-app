@@ -8,7 +8,7 @@ const AdminLayout = () => {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <main className="flex-1 bg-gray-200">
+      <main className="flex-1 min-h-screen bg-gray-200 m-auto overflow-x-hidden">
         <PageTracker />
         <Header />
         <div className="">
