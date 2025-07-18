@@ -25,7 +25,7 @@ export const Table = <T,>({
   keyExtractor,
   className = "",
   loading = false,
-  emptyMessage = "Không có dữ liệu",
+  emptyMessage = "empty Data",
   onRowClick,
 }: TableProps<T>) => {
   const getNestedValue = (obj: any, path: string) => {
@@ -37,7 +37,7 @@ export const Table = <T,>({
       <>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
           <div className="mx-auto loader border-2 border-blue-500"></div>
-          <p className="mt-2 text-gray-500">Đang đăng nhập...</p>
+          <p className="mt-2 text-gray-500">Loading...</p>
         </div>
       </>
     );

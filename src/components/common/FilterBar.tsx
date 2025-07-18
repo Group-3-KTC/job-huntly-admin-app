@@ -157,7 +157,6 @@ import {
   Calendar,
   MagnifyingGlass,
   List as ListIcon,
-  Plus,
   XCircle,
 } from "@phosphor-icons/react";
 

@@ -127,7 +127,7 @@ const NotificationMenu = () => {
     : notifications.slice(0, 5);
 
   return (
-    <Popover className="relative">
+    <Popover className="relative top-1">
       {({ open }) => (
         <>
           <PopoverButton className="relative focus:outline-none">
@@ -162,7 +162,7 @@ const NotificationMenu = () => {
                   <li
                     key={n.id}
                     onClick={() => navigate(n.link)}
-                    className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition cursor-pointer"
+                    className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition cursor-pointer items-center"
                   >
                     <div
                       className={clsx(

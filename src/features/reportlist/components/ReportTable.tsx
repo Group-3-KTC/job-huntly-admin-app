@@ -9,8 +9,8 @@ import {
 } from "../../../components/common/FilterBar";
 
 const ReportTable = () => {
-  const [searchField, setSearchField] = useState("reportType");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchField] = useState("reportType");
+  const [searchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("desc");
@@ -171,7 +171,7 @@ const ReportTable = () => {
     },
     {
       key: "actions",
-      title: "Thao tác",
+      title: "Actions",
       align: "center",
       render: (_: any, record: Reports) => (
         <div className="flex justify-center gap-2">

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { CandidateTable } from "../components/CandidateTable";
 import { type Candidate, mockCandidates } from "../mock/mockCandidates";
-import { FileXls, Plus } from "@phosphor-icons/react";
 import {
   FilterBar,
   type FilterField,
@@ -44,57 +43,57 @@ export const CandidateListPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const candidateFilters: FilterField[] = [
-    {
-      key: "searchText",
-      label: "Tìm kiếm",
-      type: "text",
-      placeholder: "Tìm theo tên hoặc username",
-    },
-    {
-      key: "status",
-      label: "Trạng thái",
-      type: "select",
-      options: ["active", "blocked", "pending"],
-      placeholder: "Chọn trạng thái",
-    },
-    {
-      key: "skills",
-      label: "Kỹ năng",
-      type: "multiselect",
-      options: ["Java", "Python", "React", "SQL"],
-      placeholder: "Chọn kỹ năng",
-    },
-    {
-      key: "location_city",
-      label: "Thành phố",
-      type: "multiselect",
-      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
-      placeholder: "Chọn thành phố",
-    },
-    {
-      key: "created_from",
-      label: "Ngày tạo",
-      type: "date",
-      placeholder: "Từ ngày",
-      prefixLabel: "Từ:",
-    },
-    {
-      key: "created_to",
-      label: "Ngày tạo",
-      type: "date",
-      placeholder: "Đến ngày",
-      prefixLabel: "Đến:",
-    },
-    {
-      key: "sort",
-      label: "Sắp xếp",
-      type: "select",
-      options: ["id", "asc", "desc", "recent"],
-      placeholder: "Chọn cách sắp xếp",
-      prefixLabel: "Sắp xếp:",
-    },
-  ];
+const candidateFilters: FilterField[] = [
+  {
+    key: "searchText",
+    label: "Search",
+    type: "text",
+    placeholder: "Search by name or username",
+  },
+  {
+    key: "status",
+    label: "Status",
+    type: "select",
+    options: ["active", "blocked", "pending"],
+    placeholder: "Select status",
+  },
+  {
+    key: "skills",
+    label: "Skills",
+    type: "multiselect",
+    options: ["Java", "Python", "React", "SQL"],
+    placeholder: "Select skills",
+  },
+  {
+    key: "location_city",
+    label: "City",
+    type: "multiselect",
+    options: ["Ho Chi Minh", "Hanoi", "Da Nang", "Can Tho", "Nha Trang"],
+    placeholder: "Select city",
+  },
+  {
+    key: "created_from",
+    label: "Created Date",
+    type: "date",
+    placeholder: "From date",
+    prefixLabel: "From:",
+  },
+  {
+    key: "created_to",
+    label: "Created Date",
+    type: "date",
+    placeholder: "To date",
+    prefixLabel: "To:",
+  },
+  {
+    key: "sort",
+    label: "Sort",
+    type: "select",
+    options: ["id", "asc", "desc", "recent"],
+    placeholder: "Select sort order",
+    prefixLabel: "Sort by:",
+  },
+];
 
   // filter + sort
   const filtered = candidates
@@ -127,13 +126,13 @@ export const CandidateListPage = () => {
 
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const handleAddCandidate = () => {
-    alert("Add Candidate");
-  };
+  // const handleAddCandidate = () => {
+  //   alert("Add Candidate");
+  // };
 
-  const handleExportExcel = () => {
-    alert("Xuất Excel");
-  };
+  // const handleExportExcel = () => {
+  //   alert("Xuất Excel");
+  // };
 
   return (
     <>
@@ -164,7 +163,7 @@ export const CandidateListPage = () => {
           }}
         />
 
-        <div className="flex items-center justify-end my-6">
+        {/* <div className="flex items-center justify-end my-6">
           <div className="flex gap-2">
             <button
               onClick={handleAddCandidate}
@@ -179,7 +178,7 @@ export const CandidateListPage = () => {
               <FileXls size={16} className="mr-2" /> Xuất Excel
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Bảng dữ liệu */}
         <CandidateTable
