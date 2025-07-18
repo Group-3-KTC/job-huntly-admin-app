@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals = 1; plural = 0;\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Dashboard"
+msgstr "Bảng điều khiển"
+
+msgid "Report List"
+msgstr "Danh sách báo cáo"
+
+msgid "Company List"
+msgstr "Danh sách công ty"
+
+msgid "Job List"
+msgstr "Danh sách công việc"
+
+msgid "Candidate List"
+msgstr "Danh sách ứng viên"

@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../app/store.ts";
 import UserMenu from "../common/UserMenu.tsx";
 import NotificationMenu from "../common/NotificationMenu.tsx";
+import { LanguageSelector } from "../common/LanguageSelector.tsx";
 
 const Header = () => {
   const pageTitle = useSelector((state: RootState) => state.page.title);
@@ -13,6 +14,7 @@ const Header = () => {
 
         {/* Right actions */}
         <div className="flex items-center gap-5">
+          <LanguageSelector />
           {/* Notification */}
           <NotificationMenu />
 

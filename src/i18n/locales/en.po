@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals = 2; plural = (n != 1);\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Report List"
+msgstr "Report List"
+
+msgid "Company List"
+msgstr "Company List"
+
+msgid "Job List"
+msgstr "Job List"
+
+msgid "Candidate List"
+msgstr "Candidate List"

@@ -1,4 +1,3 @@
-// Sidebar.jsx
 import { NavLink } from "react-router-dom";
 import {
   ChartBar,
@@ -11,6 +10,7 @@ import {
 import { useState } from "react";
 import { assets } from "../../assets/assets";
 import { SidebarSimple } from "phosphor-react";
+import { t } from "ttag";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: <ChartBar size={20} /> },
@@ -52,6 +52,7 @@ const Sidebar = () => {
         `}
         style={{ width: isHide ? "16rem" : "5.5rem" }} // Use rem for consistency
       >
+        <span>{t`Dashboard`}</span>
         {/* Logo & nút đóng (mobile) */}
         <div className="flex flex-col items-center gap-3 border-b-2 pb-4 mb-4 border-gray-200">
           <div

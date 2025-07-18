@@ -14,59 +14,60 @@ import {
   Pulse,
 } from "@phosphor-icons/react";
 import clsx from "clsx";
+import { type JSX, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { type JSX } from "react";
+import type {
+  Notification,
+  NotificationType,
+} from "../../types/notification.type.ts";
 
-// --- Notification Types ---
-type NotificationType =
-  | "report"
-  | "system"
-  | "company"
-  | "job_post_flagged"
-  | "account_locked"
-  | "recruiter_request"
-  | "high_activity"
-  | "payment_issue"
-  | "admin_mention"
-  | "weekly_summary"
-  | "other";
-
-interface Notification {
-  id: number;
-  type: NotificationType;
-  message: string;
-  time: string;
-}
-
-// --- Sample data ---
+// --- Dummy notifications ---
 const notifications: Notification[] = [
   {
     id: 1,
     type: "report",
     message: "User *john.doe* reported a job post",
     time: "5m ago",
+    link: "/listReport",
   },
   {
     id: 2,
     type: "company",
     message: "New company *ABC Tech* joined the platform",
     time: "30m ago",
+    link: "/companyList",
   },
   {
     id: 3,
     type: "system",
     message: "System update scheduled at 10 PM",
     time: "1h ago",
+    link: "/",
   },
   {
     id: 4,
     type: "other",
     message: "A new notification has arrived",
     time: "2h ago",
+    link: "/",
+  },
+  {
+    id: 5,
+    type: "weekly_summary",
+    message: "Weekly summary is available",
+    time: "3h ago",
+    link: "/",
+  },
+  {
+    id: 6,
+    type: "payment_issue",
+    message: "Payment failed for Recruiter X",
+    time: "5h ago",
+    link: "/",
   },
 ];
 
-// --- Type metadata for icons & colors ---
+// --- Icon & Color metadata ---
 const typeMeta: Record<
   NotificationType,
   { icon: JSX.Element; bgColor: string }
@@ -118,11 +119,12 @@ const typeMeta: Record<
 };
 
 const NotificationMenu = () => {
+  const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
 
-  const handleViewAll = () => {
-    navigate("/admin/notifications");
-  };
+  const visibleNotifications = showAll
+    ? notifications
+    : notifications.slice(0, 5);
 
   return (
     <Popover className="relative">
@@ -148,12 +150,18 @@ const NotificationMenu = () => {
               Notifications
             </div>
 
-            <ul className="max-h-80 overflow-y-auto divide-y divide-gray-100">
-              {notifications.map((n) => {
+            <ul
+              className={clsx(
+                "overflow-y-auto divide-y divide-gray-100",
+                showAll ? "max-h-96" : "max-h-[340px] overflow-hidden",
+              )}
+            >
+              {visibleNotifications.map((n) => {
                 const { icon, bgColor } = typeMeta[n.type] ?? typeMeta.other;
                 return (
                   <li
                     key={n.id}
+                    onClick={() => navigate(n.link)}
                     className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition cursor-pointer"
                   >
                     <div
@@ -173,14 +181,16 @@ const NotificationMenu = () => {
               })}
             </ul>
 
-            <div className="text-center p-3 border-t">
-              <button
-                onClick={handleViewAll}
-                className="text-sm text-blue-600 hover:underline"
-              >
-                View all notifications
-              </button>
-            </div>
+            {notifications.length > 5 && (
+              <div className="text-center p-3 border-t">
+                <button
+                  onClick={() => setShowAll((prev) => !prev)}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  {showAll ? "View less" : "View all notifications"}
+                </button>
+              </div>
+            )}
           </PopoverPanel>
         </>
       )}
