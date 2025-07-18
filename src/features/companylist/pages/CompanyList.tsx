@@ -8,6 +8,7 @@ import {
   type FilterField,
 } from "../../../components/common/FilterBar";
 import StatisCard from "../../../components/ui/StatisticCard";
+import AddCompanyModal from "../components/CompanyAdd";
 
 const CompanyListPage = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -18,6 +19,7 @@ const CompanyListPage = () => {
   const [sortOrder, setSortOrder] = useState("");
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [page, setPage] = useState(1);
+  const [openAddModal, setOpenAddModal] = useState(false);
   const pageSize = 5;
 
   useEffect(() => {
@@ -97,7 +99,10 @@ const CompanyListPage = () => {
         />
         <StatisCard
           label="Company in HCM"
-          value={companies.filter((c) => c.status === "active").length}
+          value={
+            companies.filter((c) => c.location_city.includes("Hồ Chí Minh"))
+              .length
+          }
           icon={<Buildings size={24} />}
           change={{
             direction: "up",
@@ -107,8 +112,10 @@ const CompanyListPage = () => {
           colorScheme="green"
         />
         <StatisCard
-          label="Company in Hà Hội"
-          value={companies.filter((c) => c.status === "blocked").length}
+          label="Company in Hà Nội"
+          value={
+            companies.filter((c) => c.location_city.includes("Hà Nội")).length
+          }
           icon={<Buildings size={24} />}
           change={{
             direction: "down",
@@ -119,7 +126,9 @@ const CompanyListPage = () => {
         />
         <StatisCard
           label="Company in Đà Nẵng"
-          value={companies.filter((c) => c.status === "pending").length}
+          value={
+            companies.filter((c) => c.location_city.includes("Đà Nẵng")).length
+          }
           icon={<Buildings size={24} />}
           change={{
             direction: "down",
@@ -156,7 +165,10 @@ const CompanyListPage = () => {
 
       <div className="flex justify-end">
         <div className="flex gap-2">
-          <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+          <button
+            onClick={() => setOpenAddModal(true)}
+            className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
             <PlusIcon size={16} className="mr-2" /> Add Company
           </button>
           <button className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
@@ -177,6 +189,10 @@ const CompanyListPage = () => {
           }}
         />
       </div>
+
+      {openAddModal && (
+        <AddCompanyModal onClose={() => setOpenAddModal(false)} />
+      )}
     </div>
   );
 };
