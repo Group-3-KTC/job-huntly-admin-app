@@ -34,6 +34,16 @@ const Login = () => {
       setApiError("Error: " + err);
     }
   };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#3B82F6]/10">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-30 text-center">
+          <div className="mx-auto loader border-2 border-blue-500"></div>
+          <p className="mt-2 text-gray-500">Đang đăng nhập...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#3B82F6]/10 px-4">
@@ -97,7 +107,7 @@ const Login = () => {
             className="w-full py-2 text-white transition bg-blue-500 rounded-md hover:bg-blue-600"
             disabled={isLoading}
           >
-            {isLoading ? "Signing In..." : "Sign In"}
+            Sign In
           </button>
 
           {apiError && (
