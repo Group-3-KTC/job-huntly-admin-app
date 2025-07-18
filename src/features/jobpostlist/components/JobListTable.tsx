@@ -9,8 +9,8 @@ import {
 } from "../../../components/common/FilterBar";
 
 const JobListTable = () => {
-  const [searchField, setSearchField] = useState<keyof JobPost>("title");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchField] = useState<keyof JobPost>("title");
+  const [searchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("");
   const [selectedJob, setSelectedJob] = useState<JobPost[]>([]);

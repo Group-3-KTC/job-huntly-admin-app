@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { CandidateTable } from "../components/CandidateTable";
 import { type Candidate, mockCandidates } from "../mock/mockCandidates";
-import { FileXls, Plus } from "@phosphor-icons/react";
 import {
   FilterBar,
   type FilterField,
@@ -127,13 +126,13 @@ const candidateFilters: FilterField[] = [
 
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const handleAddCandidate = () => {
-    alert("Add Candidate");
-  };
+  // const handleAddCandidate = () => {
+  //   alert("Add Candidate");
+  // };
 
-  const handleExportExcel = () => {
-    alert("Xuất Excel");
-  };
+  // const handleExportExcel = () => {
+  //   alert("Xuất Excel");
+  // };
 
   return (
     <>
