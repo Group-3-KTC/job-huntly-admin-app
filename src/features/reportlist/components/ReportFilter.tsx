@@ -4,7 +4,7 @@ import {
   FilterBar,
   type FilterField,
 } from "../../../components/common/FilterBar";
-import { Funnel, SortAscending, SortDescending } from "@phosphor-icons/react";
+import { SortAscending, SortDescending } from "@phosphor-icons/react";
 import type { Reports } from "../mockApi/mockReport";
 
 const ReportFilter = () => {
