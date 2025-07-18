@@ -7,25 +7,42 @@ import {
   TrendUp,
   ChartBar,
 } from "@phosphor-icons/react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/store/authSlice.ts";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const UserMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     dispatch(logout());
     navigate("/login");
   };
+  if (isLoggingOut) {
+    return (
+      <>
+        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="rounded-lg shadow-sm border border-gray-200 p-30 text-center">
+              <div className="mx-auto loader border-2 border-blue-500"></div>
+              <p className="mt-2 text-gray-500">Đang đăng xuất...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <Popover className="relative">
       {({ open }) => (
         <>
           <PopoverButton className="flex items-center gap-2 focus:outline-none">
-
             {/* Caret icon switch */}
             {open ? (
               <CaretUp size={16} className="text-gray-500" />
