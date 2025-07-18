@@ -77,7 +77,7 @@ const ChartReuse: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full p-4 bg-white shadow-md rounded-xl h-[380px]">
+    <div className="w-full max-w-full p-4 bg-white shadow-md rounded-xl h-[340px]">
       <h3 className="mb-4 text-lg font-semibold text-gray-700">{title}</h3>
       <div className="h-full">{renderChart()}</div>
     </div>

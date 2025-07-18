@@ -1,5 +1,3 @@
-
-
 export interface Candidate {
   id: number;
   name: string;
@@ -8,6 +6,8 @@ export interface Candidate {
   email: string;
   phone: string;
   status: "active" | "blocked" | "pending";
+  skills: string[];
+  location_city: string;
 }
 
 export const mockCandidates: Candidate[] = [
@@ -19,6 +19,8 @@ export const mockCandidates: Candidate[] = [
     email: "annv@example.com",
     phone: "0123456789",
     status: "active",
+    skills: ["React", "SQL"],
+    location_city: "Hồ Chí Minh",
   },
   {
     id: 2,
@@ -28,6 +30,8 @@ export const mockCandidates: Candidate[] = [
     email: "binhtt@example.com",
     phone: "0987654321",
     status: "blocked",
+    skills: ["Java"],
+    location_city: "Hà Nội",
   },
   {
     id: 3,
@@ -37,6 +41,8 @@ export const mockCandidates: Candidate[] = [
     email: "hungnv@example.com",
     phone: "0911223344",
     status: "pending",
+    skills: ["Python", "SQL"],
+    location_city: "Đà Nẵng",
   },
   {
     id: 4,
@@ -46,6 +52,8 @@ export const mockCandidates: Candidate[] = [
     email: "hoapt@example.com",
     phone: "0933445566",
     status: "active",
+    skills: ["React", "Java"],
+    location_city: "Hồ Chí Minh",
   },
   {
     id: 5,
@@ -55,6 +63,8 @@ export const mockCandidates: Candidate[] = [
     email: "tuanlq@example.com",
     phone: "0909090909",
     status: "blocked",
+    skills: ["SQL", "Python"],
+    location_city: "Cần Thơ",
   },
   {
     id: 6,
@@ -64,6 +74,8 @@ export const mockCandidates: Candidate[] = [
     email: "chaudm@example.com",
     phone: "0988112233",
     status: "active",
+    skills: ["Java", "React"],
+    location_city: "Hà Nội",
   },
   {
     id: 7,
@@ -73,6 +85,8 @@ export const mockCandidates: Candidate[] = [
     email: "kiennv@example.com",
     phone: "0977665544",
     status: "pending",
+    skills: ["Python"],
+    location_city: "Đà Nẵng",
   },
   {
     id: 8,
@@ -82,6 +96,8 @@ export const mockCandidates: Candidate[] = [
     email: "maivt@example.com",
     phone: "0966554433",
     status: "active",
+    skills: ["React"],
+    location_city: "Nha Trang",
   },
   {
     id: 9,
@@ -91,6 +107,8 @@ export const mockCandidates: Candidate[] = [
     email: "sonth@example.com",
     phone: "0944332211",
     status: "blocked",
+    skills: ["Java", "SQL"],
+    location_city: "Hồ Chí Minh",
   },
   {
     id: 10,
@@ -100,6 +118,8 @@ export const mockCandidates: Candidate[] = [
     email: "hongnt@example.com",
     phone: "0933555777",
     status: "active",
+    skills: ["Python"],
+    location_city: "Hà Nội",
   },
   {
     id: 11,
@@ -109,6 +129,8 @@ export const mockCandidates: Candidate[] = [
     email: "dungdv@example.com",
     phone: "0922334455",
     status: "pending",
+    skills: ["React", "Java"],
+    location_city: "Đà Nẵng",
   },
   {
     id: 12,
@@ -118,6 +140,8 @@ export const mockCandidates: Candidate[] = [
     email: "lanpt@example.com",
     phone: "0955667788",
     status: "blocked",
+    skills: ["SQL"],
+    location_city: "Cần Thơ",
   },
   {
     id: 13,
@@ -127,6 +151,8 @@ export const mockCandidates: Candidate[] = [
     email: "tuanlm@example.com",
     phone: "0911227788",
     status: "active",
+    skills: ["Java", "Python"],
+    location_city: "Hồ Chí Minh",
   },
   {
     id: 14,
@@ -136,6 +162,8 @@ export const mockCandidates: Candidate[] = [
     email: "yentt@example.com",
     phone: "0988445566",
     status: "pending",
+    skills: ["React"],
+    location_city: "Nha Trang",
   },
   {
     id: 15,
@@ -145,6 +173,8 @@ export const mockCandidates: Candidate[] = [
     email: "lamhv@example.com",
     phone: "0944556677",
     status: "active",
+    skills: ["Python", "SQL"],
+    location_city: "Hà Nội",
   },
   {
     id: 16,
@@ -154,6 +184,8 @@ export const mockCandidates: Candidate[] = [
     email: "hangbt@example.com",
     phone: "0977889900",
     status: "blocked",
+    skills: ["Java"],
+    location_city: "Cần Thơ",
   },
   {
     id: 17,
@@ -163,5 +195,7 @@ export const mockCandidates: Candidate[] = [
     email: "annv2@example.com",
     phone: "0900123456",
     status: "pending",
+    skills: ["React", "SQL"],
+    location_city: "Đà Nẵng",
   },
 ];

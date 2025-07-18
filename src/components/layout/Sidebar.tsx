@@ -1,12 +1,21 @@
 import { NavLink } from "react-router-dom";
-import { ChartBar, List, Buildings, X, UsersFour } from "@phosphor-icons/react";
+import {
+  ChartBar,
+  List,
+  Buildings,
+  X,
+  UsersFour,
+  ReadCvLogo,
+} from "@phosphor-icons/react";
 import { useState } from "react";
 import { assets } from "../../assets/assets";
+import { SidebarSimple } from "phosphor-react";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: <ChartBar size={20} /> },
   { to: "/listReport", label: "Report List", icon: <List size={20} /> },
   { to: "/companyList", label: "Company List", icon: <Buildings size={20} /> },
+  { to: "/jobList", label: "Job List", icon: <ReadCvLogo size={20} /> },
   {
     to: "/candidateList",
     label: "Candidate List",
@@ -16,6 +25,7 @@ const navItems = [
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
+  const [isHide, setIsHide] = useState(true);
 
   return (
     <>
@@ -33,34 +43,61 @@ const Sidebar = () => {
       {/* Sidebar chính */}
       <div
         className={`
-          fixed top-0 left-0 min-h-full min-w-64 bg-white border-r p-4 py-8 z-40 border-gray-300 
-          flex-col gap-4 shadow-lg transition-transform duration-300
+          fixed top-0 left-0 min-h-full bg-white border-r p-4 py-8 z-40 border-gray-300 
+          flex-col gap-4 shadow-lg transition-all duration-300
           ${open ? "flex translate-x-0" : "translate-x-[-100%]"}
-          md:translate-x-0 md:flex md:static md:shadow-none 
+          ${isHide ? "min-w-64" : "min-w-22 max-w-22"}
+          md:translate-x-0 md:flex md:static md:shadow-none
         `}
+        style={{ width: isHide ? "16rem" : "5.5rem" }} // Use rem for consistency
       >
         {/* Logo & nút đóng (mobile) */}
-        <div className="flex items-end justify-between mb-4 md:mb-6">
-          <div className="flex items-end">
+        <div className="flex flex-col items-center gap-3 border-b-2 pb-4 mb-4 border-gray-200">
+          <div
+            className={`flex items-end gap-2 ${
+              isHide
+                ? "justify-between w-full"
+                : "flex-col justify-center w-full"
+            } `}
+          >
             <img
-              src={assets.logoTitle}
-              className="object-contain w-[50%] md:w-[78%] md:h-[58px]"
-              alt=""
+              src={isHide ? assets.logoTitle : assets.logoShort}
+              className={
+                isHide
+                  ? `object-contain h-[58px]`
+                  : `object-contain h-[40px] w-[40px] m-auto`
+              }
+              alt="Logo"
             />
-            <h2 className="ml-[2px] text-blue-700 text-md font-medium md:text-2xl md:font-bold mb-[1px]">
+            <h2
+              className={`text-blue-700 font-bold mb-[2px] text-2xl ${
+                isHide ? "block" : "hidden"
+              }`}
+            >
               Admin
             </h2>
           </div>
+          <div
+            className={`w-full flex ${
+              isHide ? "justify-end" : "justify-center"
+            }`}
+          >
+            <button
+              className="text-gray-500 hover:text-blue-600"
+              onClick={() => setIsHide(!isHide)}
+              aria-label="Toggle Sidebar"
+            >
+              <SidebarSimple size={24} />
+            </button>
+          </div>
           <button
-            className="md:hidden"
+            className="md:hidden absolute top-4 right-4 text-gray-500 hover:text-blue-600"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
           >
             <X size={24} />
           </button>
         </div>
-
-        {/* Nav items */}
         <nav className="flex flex-col gap-[12px] font-medium text-md">
           {navItems.map(({ to, label, icon }) => (
             <NavLink
@@ -77,13 +114,11 @@ const Sidebar = () => {
               onClick={() => setOpen(false)}
             >
               {icon}
-              <span>{label}</span>
+              {isHide && <span>{label}</span>}
             </NavLink>
           ))}
         </nav>
       </div>
-
-      {/* Overlay (mobile) */}
       {open && (
         <div
           className="fixed inset-0 z-30 bg-black/40 md:hidden"

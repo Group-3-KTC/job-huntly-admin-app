@@ -1,12 +1,14 @@
-import ReportTable from "../components/ReportTable";
+
+import ReportItem from '../components/ReportItem';
+import ReportTable from '../components/ReportTable';
 
 const ReportList = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-2 ml-4">Report Management</h1>
+    <div className="w-full px-2 md:px-6">
+      <ReportItem />
       <ReportTable />
     </div>
   );
-};
+}
 
-export default ReportList;
+export default ReportList; 

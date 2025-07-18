@@ -3,6 +3,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import LoginPage from "./features/auth/pages/LoginPage.tsx";
 import { useAuthInitializer } from "./features/auth/hooks/useAuthInitializer.ts";
+import "./i18n/i18n.ts";
 
 function App() {
   useAuthInitializer();

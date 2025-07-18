@@ -1,7 +1,14 @@
+// src/features/companylist/pages/CompanyListPage.tsx
 import { useEffect, useState } from "react";
 import { type Company, mockCompany } from "../mockApi/mockCompany";
 import { CompanyTable } from "../components/CompanyTable";
-import { PlusIcon, FileXlsIcon } from "@phosphor-icons/react";
+import { PlusIcon, FileXlsIcon, Buildings } from "@phosphor-icons/react";
+import {
+  FilterBar,
+  type FilterField,
+} from "../../../components/common/FilterBar";
+import StatisCard from "../../../components/ui/StatisticCard";
+import AddCompanyModal from "../components/CompanyAdd";
 
 const CompanyListPage = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -10,7 +17,9 @@ const CompanyListPage = () => {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
+  const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [page, setPage] = useState(1);
+  const [openAddModal, setOpenAddModal] = useState(false);
   const pageSize = 5;
 
   useEffect(() => {
@@ -21,13 +30,48 @@ const CompanyListPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const filters: FilterField[] = [
+    {
+      key: "searchText",
+      label: "Search (ID, Email, Employees)",
+      type: "text",
+    },
+    {
+      key: "status",
+      label: "Status",
+      type: "select",
+      options: ["active", "blocked", "pending"],
+    },
+    {
+      key: "sort",
+      label: "Sort",
+      type: "select",
+      options: ["id", "asc", "desc", "recent"],
+    },
+    {
+      key: "location_city",
+      label: "Thành phố",
+      type: "multiselect",
+      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
+      placeholder: "Chọn thành phố",
+    },
+  ];
+
   const filtered = companies
     .filter((c) => {
-      const matchSearch = c.email
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
+      const matchSearch =
+        c.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        c.id.toString().includes(searchText) ||
+        c.quantity_employee.toString().includes(searchText);
+
       const matchStatus = statusFilter ? c.status === statusFilter : true;
-      return matchSearch && matchStatus;
+
+      const matchCity =
+        selectedCities.length > 0
+          ? c.location_city.some((city) => selectedCities.includes(city))
+          : true;
+
+      return matchSearch && matchStatus && matchCity;
     })
     .sort((a, b) => {
       if (sortOrder === "asc") return a.email.localeCompare(b.email);
@@ -40,75 +84,100 @@ const CompanyListPage = () => {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="w-full p-6">
-      <div className="p-6 bg-black">
-        <h1 className="text-2xl font-semibold text-white">
-          Welcome to the Company List
-        </h1>
+    <div className="w-full px-6 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatisCard
+          label="Total Companies"
+          value={companies.length}
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "up",
+            percentage: "3.5%",
+            description: "Up from last month",
+          }}
+          colorScheme="green"
+        />
+        <StatisCard
+          label="Company in HCM"
+          value={
+            companies.filter((c) => c.location_city.includes("Hồ Chí Minh"))
+              .length
+          }
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "up",
+            percentage: "12%",
+            description: "Up from last month",
+          }}
+          colorScheme="green"
+        />
+        <StatisCard
+          label="Company in Hà Nội"
+          value={
+            companies.filter((c) => c.location_city.includes("Hà Nội")).length
+          }
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "down",
+            percentage: "5.5%",
+            description: "Down from last month",
+          }}
+          colorScheme="orange"
+        />
+        <StatisCard
+          label="Company in Đà Nẵng"
+          value={
+            companies.filter((c) => c.location_city.includes("Đà Nẵng")).length
+          }
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "down",
+            percentage: "3%",
+            description: "Down from last month",
+          }}
+          colorScheme="red"
+        />
       </div>
-      <div className="flex items-center justify-end mb-6 mt-5">
+
+      <FilterBar
+        filters={filters}
+        initialValues={{
+          searchText,
+          status: statusFilter,
+          sort: sortOrder,
+          location_city: selectedCities,
+        }}
+        onFilterChange={(values) => {
+          setSearchText(values.searchText || "");
+          setStatusFilter(values.status || "");
+          setSortOrder(values.sort || "");
+          setSelectedCities(values.location_city || []);
+          setPage(1);
+        }}
+        onReset={() => {
+          setSearchText("");
+          setStatusFilter("");
+          setSortOrder("");
+          setSelectedCities([]);
+          setPage(1);
+        }}
+      />
+
+      <div className="flex justify-end">
         <div className="flex gap-2">
-          <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-            <PlusIcon size={16} className="mr-2" /> Thêm Công Ty
+          <button
+            onClick={() => setOpenAddModal(true)}
+            className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            <PlusIcon size={16} className="mr-2" /> Add Company
           </button>
-          <button className="flex items-center px-4 py-2 bg-green-500 rounded hover:bg-gray-300">
-            <FileXlsIcon size={16} className="mr-2" /> Xuất Excel
+          <button className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            <FileXlsIcon size={16} className="mr-2" /> Export to Excel
           </button>
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
-        <div className="flex flex-wrap items-center justify-end gap-4">
-          <input
-            type="text"
-            placeholder="Tìm theo email công ty"
-            className="px-4 py-2 border border-gray-300 rounded"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              setPage(1);
-            }}
-          />
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-2 border border-gray-300 rounded"
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="active">Hoạt động</option>
-            <option value="blocked">Đã khóa</option>
-            <option value="pending">Chờ xác nhận</option>
-          </select>
-          <select
-            value={sortOrder}
-            onChange={(e) => {
-              setSortOrder(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-2 border border-gray-300 rounded"
-          >
-            <option value="">Sắp xếp</option>
-            <option value="id">ID tăng dần</option>
-            <option value="asc">Email A-Z</option>
-            <option value="desc">Email Z-A</option>
-            <option value="recent">Mới nhất</option>
-          </select>
-          <button
-            onClick={() => {
-              setSearchText("");
-              setStatusFilter("");
-              setSortOrder("");
-              setPage(1);
-            }}
-            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
-          >
-            Đặt lại
-          </button>
-        </div>
-
+      <div className="mt-6">
         <CompanyTable
           companies={paginated}
           loading={loading}
@@ -120,6 +189,10 @@ const CompanyListPage = () => {
           }}
         />
       </div>
+
+      {openAddModal && (
+        <AddCompanyModal onClose={() => setOpenAddModal(false)} />
+      )}
     </div>
   );
 };

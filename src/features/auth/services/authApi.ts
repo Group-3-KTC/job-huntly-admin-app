@@ -1,3 +1,7 @@
+// import { createApi } from "@reduxjs/toolkit/query";
+// import { axiosBaseQuery } from "../../../config/axios.config";
+// import type { LoginRequest, LoginResponse } from "../../../types/auth.type";
+
 // export const authApi = createApi({
 //   reducerPath: "authApi",
 //   baseQuery: axiosBaseQuery({
@@ -13,5 +17,5 @@
 //     }),
 //   }),
 // });
-//
+
 // export const { useLoginMutation } = authApi;

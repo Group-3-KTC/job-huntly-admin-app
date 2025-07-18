@@ -25,7 +25,7 @@ export const Table = <T,>({
   keyExtractor,
   className = "",
   loading = false,
-  emptyMessage = "Không có dữ liệu",
+  emptyMessage = "empty Data",
   onRowClick,
 }: TableProps<T>) => {
   const getNestedValue = (obj: any, path: string) => {
@@ -35,10 +35,9 @@ export const Table = <T,>({
   if (loading) {
     return (
       <>
-        <div className="p-8 text-center bg-white rounded-lg shadow-sm">
-          {/*<div className="w-8 h-8 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>*/}
-          <div className="mx-auto loader"></div>
-          <p className="mt-2 text-gray-500">Đang tải...</p>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          <div className="mx-auto loader border-2 border-blue-500"></div>
+          <p className="mt-2 text-gray-500">Loading...</p>
         </div>
       </>
     );
@@ -46,7 +45,7 @@ export const Table = <T,>({
 
   if (data.length === 0) {
     return (
-      <div className="p-8 text-center bg-white rounded-lg shadow-sm">
+      <div className="scroll-x-only bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
         <p className="text-gray-500">{emptyMessage}</p>
       </div>
     );
@@ -54,62 +53,81 @@ export const Table = <T,>({
 
   return (
     <div
-      className={`overflow-x-auto bg-white rounded-lg shadow-sm ${className}`}
+      className={` bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}
     >
-      <table className="w-full whitespace-nowrap">
-        <thead>
-          <tr className="text-xs font-medium text-left text-gray-600 uppercase bg-gray-50">
-            {columns.map((column, index) => (
-              <th
-                key={index}
-                className={`px-6 py-4 ${
-                  column.align === "center"
-                    ? "text-center"
-                    : column.align === "right"
-                      ? "text-right"
-                      : ""
-                }`}
-                style={{ width: column.width }}
-              >
-                {column.title}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {data.map((record, index) => (
-            <tr
-              key={keyExtractor(record)}
-              className={`hover:bg-gray-50 ${
-                onRowClick ? "cursor-pointer" : ""
-              }`}
-              onClick={() => onRowClick?.(record, index)}
-            >
-              {columns.map((column, colIndex) => {
-                const value = getNestedValue(record, column.key as string);
-                const cellContent = column.render
-                  ? column.render(value, record, index)
-                  : value;
-
-                return (
-                  <td
-                    key={colIndex}
-                    className={`px-6 py-4 ${
+      <div className="overflow-x-auto scroll-x-only">
+        <table className="min-w-full  whitespace-nowrap">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              {columns.map((column, index) => (
+                <th
+                  key={index}
+                  className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  style={{ width: column.width }}
+                >
+                  <div
+                    className={`flex items-center gap-2 ${
                       column.align === "center"
-                        ? "text-center"
+                        ? "justify-center"
                         : column.align === "right"
-                          ? "text-right"
-                          : ""
+                          ? "justify-end"
+                          : "justify-start"
                     }`}
                   >
-                    {cellContent}
-                  </td>
-                );
-              })}
+                    {column.title}
+                  </div>
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {data.map((record, index) => (
+              <tr
+                key={keyExtractor(record)}
+                className={`hover:bg-gray-50 transition-colors ${
+                  onRowClick ? "cursor-pointer" : ""
+                }`}
+                onClick={() => onRowClick?.(record, index)}
+              >
+                {columns.map((column, colIndex) => {
+                  const value = getNestedValue(record, column.key as string);
+                  const cellContent = column.render
+                    ? column.render(value, record, index)
+                    : value;
+
+                  const isImage =
+                    typeof cellContent === "object" &&
+                    cellContent !== null &&
+                    "type" in cellContent &&
+                    (cellContent.type === "img" ||
+                      cellContent.type === "Image");
+
+                  return (
+                    <td
+                      key={colIndex}
+                      className={`px-6 py-4 whitespace-nowrap text-sm ${
+                        column.align === "center"
+                          ? isImage
+                            ? "" // bỏ text-center nếu là ảnh
+                            : "text-center"
+                          : column.align === "right"
+                            ? "text-right"
+                            : ""
+                      }`}
+                    >
+                      {isImage ? (
+                        <div className="flex justify-center">{cellContent}</div>
+                      ) : (
+                        cellContent
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
