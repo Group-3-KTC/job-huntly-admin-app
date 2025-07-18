@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import { type Company, mockCompany } from "../mockApi/mockCompany";
 import { CompanyTable } from "../components/CompanyTable";
-import { PlusIcon, FileXlsIcon } from "@phosphor-icons/react";
+import { PlusIcon, FileXlsIcon, Buildings } from "@phosphor-icons/react";
 import {
   FilterBar,
   type FilterField,
 } from "../../../components/common/FilterBar";
+import StatisCard from "../../../components/ui/StatisticCard";
 
 const CompanyListPage = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -81,7 +82,54 @@ const CompanyListPage = () => {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="w-full px-6">
+    <div className="w-full px-6 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatisCard
+          label="Total Companies"
+          value={companies.length}
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "up",
+            percentage: "3.5%",
+            description: "Up from last month",
+          }}
+          colorScheme="green"
+        />
+        <StatisCard
+          label="Company in HCM"
+          value={companies.filter((c) => c.status === "active").length}
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "up",
+            percentage: "12%",
+            description: "Up from last month",
+          }}
+          colorScheme="green"
+        />
+        <StatisCard
+          label="Company in Hà Hội"
+          value={companies.filter((c) => c.status === "blocked").length}
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "down",
+            percentage: "5.5%",
+            description: "Down from last month",
+          }}
+          colorScheme="orange"
+        />
+        <StatisCard
+          label="Company in Đà Nẵng"
+          value={companies.filter((c) => c.status === "pending").length}
+          icon={<Buildings size={24} />}
+          change={{
+            direction: "down",
+            percentage: "3%",
+            description: "Down from last month",
+          }}
+          colorScheme="red"
+        />
+      </div>
+
       <FilterBar
         filters={filters}
         initialValues={{
@@ -106,7 +154,7 @@ const CompanyListPage = () => {
         }}
       />
 
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end">
         <div className="flex gap-2">
           <button className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             <PlusIcon size={16} className="mr-2" /> Add Company

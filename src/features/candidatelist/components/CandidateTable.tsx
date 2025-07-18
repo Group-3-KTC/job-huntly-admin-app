@@ -9,116 +9,13 @@ import {
   Trash,
   Plus,
 } from "@phosphor-icons/react";
-
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
-}
-
-const Modal = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  size = "md",
-}: ModalProps) => {
-  if (!isOpen) return null;
-
-  const sizeClass = {
-    sm: "max-w-sm",
-    md: "max-w-md",
-    lg: "max-w-lg",
-    xl: "max-w-xl",
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className={`bg-white rounded-lg shadow-lg ${sizeClass[size]} w-full mx-4`}
-      >
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-medium">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </div>
-        <div className="p-4">{children}</div>
-      </div>
-    </div>
-  );
-};
-
-interface ConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  type?: "danger" | "warning" | "success";
-}
-
-const ConfirmModal = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmText = "Xác nhận",
-  cancelText = "Hủy",
-  type = "danger",
-}: ConfirmModalProps) => {
-  if (!isOpen) return null;
-
-  const buttonClass = {
-    danger: "bg-red-500 hover:bg-red-600 text-white",
-    warning: "bg-yellow-500 hover:bg-yellow-600 text-white",
-    success: "bg-green-500 hover:bg-green-600 text-white",
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-medium">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </div>
-        <div className="p-4">
-          <p className="mb-4">{message}</p>
-          <div className="flex justify-end space-x-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              {cancelText}
-            </button>
-            <button
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
-              className={`px-4 py-2 rounded ${buttonClass[type]}`}
-            >
-              {confirmText}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { 
+  ConfirmModal, 
+  CandidateDetailsModal,
+  CandidateAddModal,
+  CandidateEditModal,
+  CandidateCVModal
+} from "./modals";
 
 interface Props {
   candidates: Candidate[];
@@ -132,9 +29,9 @@ interface Props {
 }
 
 const statusLabel = {
-  active: { text: "Hoạt động", style: "bg-green-100 text-green-700" },
-  blocked: { text: "Đã khóa", style: "bg-red-100 text-red-700" },
-  pending: { text: "Chờ xác nhận", style: "bg-purple-100 text-purple-700" },
+  active: { text: "Active", style: "bg-green-100 text-green-700" },
+  blocked: { text: "Blocked", style: "bg-red-100 text-red-700" },
+  pending: { text: "Pending", style: "bg-purple-100 text-purple-700" },
 };
 
 export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
@@ -232,8 +129,8 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     // TODO: Thực hiện block/unblock ứng viên
     console.log(
       selectedCandidate.status === "blocked"
-        ? "Mở khóa ứng viên:"
-        : "Khóa ứng viên:",
+        ? "Unlock candidate"
+        : "Block candidate",
       selectedCandidate.id,
     );
   };
@@ -252,12 +149,12 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     },
     {
       key: "name",
-      title: "Họ tên",
+      title: "Name",
       render: (value) => <span className="font-medium">{value}</span>,
     },
     {
       key: "avatarUrl",
-      title: "Ảnh đại diện",
+      title: "Avatar",
       render: (url: string) => (
         <img
           src={url}
@@ -279,11 +176,11 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     },
     {
       key: "phone",
-      title: "Số điện thoại",
+      title: "Phone",
     },
     {
       key: "status",
-      title: "Trạng thái",
+      title: "Status",
       render: (status: keyof typeof statusLabel) => (
         <span
           className={`px-2 py-1 ${statusLabel[status].style} rounded-full text-xs`}
@@ -295,7 +192,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     },
     {
       key: "skills",
-      title: "Kỹ năng",
+      title: "Skills",
       render: (skills: string[]) => (
         <div className="flex flex-wrap gap-1">
           {skills.map((skill) => (
@@ -312,18 +209,18 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
 
     {
       key: "location_city",
-      title: "Thành phố",
+      title: "City",
     },
 
     {
       key: "actions",
-      title: "Thao tác",
+      title: "Actions",
       align: "center",
       render: (_, record) => (
         <div className="flex justify-center space-x-2 text-sm">
           <button
             className="text-blue-500 hover:text-blue-700"
-            title="Xem chi tiết"
+            title="View details"
             onClick={(e) => {
               e.stopPropagation();
               handleViewDetails(record);
@@ -333,7 +230,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-blue-500 hover:text-blue-700"
-            title="Xem CV"
+            title="View CV"
             onClick={(e) => {
               e.stopPropagation();
               handleViewCV(record);
@@ -343,7 +240,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-gray-500 hover:text-gray-700"
-            title="Sửa"
+            title="Edit"
             onClick={(e) => {
               e.stopPropagation();
               handleEditCandidate(record);
@@ -353,7 +250,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-yellow-500 hover:text-yellow-700"
-            title={record.status === "blocked" ? "Mở khóa" : "Khóa"}
+            title={record.status === "blocked" ? "Unlock" : "Block"}
             onClick={(e) => {
               e.stopPropagation();
               handleBlockCandidate(record);
@@ -363,7 +260,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           </button>
           <button
             className="text-red-500 hover:text-red-700"
-            title="Xóa"
+            title="Delete"
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteCandidate(record);
@@ -390,7 +287,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           onClick={handleAddCandidate}
         >
           <Plus size={16} weight="bold" />
-          Thêm ứng viên
+          Add candidate
         </button>
       </div>
 
@@ -400,14 +297,14 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         keyExtractor={(candidate) => candidate.id}
         onRowClick={handleRowClick}
         loading={loading}
-        emptyMessage="Không có ứng viên nào"
+        emptyMessage="No candidate found"
       />
       {pagination && (
         <div className="flex items-center justify-between px-6 py-3 border-t ">
           <div className="text-sm text-gray-500">
-            Hiển thị {(pagination.page - 1) * pagination.pageSize + 1}–
+            Display {(pagination.page - 1) * pagination.pageSize + 1}–
             {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
-            trên {pagination.total} ứng viên
+            of {pagination.total} candidates
           </div>
           <div className="flex gap-1">
             <button
@@ -517,359 +414,65 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         </div>
       )}
 
-      {/* Modal xem chi tiết */}
-      <Modal
+      {/* Sử dụng các modal đã tách */}
+      <CandidateDetailsModal
         isOpen={viewModalOpen}
         onClose={() => setViewModalOpen(false)}
-        title="Thông tin ứng viên"
-        size="lg"
-      >
-        {selectedCandidate && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <img
-                src={selectedCandidate.avatarUrl}
-                alt="avatar"
-                className="object-cover w-20 h-20 rounded-full"
-              />
-              <div>
-                <h3 className="text-xl font-bold">{selectedCandidate.name}</h3>
-                <p className="text-gray-500">{selectedCandidate.username}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <p className="font-semibold">Email:</p>
-                <p>{selectedCandidate.email}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Số điện thoại:</p>
-                <p>{selectedCandidate.phone}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Trạng thái:</p>
-                <p>
-                  <span
-                    className={`px-2 py-1 ${
-                      statusLabel[selectedCandidate.status].style
-                    } rounded-full text-xs`}
-                  >
-                    {statusLabel[selectedCandidate.status].text}
-                  </span>
-                </p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">ID:</p>
-                <p>{selectedCandidate.id}</p>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2 pt-4">
-              <button
-                onClick={() => {
-                  setViewModalOpen(false);
-                  handleViewCV(selectedCandidate);
-                }}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Xem CV
-              </button>
-              <button
-                onClick={() => setViewModalOpen(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
+        candidate={selectedCandidate}
+        onViewCV={handleViewCV}
+      />
 
-      {/* Modal thêm ứng viên */}
-      <Modal
+      <CandidateAddModal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
-        title="Thêm ứng viên mới"
-        size="lg"
-      >
-        <form onSubmit={handleAddSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block mb-1 text-sm font-medium">Họ tên</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Số điện thoại
-              </label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Trạng thái
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleFormChange}
-                className="w-full px-3 py-2 border rounded"
-                required
-              >
-                <option value="active">Hoạt động</option>
-                <option value="pending">Chờ xác nhận</option>
-                <option value="blocked">Đã khóa</option>
-              </select>
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Ảnh đại diện
-              </label>
-              <input type="file" className="w-full px-3 py-2 border rounded" />
-            </div>
-          </div>
-          <div className="flex justify-end space-x-2 pt-4">
-            <button
-              type="button"
-              onClick={() => setAddModalOpen(false)}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Thêm mới
-            </button>
-          </div>
-        </form>
-      </Modal>
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleAddSubmit}
+      />
 
-      {/* Modal chỉnh sửa ứng viên */}
-      <Modal
+      <CandidateEditModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        title="Chỉnh sửa thông tin ứng viên"
-        size="lg"
-      >
-        {selectedCandidate && (
-          <form onSubmit={handleEditSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block mb-1 text-sm font-medium">Họ tên</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Số điện thoại
-                </label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Trạng thái
-                </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleFormChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                >
-                  <option value="active">Hoạt động</option>
-                  <option value="pending">Chờ xác nhận</option>
-                  <option value="blocked">Đã khóa</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Ảnh đại diện
-                </label>
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={selectedCandidate.avatarUrl}
-                    alt="avatar"
-                    className="object-cover w-10 h-10 rounded-full"
-                  />
-                  <input
-                    type="file"
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2 pt-4">
-              <button
-                type="button"
-                onClick={() => setEditModalOpen(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
-              >
-                Hủy
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Lưu thay đổi
-              </button>
-            </div>
-          </form>
-        )}
-      </Modal>
+        candidate={selectedCandidate}
+        formData={formData}
+        onFormChange={handleFormChange}
+        onSubmit={handleEditSubmit}
+      />
 
-      {/* Modal xác nhận block/unblock */}
+      <CandidateCVModal
+        isOpen={cvModalOpen}
+        onClose={() => setCvModalOpen(false)}
+        candidate={selectedCandidate}
+      />
+
       <ConfirmModal
         isOpen={blockModalOpen}
         onClose={() => setBlockModalOpen(false)}
         onConfirm={handleConfirmBlock}
         title={
           selectedCandidate?.status === "blocked"
-            ? "Mở khóa tài khoản"
-            : "Khóa tài khoản"
+            ? "Unlock account"
+            : "Block account"
         }
         message={
           selectedCandidate?.status === "blocked"
-            ? `Bạn có chắc chắn muốn mở khóa tài khoản của "${selectedCandidate?.name}"?`
-            : `Bạn có chắc chắn muốn khóa tài khoản của "${selectedCandidate?.name}"?`
+            ? `Are you sure you want to unlock the account of "${selectedCandidate?.name}"?`
+            : `Are you sure you want to block the account of "${selectedCandidate?.name}"?`
         }
         type={selectedCandidate?.status === "blocked" ? "success" : "warning"}
         confirmText={
-          selectedCandidate?.status === "blocked" ? "Mở khóa" : "Khóa"
+          selectedCandidate?.status === "blocked" ? "Unlock" : "Block"
         }
       />
 
-      {/* Modal xác nhận xóa */}
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Xóa tài khoản"
-        message={`Bạn có chắc chắn muốn xóa tài khoản "${selectedCandidate?.name}"? Hành động này không thể hoàn tác.`}
+        title="Delete account"
+        message={`Are you sure you want to delete the account of "${selectedCandidate?.name}"? This action cannot be undone.`}
         type="danger"
       />
-
-      {/* Modal xem CV */}
-      <Modal
-        isOpen={cvModalOpen}
-        onClose={() => setCvModalOpen(false)}
-        title="CV của ứng viên"
-        size="xl"
-      >
-        {selectedCandidate && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold">{selectedCandidate.name}</h3>
-              <span
-                className={`px-2 py-1 ${
-                  statusLabel[selectedCandidate.status].style
-                } rounded-full text-xs`}
-              >
-                {statusLabel[selectedCandidate.status].text}
-              </span>
-            </div>
-            <div className="border rounded p-4 min-h-[400px] bg-gray-50">
-              <div className="text-center py-10">
-                <p className="text-gray-500">
-                  Đây là nơi hiển thị CV của ứng viên.
-                </p>
-                <p className="text-gray-500 mt-2">
-                  (Mẫu CV của {selectedCandidate.name})
-                </p>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => {
-                  // TODO: Tải xuống CV
-                  console.log("Tải xuống CV của:", selectedCandidate.id);
-                }}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Tải xuống
-              </button>
-              <button
-                onClick={() => setCvModalOpen(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
     </>
   );
 };
