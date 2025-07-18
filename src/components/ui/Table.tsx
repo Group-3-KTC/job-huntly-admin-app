@@ -38,7 +38,7 @@ export const Table = <T,>({
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
           {/*<div className="w-8 h-8 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>*/}
           <div className="mx-auto loader"></div>
-          <p className="mt-2 text-gray-500">Đang tải...</p>
+          <p className="mt-2 text-gray-500">Loading...</p>
         </div>
       </>
     );

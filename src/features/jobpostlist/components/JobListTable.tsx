@@ -150,7 +150,7 @@ const JobListTable = () => {
     },
     {
       key: "actions",
-      title: "Thao tác",
+      title: "Actions",
       align: "center",
       render: (_, record) => (
         <div className="flex justify-center gap-2">

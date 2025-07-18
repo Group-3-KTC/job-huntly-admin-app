@@ -171,7 +171,7 @@ const ReportTable = () => {
     },
     {
       key: "actions",
-      title: "Thao tác",
+      title: "Actions",
       align: "center",
       render: (_: any, record: Reports) => (
         <div className="flex justify-center gap-2">
