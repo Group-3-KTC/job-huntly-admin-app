@@ -12,7 +12,7 @@ import CompanyDetailModal from "./CompanyDetail";
 import CompanyEditModal from "./CompanyEdit";
 
 interface Props {
-  companies: Company[]; 
+  companies: Company[];
   loading?: boolean;
   pagination?: {
     page: number;
