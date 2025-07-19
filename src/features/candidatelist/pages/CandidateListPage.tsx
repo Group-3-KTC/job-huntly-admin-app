@@ -136,7 +136,7 @@ const candidateFilters: FilterField[] = [
 
   return (
     <>
-      <div className="w-full p-6">
+      <div className="w-full px-6">
         {/* Thống kê nhanh */}
         <CandidateStatistics candidates={candidates} />
         
