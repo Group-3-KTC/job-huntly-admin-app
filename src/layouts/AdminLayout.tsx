@@ -12,13 +12,13 @@ const AdminLayout = () => {
   );
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden scroll-x-only">
       <div className="fixed top-0 left-0 z-20 h-full shadow-lg md:shadow-none transition-transform duration-300 ease-in-out">
         <Sidebar />
       </div>
 
       <main
-        className={` scroll-x-only flex-1 min-h-screen bg-gray-200 transition-all duration-300 ease-in-out
+        className={` flex-1 h-full overflow-y-auto bg-gray-200 transition-all duration-300 ease-in-out
                      ${
                        isSidebarCollapsed
                          ? "ml-[5.5rem] md:ml-[5.5rem]"
@@ -27,7 +27,9 @@ const AdminLayout = () => {
                   `}
       >
         <PageTracker />
-        <Header />
+        <div className="sticky top-0 z-10 bg-gray-200">
+          <Header />
+        </div>
         <div>
           <AdminRoutes />
         </div>
