@@ -11,8 +11,8 @@ export interface JobPost {
   salary: string;
   description: string;
   location_city: (
-    | "Hồ Chí Minh"
-    | "Hà Nội"
+    | "Thành phố Hồ Chí Minh"
+    | "Thành phố Hà Nội"
     | "Đà Nẵng"
     | "Cần Thơ"
     | "Nha Trang"
@@ -35,7 +35,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-10"),
     salary: "Negotiate",
     description: "This is description 1",
-    location_city: ["Hồ Chí Minh", "Cần Thơ", "Hà Nội"],
+    location_city: ["Thành phố Hồ Chí Minh", "Cần Thơ", "Thành phố Hà Nội"],
     location_ward: "Phường 1"
   },
   {
@@ -51,7 +51,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-12"),
     salary: "Negotiate",
     description: "This is description 2",
-    location_city: ["Đà Nẵng", "Hồ Chí Minh"],
+    location_city: ["Đà Nẵng", "Thành phố Hồ Chí Minh"],
     location_ward: "Phường 7"
   },
   {
@@ -67,7 +67,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-08"),
     salary: "Negotiate",
     description: "This is description 3",
-    location_city: ["Hà Nội"],
+    location_city: ["Thành phố Hà Nội"],
     location_ward: "Phường 3"
   },
   {
@@ -115,7 +115,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-06"),
     salary: "Negotiate",
     description: "This is description 6",
-    location_city: ["Hồ Chí Minh", "Hà Nội"],
+    location_city: ["Thành phố Hồ Chí Minh", "Thành phố Hà Nội"],
     location_ward: "Phường 5"
   },
   {
@@ -147,7 +147,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-05"),
     salary: "Negotiate",
     description: "This is description 8",
-    location_city: ["Cần Thơ", "Hồ Chí Minh"],
+    location_city: ["Cần Thơ", "Thành phố Hồ Chí Minh"],
     location_ward: "Phường 8"
   },
   {
@@ -179,7 +179,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-03"),
     salary: "Negotiate",
     description: "This is description 10",
-    location_city: ["Hà Nội"],
+    location_city: ["Thành phố Hà Nội"],
     location_ward: "Phường 10"
   },
   {
@@ -195,7 +195,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-07"),
     salary: "Negotiate",
     description: "This is description 11",
-    location_city: ["Hồ Chí Minh"],
+    location_city: ["Thành phố Hồ Chí Minh"],
     location_ward: "Phường 11"
   },
   {
@@ -259,7 +259,7 @@ export const mockJob: JobPost[] = [
     expired_date: new Date("2025-08-15"),
     salary: "Negotiate",
     description: "This is description 15",
-    location_city: ["Hà Nội", "Hồ Chí Minh"],
+    location_city: ["Thành phố Hà Nội", "Thành phố Hồ Chí Minh"],
     location_ward: "Phường 15"
   }
 ];
