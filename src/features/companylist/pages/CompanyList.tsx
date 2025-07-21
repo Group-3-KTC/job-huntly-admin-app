@@ -46,7 +46,7 @@ const CompanyListPage = () => {
       key: "sort",
       label: "Sort",
       type: "select",
-      options: ["id", "asc", "desc", "recent"],
+      options: ["ID", "Ascending", "Descending", "Recent"],
     },
     {
       key: "location_city",
@@ -74,10 +74,10 @@ const CompanyListPage = () => {
       return matchSearch && matchStatus && matchCity;
     })
     .sort((a, b) => {
-      if (sortOrder === "asc") return a.email.localeCompare(b.email);
-      if (sortOrder === "desc") return b.email.localeCompare(a.email);
-      if (sortOrder === "id") return a.id - b.id;
-      if (sortOrder === "recent") return b.id - a.id;
+      if (sortOrder === "Ascending") return a.email.localeCompare(b.email);
+      if (sortOrder === "Descending") return b.email.localeCompare(a.email);
+      if (sortOrder === "ID") return a.id - b.id;
+      if (sortOrder === "Recent") return b.id - a.id;
       return 0;
     });
 
