@@ -11,24 +11,52 @@ import { assets } from "../../assets/assets";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "../../store/uiSlice";
 import type { RootState } from "../../app/store";
-
-const navItems = [
-  { to: "/admin/dashboard", label: "Dashboard", icon: <ChartBar size={20} /> },
-  { to: "/admin/listReport", label: "Report List", icon: <List size={20} /> },
-  { to: "/admin/companyList", label: "Company List", icon: <Buildings size={20} /> },
-  { to: "/admin/jobList", label: "Job List", icon: <ReadCvLogo size={20} /> },
-  {
-    to: "/admin/candidateList",
-    label: "Candidate List",
-    icon: <UsersFour size={20} />,
-  },
-];
+import { t } from "ttag";
+import { useEffect, useState } from "react";
+import { subscribeToLanguageChange } from "../../i18n/i18n";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const isCollapsed = useSelector(
-    (state: RootState) => state.ui.isSidebarCollapsed,
+    (state: RootState) => state.ui.isSidebarCollapsed
   );
+  const [, forceUpdate] = useState(0);
+  useEffect(() => {
+    const handleLangChange = () => {
+      forceUpdate((prev) => prev + 1);
+    };
+    const unsubscribe = subscribeToLanguageChange(handleLangChange);
+
+    return unsubscribe;
+  }, []);
+
+  const navItems = [
+    {
+      to: "/admin/dashboard",
+      label: t`Dashboard`,
+      icon: <ChartBar size={20} />,
+    },
+    {
+      to: "/admin/listReport",
+      label: t`Report List`,
+      icon: <List size={20} />,
+    },
+    {
+      to: "/admin/companyList",
+      label: t`Company List`,
+      icon: <Buildings size={20} />,
+    },
+    {
+      to: "/admin/jobList",
+      label: t`Job List`,
+      icon: <ReadCvLogo size={20} />,
+    },
+    {
+      to: "/admin/candidateList",
+      label: t`Candidate List`,
+      icon: <UsersFour size={20} />,
+    },
+  ];
 
   return (
     <div
