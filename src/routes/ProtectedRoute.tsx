@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
-import type { RootState } from "../app/store.ts";
+import type { RootState } from "../app/store";
 import { useSelector } from "react-redux";
+import AppErrorBoundary from "./AppErrorBoundary"; // <-- ErrorBoundary
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,5 +14,9 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (!authInitialized) return null;
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <AppErrorBoundary>{children}</AppErrorBoundary>;
 };
