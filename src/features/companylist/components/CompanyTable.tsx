@@ -1,4 +1,3 @@
-// src/features/companylist/components/CompanyTable.tsx
 import { useState, useEffect } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { Company } from "../mockApi/mockCompany";
