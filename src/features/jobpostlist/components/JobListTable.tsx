@@ -7,6 +7,7 @@ import {
   FilterBar,
   type FilterField,
 } from "../../../components/common/FilterBar";
+import axios from "axios";
 
 const JobListTable = () => {
   const [searchField] = useState<keyof JobPost>("title");
@@ -16,8 +17,21 @@ const JobListTable = () => {
   const [selectedJob, setSelectedJob] = useState<JobPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState<JobPost[]>([]);
+  const [cityOptions, setCityOptions] = useState<string[]>([]);
 
   const pageSize = 5;
+
+  useEffect(() => {
+    axios
+      .get("https://provinces.open-api.vn/api/")
+      .then((res) => {
+        const names = res.data.map((city: any) => city.name);
+        setCityOptions(names);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch cities:", err);
+      });
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -43,20 +57,22 @@ const JobListTable = () => {
         if (!jobValue) return false;
 
         const jobValues = Array.isArray(jobValue)
-          ? jobValue.map((v) => v.toString().toLowerCase())
-          : [jobValue.toString().toLowerCase()];
+          ? jobValue.map((v) => v.toString().toLowerCase().trim())
+          : [jobValue.toString().toLowerCase().trim()];
 
         const filterValues = Array.isArray(value)
-          ? value.map((v) => v.toString().toLowerCase())
-          : [value.toString().toLowerCase()];
-
-        return filterValues.every((val) => jobValues.includes(val));
+          ? value.map((v) => v.toString().toLowerCase().trim())
+          : [value.toString().toLowerCase().trim()];
+        return filterValues.every((filterVal) =>
+          jobValues.some((jobVal) => jobVal.includes(filterVal))
+        );
       });
     });
 
     setJobs(filtered);
     setCurrentPage(1);
   };
+
   const filterFields: FilterField[] = [
     {
       key: "workType",
@@ -85,8 +101,8 @@ const JobListTable = () => {
     {
       key: "location_city",
       label: "City",
-      type: "select",
-      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
+      type: "multiselect",
+      options: cityOptions,
     },
     {
       key: "sort",
@@ -195,26 +211,14 @@ const JobListTable = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm">
               {Object.entries(selectedJob[0]).map(([key, value]) => (
                 <div key={key} className="flex flex-col">
-                  <label className="text-gray-600 font-medium mb-1 capitalize">
+                  <strong className="text-gray-600 capitalize mb-1">
                     {key.replaceAll("_", " ")}:
-                  </label>
-                  {typeof value === "string" && value.length > 100 ? (
-                    <textarea
-                      readOnly
-                      value={value}
-                      className="border rounded px-3 py-2 bg-gray-100 resize-none text-gray-800"
-                      rows={Math.min(6, Math.ceil(value.length / 50))}
-                    />
-                  ) : (
-                    <input
-                      readOnly
-                      type="text"
-                      value={
-                        Array.isArray(value) ? value.join(", ") : String(value)
-                      }
-                      className="border rounded px-3 py-2 bg-gray-100 text-gray-800"
-                    />
-                  )}
+                  </strong>
+                  <div className="text-gray-800 p-2 rounded whitespace-pre-wrap">
+                    <strong>
+                      {Array.isArray(value) ? value.join(", ") : String(value)}
+                    </strong>
+                  </div>
                 </div>
               ))}
             </div>

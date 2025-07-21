@@ -5,7 +5,7 @@ import StatisticItem from "../components/StatisticItem";
 
 const DashboardPage = () => {
   return (
-    <div className="w-full px-2 md:px-6">
+    <div className="w-full px-6">
       <StatisticItem />
 
       <div className="mt-4 mb-6">
