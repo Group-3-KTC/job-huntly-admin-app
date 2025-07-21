@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { Company } from "../mockApi/mockCompany";
-import {
-  EyeIcon,
-  PencilSimpleIcon,
-  ProhibitIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
+import { Eye, Edit2, LockKeyholeOpen, Trash2, LockKeyhole } from "lucide-react";
 import CompanyDetailModal from "./CompanyDetail";
 import CompanyEditModal from "./CompanyEdit";
 
@@ -102,7 +97,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
               setSelectedCompany(record);
             }}
           >
-            <EyeIcon size={18} />
+            <Eye size={18} />
           </button>
           <button
             className="text-gray-500 hover:text-gray-700"
@@ -112,18 +107,24 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
               setEditingCompany(record);
             }}
           >
-            <PencilSimpleIcon size={18} />
+            <Edit2 size={18} />
           </button>
-          <button
-            className="text-yellow-500 hover:text-yellow-700"
-            title="Block"
-            onClick={(e) => {
-              e.stopPropagation();
-              setConfirmAction({ type: "block", company: record });
-            }}
-          >
-            <ProhibitIcon size={18} />
-          </button>
+          {record.status === "blocked" ? (
+            <span title="Blocked">
+              <LockKeyhole size={18} className="text-yellow-500" />
+            </span>
+          ) : (
+            <button
+              className="text-yellow-500 hover:text-yellow-700"
+              title="Block"
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmAction({ type: "block", company: record });
+              }}
+            >
+              <LockKeyholeOpen size={18} />
+            </button>
+          )}
           <button
             className="text-red-500 hover:text-red-700"
             title="Delete"
@@ -132,7 +133,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
               setConfirmAction({ type: "delete", company: record });
             }}
           >
-            <TrashIcon size={18} />
+            <Trash2 size={18} />
           </button>
         </div>
       ),
@@ -226,7 +227,6 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                 );
               }
 
-              // Hiển thị "..." và nút trang cuối nếu cần
               if (endPage < totalPages) {
                 if (endPage < totalPages - 1) {
                   pages.push(

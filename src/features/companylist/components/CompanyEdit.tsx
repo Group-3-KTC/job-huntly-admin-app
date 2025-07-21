@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import type { Company } from "../mockApi/mockCompany";
-import Select from "react-select";
+
 interface Props {
   company: Company | null;
   onClose: () => void;
@@ -46,10 +46,11 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
   };
 
-  const handleProvinceChange = (selected: any) => {
-    if (!selected) return;
-    handleChange("location_city", [selected.label]);
-    fetch(`https://provinces.open-api.vn/api/p/${selected.value}?depth=2`)
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = Number(e.target.value);
+    const name = provinces.find((p) => p.code === code)?.name || "";
+    handleChange("location_city", [name]);
+    fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
       .then((res) => res.json())
       .then((data) => {
         setDistricts(data.districts);
@@ -58,10 +59,11 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
       });
   };
 
-  const handleDistrictChange = (selected: any) => {
-    if (!selected) return;
-    setSelectedDistrict(selected.label);
-    fetch(`https://provinces.open-api.vn/api/d/${selected.value}?depth=2`)
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = Number(e.target.value);
+    const name = districts.find((d) => d.code === code)?.name || "";
+    setSelectedDistrict(name);
+    fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
       .then((res) => res.json())
       .then((data) => {
         setWards(data.wards);
@@ -69,9 +71,10 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
       });
   };
 
-  const handleWardChange = (selected: any) => {
-    if (!selected) return;
-    const full = `${selected.label}, ${selectedDistrict}`;
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const name =
+      wards.find((w) => w.code === Number(e.target.value))?.name || "";
+    const full = `${name}, ${selectedDistrict}`;
     handleChange("location_ward", full);
   };
 
@@ -92,71 +95,71 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
     >
       <div className="flex items-center justify-center min-h-screen px-4">
         <div className="fixed inset-0 bg-black opacity-30" aria-hidden="true" />
-
         <div className="relative bg-white rounded-lg shadow-xl w-full max-w-xl mx-auto z-50 p-6">
           <Dialog.Title className="text-xl font-bold mb-4">
             Edit for Company
           </Dialog.Title>
-
           <div className="space-y-4">
-            <div>
-              <label className="font-medium">Email:</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
-            </div>
-            <div>
-              <label className="font-medium">Address:</label>
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) => handleChange("address", e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
-            </div>
-            <div>
-              <label className="font-medium">City:</label>
-              <Select
-                options={provinces.map((p) => ({
-                  label: p.name,
-                  value: p.code,
-                }))}
-                onChange={handleProvinceChange}
-              />
-            </div>
-            <div>
-              <label className="font-medium">District:</label>
-              <Select
-                options={districts.map((d) => ({
-                  label: d.name,
-                  value: d.code,
-                }))}
-                onChange={handleDistrictChange}
-              />
-            </div>
-            <div>
-              <label className="font-medium">Ward:</label>
-              <Select
-                options={wards.map((w) => ({ label: w.name, value: w.name }))}
-                onChange={handleWardChange}
-              />
-            </div>
-            <div>
-              <label className="font-medium">Employees:</label>
-              <input
-                type="number"
-                value={form.quantity_employee}
-                onChange={(e) =>
-                  handleChange("quantity_employee", Number(e.target.value))
-                }
-                className="w-full px-3 py-2 border rounded"
-              />
-            </div>
-          </div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              className="w-full px-3 py-2 border rounded"
+            />
+            <input
+              placeholder="Address"
+              value={form.address}
+              onChange={(e) => handleChange("address", e.target.value)}
+              className="w-full px-3 py-2 border rounded"
+            />
+            <label className="font-medium">Province:</label>
+            <select
+              className="w-full px-3 py-2 border rounded"
+              onChange={handleProvinceChange}
+            >
+              <option value="">Select province</option>
+              {provinces.map((p) => (
+                <option key={p.code} value={p.code}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <label className="font-medium">District:</label>
+            <select
+              className="w-full px-3 py-2 border rounded"
+              onChange={handleDistrictChange}
+            >
+              <option value="">Select district</option>
+              {districts.map((d) => (
+                <option key={d.code} value={d.code}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+            <label className="font-medium">Ward:</label>
+            <select
+              className="w-full px-3 py-2 border rounded"
+              onChange={handleWardChange}
+            >
+              <option value="">Select ward</option>
+              {wards.map((w) => (
+                <option key={w.code} value={w.code}>
+                  {w.name}
+                </option>
+              ))}
+            </select>
 
+            <label className="font-medium">Employees:</label>
+            <input
+              type="number"
+              value={form.quantity_employee}
+              onChange={(e) =>
+                handleChange("quantity_employee", Number(e.target.value))
+              }
+              className="w-full px-3 py-2 border rounded"
+            />
+          </div>
           <div className="mt-6 text-right space-x-2">
             <button
               onClick={onClose}
