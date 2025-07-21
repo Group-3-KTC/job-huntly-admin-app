@@ -1,6 +1,10 @@
 import React from 'react';
 import { Modal } from './Modal';
 import type { Candidate } from '../../mock/mockCandidates';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 interface CandidateCVModalProps {
   isOpen: boolean;
@@ -8,29 +12,42 @@ interface CandidateCVModalProps {
   candidate: Candidate | null;
 }
 
-const statusLabel = {
-  active: { text: "Active", style: "bg-green-100 text-green-700" },
-  blocked: { text: "Blocked", style: "bg-red-100 text-red-700" },
-  pending: { text: "Pending", style: "bg-purple-100 text-purple-700" },
+const STATUS_LABEL = {
+  active: { text: 'Active', style: 'bg-green-100 text-green-700' },
+  blocked: { text: 'Blocked', style: 'bg-red-100 text-red-700' },
+  pending: { text: 'Pending', style: 'bg-purple-100 text-purple-700' },
 };
 
+/**
+ * @param isOpen
+ * @param onClose
+ * @param candidate
+ */
 export const CandidateCVModal: React.FC<CandidateCVModalProps> = ({
   isOpen,
   onClose,
-  candidate
+  candidate,
 }) => {
   if (!candidate) return null;
 
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+
   const handleDownloadCV = () => {
-    // TODO: Tải xuống CV
-    console.log("Download CV of:", candidate.id);
+    if (candidate.cvUrl) {
+      const link = document.createElement('a');
+      link.href = candidate.cvUrl;
+      link.download = `CV-${candidate.name}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Candidate CV"
+      title="View Candidate CV"
       size="xl"
     >
       <div className="space-y-4">
@@ -38,32 +55,43 @@ export const CandidateCVModal: React.FC<CandidateCVModalProps> = ({
           <h3 className="text-xl font-bold">{candidate.name}</h3>
           <span
             className={`px-2 py-1 ${
-              statusLabel[candidate.status].style
+              STATUS_LABEL[candidate.status].style
             } rounded-full text-xs`}
           >
-            {statusLabel[candidate.status].text}
+            {STATUS_LABEL[candidate.status].text}
           </span>
         </div>
-        <div className="border rounded p-4 min-h-[400px] bg-gray-50">
-          <div className="text-center py-10">
-            <p className="text-gray-500">
-              This is where the candidate's CV is displayed.
-            </p>
-            <p className="text-gray-500 mt-2">
-              (CV of {candidate.name})
-            </p>
-          </div>
+        
+        <div className="border rounded bg-gray-50 h-[600px]">
+          {candidate.cvUrl ? (
+            <Worker workerUrl="/utils/pdf.worker.min.js">
+              <Viewer
+                fileUrl={candidate.cvUrl}
+                plugins={[defaultLayoutPluginInstance]}
+                defaultScale={1.0}
+              />
+            </Worker>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-gray-500 text-xl">This candidate has no CV</p>
+            </div>
+          )}
         </div>
+        
         <div className="flex justify-end space-x-2">
-          <button
-            onClick={handleDownloadCV}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Download
-          </button>
+          {candidate.cvUrl && (
+            <button
+              onClick={handleDownloadCV}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              type="button"
+            >
+              Download
+            </button>
+          )}
           <button
             onClick={onClose}
             className="px-4 py-2 border rounded hover:bg-gray-100"
+            type="button"
           >
             Close
           </button>

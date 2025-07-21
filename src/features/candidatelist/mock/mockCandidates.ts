@@ -8,6 +8,7 @@ export interface Candidate {
   status: "active" | "blocked" | "pending";
   skills: string[];
   location_city: string;
+  cvUrl?: string;
 }
 
 export const mockCandidates: Candidate[] = [
@@ -21,6 +22,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
     skills: ["React", "SQL"],
     location_city: "Hồ Chí Minh",
+    cvUrl: "/assets/sample-cv.pdf"
   },
   {
     id: 2,
@@ -32,6 +34,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
     skills: ["Java"],
     location_city: "Hà Nội",
+    cvUrl: ""
   },
   {
     id: 3,
@@ -43,6 +46,7 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
     skills: ["Python", "SQL"],
     location_city: "Đà Nẵng",
+    cvUrl: ""
   },
   {
     id: 4,
@@ -54,6 +58,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
     skills: ["React", "Java"],
     location_city: "Hồ Chí Minh",
+    cvUrl: ""
   },
   {
     id: 5,
@@ -65,6 +70,7 @@ export const mockCandidates: Candidate[] = [
     status: "blocked",
     skills: ["SQL", "Python"],
     location_city: "Cần Thơ",
+    cvUrl: ""
   },
   {
     id: 6,
@@ -76,6 +82,7 @@ export const mockCandidates: Candidate[] = [
     status: "active",
     skills: ["Java", "React"],
     location_city: "Hà Nội",
+    cvUrl: ""
   },
   {
     id: 7,
@@ -87,6 +94,7 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
     skills: ["Python"],
     location_city: "Đà Nẵng",
+    cvUrl: ""
   },
   {
     id: 8,
@@ -197,5 +205,6 @@ export const mockCandidates: Candidate[] = [
     status: "pending",
     skills: ["React", "SQL"],
     location_city: "Đà Nẵng",
+    cvUrl: ""
   },
 ];
