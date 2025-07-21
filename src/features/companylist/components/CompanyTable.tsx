@@ -151,11 +151,11 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
       />
 
       {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 border-t mt-5 ">
+        <div className="flex items-center justify-between px-6 py-3 border-t ">
           <div className="text-sm text-gray-500">
-            Hiển thị {(pagination.page - 1) * pagination.pageSize + 1}–
+            Display {(pagination.page - 1) * pagination.pageSize + 1}–
             {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
-            trên {pagination.total} ứng viên
+            of {pagination.total} candidates
           </div>
           <div className="flex gap-1">
             <button
@@ -165,7 +165,92 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             >
               &lt;
             </button>
-            {/* ...pagination buttons logic... */}
+
+            {/* Hiển thị các nút số trang */}
+            {(() => {
+              const totalPages = Math.ceil(
+                pagination.total / pagination.pageSize
+              );
+              const pages = [];
+              const maxVisible = 5;
+
+              let startPage = Math.max(
+                1,
+                pagination.page - Math.floor(maxVisible / 2)
+              );
+              const initialEndPage = Math.min(
+                totalPages,
+                startPage + maxVisible - 1
+              );
+
+              if (initialEndPage - startPage + 1 < maxVisible) {
+                startPage = Math.max(1, initialEndPage - maxVisible + 1);
+              }
+
+              const endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+              // Hiển thị nút trang đầu và "..." nếu cần
+              if (startPage > 1) {
+                pages.push(
+                  <button
+                    key="first"
+                    onClick={() => pagination.onPageChange(1)}
+                    className="px-3 py-1 border rounded hover:bg-gray-100"
+                  >
+                    1
+                  </button>
+                );
+
+                if (startPage > 2) {
+                  pages.push(
+                    <span key="dots1" className="px-3 py-1">
+                      ...
+                    </span>
+                  );
+                }
+              }
+
+              // Hiển thị các trang giữa
+              for (let i = startPage; i <= endPage; i++) {
+                pages.push(
+                  <button
+                    key={i}
+                    onClick={() => pagination.onPageChange(i)}
+                    className={`px-3 py-1 border rounded ${
+                      pagination.page === i
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    {i}
+                  </button>
+                );
+              }
+
+              // Hiển thị "..." và nút trang cuối nếu cần
+              if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                  pages.push(
+                    <span key="dots2" className="px-3 py-1">
+                      ...
+                    </span>
+                  );
+                }
+
+                pages.push(
+                  <button
+                    key="last"
+                    onClick={() => pagination.onPageChange(totalPages)}
+                    className="px-3 py-1 border rounded hover:bg-gray-100"
+                  >
+                    {totalPages}
+                  </button>
+                );
+              }
+
+              return pages;
+            })()}
+
             <button
               disabled={
                 pagination.page ===
@@ -197,7 +282,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
 
       {confirmAction && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/10 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-xl w-full max-w-sm">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm">
             <h2 className="text-lg font-semibold mb-4">
               {confirmAction.type === "delete"
                 ? "Confirm company deletion"

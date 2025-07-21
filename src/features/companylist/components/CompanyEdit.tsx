@@ -92,10 +92,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
       className="fixed z-50 inset-0 overflow-y-auto"
     >
       <div className="flex items-center justify-center min-h-screen px-4">
-        <div
-          className="fixed inset-0 backdrop-blur-sm bg-black/10"
-          aria-hidden="true"
-        />
+        <div className="fixed inset-0 bg-black opacity-30" aria-hidden="true" />
 
         <div className="relative bg-white rounded-lg shadow-xl w-full max-w-xl mx-auto z-50 p-6">
           <Dialog.Title className="text-xl font-bold mb-4">
