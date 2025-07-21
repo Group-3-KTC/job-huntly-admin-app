@@ -50,7 +50,7 @@ const CompanyListPage = () => {
     },
     {
       key: "location_city",
-      label: "Thành phố",
+      label: "City",
       type: "multiselect",
       options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
       placeholder: "Chọn thành phố",
