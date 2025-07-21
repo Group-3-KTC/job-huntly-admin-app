@@ -3,7 +3,6 @@ import {
   ChartBar,
   List,
   Buildings,
-  X,
   UsersFour,
   ReadCvLogo,
   SidebarSimple,

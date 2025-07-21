@@ -5,7 +5,6 @@ import LoginPage from "./features/auth/pages/LoginPage.tsx";
 import { useAuthInitializer } from "./features/auth/hooks/useAuthInitializer.ts";
 import Error404 from "./features/error/Error404.tsx";
 import AdminRoutes from "./routes/adminRoutes.tsx";
-import Error500 from "./features/error/Error500.tsx";
 
 function App() {
   useAuthInitializer();
