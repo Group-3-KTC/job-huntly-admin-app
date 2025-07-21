@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import type { Company } from "../mockApi/mockCompany";
-
+import Select from "react-select";
 interface Props {
   company: Company | null;
   onClose: () => void;
