@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { Company } from "../mockApi/mockCompany";
-import { Eye, Edit2, LockKeyholeOpen, Trash2, LockKeyhole } from "lucide-react";
+import {
+  EyeIcon,
+  PencilSimpleIcon,
+  ProhibitIcon,
+  TrashIcon,
+  CheckCircleIcon,
+} from "@phosphor-icons/react";
+
 import CompanyDetailModal from "./CompanyDetail";
 import CompanyEditModal from "./CompanyEdit";
 
@@ -97,7 +104,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
               setSelectedCompany(record);
             }}
           >
-            <Eye size={18} />
+            <EyeIcon size={18} />
           </button>
           <button
             className="text-gray-500 hover:text-gray-700"
@@ -107,11 +114,11 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
               setEditingCompany(record);
             }}
           >
-            <Edit2 size={18} />
+            <PencilSimpleIcon size={18} />
           </button>
           {record.status === "blocked" ? (
             <span title="Blocked">
-              <LockKeyhole size={18} className="text-yellow-500" />
+              <CheckCircleIcon size={18} className="text-yellow-500" />
             </span>
           ) : (
             <button
@@ -122,7 +129,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                 setConfirmAction({ type: "block", company: record });
               }}
             >
-              <LockKeyholeOpen size={18} />
+              <ProhibitIcon size={18} />
             </button>
           )}
           <button
@@ -133,7 +140,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
               setConfirmAction({ type: "delete", company: record });
             }}
           >
-            <Trash2 size={18} />
+            <TrashIcon size={18} />
           </button>
         </div>
       ),
