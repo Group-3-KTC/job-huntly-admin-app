@@ -14,15 +14,7 @@ type LocaleType = "en" | "vi";
 
 const listeners: (() => void)[] = [];
 
-let currentLang: LocaleType = getCurrentLanguage();
-
 export const initI18n = async () => {
-  // await loadLanguage(currentLang);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  // useLocale(currentLang);
-  // const langCode = localStorage.getItem("lang");
-  // await setLanguage(langCode);
-
   let langCode = localStorage.getItem("lang") as LocaleType | null;
 
   if (!langCode || !["en", "vi"].includes(langCode)) {
@@ -43,37 +35,11 @@ const loadLanguage = async (lang: string = "en") => {
   }
 };
 
-// export const setLanguage = async (lang: string = "en") => {
-//   try {
-//     const response = await fetch(`/locales/${lang}.po.json`);
-//
-//     if (!response.ok) {
-//       throw new Error(
-//         `Failed to load translations for ${lang}: ${response.statusText}`,
-//       );
-//     }
-//
-//     const translationsObj = await response.json();
-//
-//     addLocale(lang, translationsObj); // Load file dịch
-//     // eslint-disable-next-line react-hooks/rules-of-hooks
-//     useLocale(lang); // Áp dụng ngôn ngữ
-//     localStorage.setItem("lang", lang);
-//
-//     if (onLanguageChange) {
-//       onLanguageChange();
-//     }
-//   } catch (error) {
-//     console.error("Error loading language:", error);
-//   }
-// };
-
 export const setLanguage = async (lang: LocaleType) => {
-  if (lang === currentLang) return;
+  // if (lang === currentLang) return;
 
   await loadLanguage(lang);
   localStorage.setItem("lang", lang);
-  currentLang = lang;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useLocale(lang);
   listeners.forEach((cb) => cb());

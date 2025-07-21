@@ -25,7 +25,7 @@ const Header = () => {
               <p className="text-gray-400 text-xs">Admin</p>
             </div>
             <img
-              src="https://i.pravatar.cc/40?img=5"
+              src="https://i.pravatar.cc/40?img=3"
               alt="User"
               className="w-8 h-8 rounded-full object-cover"
             />

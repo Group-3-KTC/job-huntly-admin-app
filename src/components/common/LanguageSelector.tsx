@@ -40,7 +40,6 @@ export const LanguageSelector = () => {
     setIsLoading(true);
     try {
       await setLanguage(langCode);
-      // The language state will be updated through the subscription
     } catch (error) {
       console.error("Failed to change language:", error);
     } finally {
@@ -59,7 +58,9 @@ export const LanguageSelector = () => {
         <span>{currentLang?.flag}</span>
         <span>{currentLang?.code.toUpperCase()}</span>
         <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`w-4 h-4 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
