@@ -32,19 +32,27 @@ const Sidebar = () => {
 
   const navItems = [
     {
-      to: "dashboard",
+      to: "/admin/dashboard",
       label: t`Dashboard`,
       icon: <ChartBar size={20} />,
     },
-    { to: "listReport", label: t`Report List`, icon: <List size={20} /> },
     {
-      to: "companyList",
+      to: "/admin/listReport",
+      label: t`Report List`,
+      icon: <List size={20} />,
+    },
+    {
+      to: "/admin/companyList",
       label: t`Company List`,
       icon: <Buildings size={20} />,
     },
-    { to: "jobList", label: t`Job List`, icon: <ReadCvLogo size={20} /> },
     {
-      to: "candidateList",
+      to: "/admin/jobList",
+      label: t`Job List`,
+      icon: <ReadCvLogo size={20} />,
+    },
+    {
+      to: "/admin/candidateList",
       label: t`Candidate List`,
       icon: <UsersFour size={20} />,
     },
