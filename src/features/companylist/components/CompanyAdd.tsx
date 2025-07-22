@@ -54,10 +54,12 @@ export default function AddCompanyModal({ onClose }: Props) {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleProvinceChange = (selected: any) => {
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const selected = provinces.find((p) => p.code.toString() === code);
     if (!selected) return;
-    handleChange("location_city", [selected.label]);
-    fetch(`https://provinces.open-api.vn/api/p/${selected.value}?depth=2`)
+    handleChange("location_city", [selected.name]);
+    fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
       .then((res) => res.json())
       .then((data) => {
         setDistricts(data.districts);
@@ -66,9 +68,11 @@ export default function AddCompanyModal({ onClose }: Props) {
       });
   };
 
-  const handleDistrictChange = (selected: any) => {
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const selected = districts.find((d) => d.code.toString() === code);
     if (!selected) return;
-    fetch(`https://provinces.open-api.vn/api/d/${selected.value}?depth=2`)
+    fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
       .then((res) => res.json())
       .then((data) => {
         setWards(data.wards);
@@ -76,13 +80,14 @@ export default function AddCompanyModal({ onClose }: Props) {
       });
   };
 
-  const handleWardChange = (selected: any) => {
-    if (!selected) return;
-    const full = `${selected.label}, ${
-      districts.find((d) => d.wards.some((w) => w.code === selected.value))
-        ?.name || ""
-    }`;
-    handleChange("location_ward", full);
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const ward = wards.find((w) => w.code.toString() === code);
+    const district = districts.find((d) =>
+      d.wards.some((w) => w.code.toString() === code)
+    );
+    if (!ward || !district) return;
+    handleChange("location_ward", `${ward.name}, ${district.name}`);
   };
 
   const handleSubmit = async () => {
@@ -130,21 +135,44 @@ export default function AddCompanyModal({ onClose }: Props) {
             />
 
             <label className="font-medium">Province:</label>
-            <Select
-              options={provinces.map((p) => ({ label: p.name, value: p.code }))}
+            <select
+              className="w-full px-3 py-2 border rounded"
               onChange={handleProvinceChange}
-            />
+            >
+              <option value="">Select province</option>
+              {provinces.map((p) => (
+                <option key={p.code} value={p.code}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
 
             <label className="font-medium">District:</label>
-            <Select
-              options={districts.map((d) => ({ label: d.name, value: d.code }))}
+            <select
+              className="w-full px-3 py-2 border rounded"
               onChange={handleDistrictChange}
-            />
+            >
+              <option value="">Select district</option>
+              {districts.map((d) => (
+                <option key={d.code} value={d.code}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+
             <label className="font-medium">Ward:</label>
-            <Select
-              options={wards.map((w) => ({ label: w.name, value: w.code }))}
+            <select
+              className="w-full px-3 py-2 border rounded"
               onChange={handleWardChange}
-            />
+            >
+              <option value="">Select ward</option>
+              {wards.map((w) => (
+                <option key={w.code} value={w.code}>
+                  {w.name}
+                </option>
+              ))}
+            </select>
+
             <label className="block font-medium">Employees:</label>
             <input
               type="number"
