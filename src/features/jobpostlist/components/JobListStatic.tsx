@@ -6,10 +6,10 @@ import { Files, City } from "@phosphor-icons/react";
 const JobListStatic = () => {
   const totalJob = mockJob.length;
   const HCMJob = mockJob.filter((r) =>
-    r.location_city.includes("Hồ Chí Minh")
+    r.location_city.includes("Thành phố Hồ Chí Minh")
   ).length;
   const HNJob = mockJob.filter((r) =>
-    r.location_city.includes("Hà Nội")
+    r.location_city.includes("Thành phố Hà Nội")
   ).length;
   const DNJob = mockJob.filter((r) =>
     r.location_city.includes("Đà Nẵng")
