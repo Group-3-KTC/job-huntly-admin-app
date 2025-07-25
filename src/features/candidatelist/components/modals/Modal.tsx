@@ -26,8 +26,11 @@ export const Modal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Overlay với backdrop blur */}
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose}></div>
+      
       <div
-        className={`bg-white rounded-lg shadow-lg ${sizeClass[size]} w-full mx-4`}
+        className={`bg-white rounded-lg shadow-lg ${sizeClass[size]} w-full mx-4 z-10`}
       >
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-medium">{title}</h2>

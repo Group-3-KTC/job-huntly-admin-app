@@ -1,11 +1,26 @@
-// src/features/companylist/components/CompanyAdd.tsx
 import { Dialog } from "@headlessui/react";
-import { useState } from "react";
-import { companyService } from "../services/companyService";
+import { useEffect, useState } from "react";
 import type { Company } from "../mockApi/mockCompany";
 
 interface Props {
   onClose: () => void;
+}
+
+interface Province {
+  code: number;
+  name: string;
+  districts: District[];
+}
+
+interface District {
+  code: number;
+  name: string;
+  wards: Ward[];
+}
+
+interface Ward {
+  code: number;
+  name: string;
 }
 
 const defaultForm: Omit<Company, "id" | "userId"> = {
@@ -18,18 +33,19 @@ const defaultForm: Omit<Company, "id" | "userId"> = {
   status: "pending",
 };
 
-const cityOptions: Company["location_city"] = [
-  "Hồ Chí Minh",
-  "Hà Nội",
-  "Đà Nẵng",
-  "Cần Thơ",
-  "Nha Trang",
-];
-
 const statusOptions: Company["status"][] = ["active", "blocked", "pending"];
 
 export default function AddCompanyModal({ onClose }: Props) {
   const [form, setForm] = useState<Omit<Company, "id" | "userId">>(defaultForm);
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
+
+  useEffect(() => {
+    fetch("https://provinces.open-api.vn/api/?depth=1")
+      .then((res) => res.json())
+      .then(setProvinces);
+  }, []);
 
   const handleChange = <K extends keyof typeof form>(
     key: K,
@@ -38,13 +54,53 @@ export default function AddCompanyModal({ onClose }: Props) {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const selected = provinces.find((p) => p.code.toString() === code);
+    if (!selected) return;
+    handleChange("location_city", [selected.name]);
+    fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
+      .then((res) => res.json())
+      .then((data) => {
+        setDistricts(data.districts);
+        setWards([]);
+        handleChange("location_ward", "");
+      });
+  };
+
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const selected = districts.find((d) => d.code.toString() === code);
+    if (!selected) return;
+    fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
+      .then((res) => res.json())
+      .then((data) => {
+        setWards(data.wards);
+        handleChange("location_ward", "");
+      });
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const ward = wards.find((w) => w.code.toString() === code);
+    const district = districts.find((d) =>
+      d.wards.some((w) => w.code.toString() === code)
+    );
+    if (!ward || !district) return;
+    handleChange("location_ward", `${ward.name}, ${district.name}`);
+  };
+
   const handleSubmit = async () => {
     const newCompany: Company = {
       ...form,
       id: Date.now(),
       userId: Math.floor(Math.random() * 10000),
     };
-    await companyService.add(newCompany);
+    await fetch("/api/companies", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCompany),
+    });
     onClose();
     window.location.reload();
   };
@@ -77,36 +133,47 @@ export default function AddCompanyModal({ onClose }: Props) {
               value={form.address}
               onChange={(e) => handleChange("address", e.target.value)}
             />
-            <input
-              placeholder="Ward"
-              className="w-full px-3 py-2 border rounded"
-              value={form.location_ward}
-              onChange={(e) => handleChange("location_ward", e.target.value)}
-            />
 
-            <div>
-              <label className="block font-medium mb-1">Cities:</label>
-              <select
-                multiple
-                value={form.location_city}
-                onChange={(e) =>
-                  handleChange(
-                    "location_city",
-                    Array.from(e.target.selectedOptions).map(
-                      (o) => o.value as Company["location_city"][number]
-                    )
-                  )
-                }
-                className="w-full px-3 py-2 border rounded"
-              >
-                {cityOptions.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <label className="block font-medium mb-1">Employees:</label>
+            <label className="font-medium">Province:</label>
+            <select
+              className="w-full px-3 py-2 border rounded"
+              onChange={handleProvinceChange}
+            >
+              <option value="">Select province</option>
+              {provinces.map((p) => (
+                <option key={p.code} value={p.code}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+
+            <label className="font-medium">District:</label>
+            <select
+              className="w-full px-3 py-2 border rounded"
+              onChange={handleDistrictChange}
+            >
+              <option value="">Select district</option>
+              {districts.map((d) => (
+                <option key={d.code} value={d.code}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+
+            <label className="font-medium">Ward:</label>
+            <select
+              className="w-full px-3 py-2 border rounded"
+              onChange={handleWardChange}
+            >
+              <option value="">Select ward</option>
+              {wards.map((w) => (
+                <option key={w.code} value={w.code}>
+                  {w.name}
+                </option>
+              ))}
+            </select>
+
+            <label className="block font-medium">Employees:</label>
             <input
               type="number"
               min={0}
@@ -120,7 +187,7 @@ export default function AddCompanyModal({ onClose }: Props) {
             />
 
             <div>
-              <label className="block font-medium mb-1">Status:</label>
+              <label className="block font-medium">Status:</label>
               <select
                 value={form.status}
                 onChange={(e) =>

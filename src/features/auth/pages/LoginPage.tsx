@@ -29,7 +29,7 @@ const Login = () => {
       localStorage.setItem("admin_token", res.accessToken);
       localStorage.setItem("admin_user", JSON.stringify(res.user));
       dispatch(loginSuccess({ user: res.user, token: res.accessToken }));
-      navigate("/dashboard");
+      navigate("/admin/dashboard");
     } catch (err) {
       setApiError("Error: " + err);
     }
