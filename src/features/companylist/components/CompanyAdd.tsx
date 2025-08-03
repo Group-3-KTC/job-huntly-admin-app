@@ -90,7 +90,8 @@ export default function AddCompanyModal({ onClose }: Props) {
     handleChange("location_ward", `${ward.name}, ${district.name}`);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const newCompany: Company = {
       ...form,
       id: Date.now(),
@@ -119,12 +120,21 @@ export default function AddCompanyModal({ onClose }: Props) {
             Add New Company
           </Dialog.Title>
 
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               placeholder="Email"
               className="w-full px-3 py-2 border rounded"
               value={form.email}
               onChange={(e) => handleChange("email", e.target.value)}
+              required
+            />
+
+            <textarea
+              placeholder="Description"
+              className="w-full px-3 py-2 border rounded"
+              value={form.description}
+              onChange={(e) => handleChange("description", e.target.value)}
+              required
             />
 
             <input
@@ -132,12 +142,14 @@ export default function AddCompanyModal({ onClose }: Props) {
               className="w-full px-3 py-2 border rounded"
               value={form.address}
               onChange={(e) => handleChange("address", e.target.value)}
+              required
             />
 
             <label className="font-medium">Province:</label>
             <select
               className="w-full px-3 py-2 border rounded"
               onChange={handleProvinceChange}
+              required
             >
               <option value="">Select province</option>
               {provinces.map((p) => (
@@ -151,6 +163,8 @@ export default function AddCompanyModal({ onClose }: Props) {
             <select
               className="w-full px-3 py-2 border rounded"
               onChange={handleDistrictChange}
+              required
+              disabled={districts.length === 0}
             >
               <option value="">Select district</option>
               {districts.map((d) => (
@@ -164,6 +178,8 @@ export default function AddCompanyModal({ onClose }: Props) {
             <select
               className="w-full px-3 py-2 border rounded"
               onChange={handleWardChange}
+              required
+              disabled={wards.length === 0}
             >
               <option value="">Select ward</option>
               {wards.map((w) => (
@@ -178,12 +194,13 @@ export default function AddCompanyModal({ onClose }: Props) {
               type="number"
               min={0}
               step={1}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={form.quantity_employee}
               onChange={(e) => {
                 const val = e.target.value;
                 handleChange("quantity_employee", val === "" ? 0 : Number(val));
               }}
+              required
             />
 
             <div>
@@ -194,6 +211,7 @@ export default function AddCompanyModal({ onClose }: Props) {
                   handleChange("status", e.target.value as Company["status"])
                 }
                 className="w-full px-3 py-2 border rounded"
+                required
               >
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -202,22 +220,23 @@ export default function AddCompanyModal({ onClose }: Props) {
                 ))}
               </select>
             </div>
-          </div>
 
-          <div className="mt-6 text-right space-x-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Add
-            </button>
-          </div>
+            <div className="mt-6 text-right space-x-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border rounded hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Add
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </Dialog>
