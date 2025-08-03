@@ -1,6 +1,6 @@
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
-import { mockJob } from "../mockApi/mockJob";
+import { mockJob } from "../mock/mockJob";
 import { Files, City } from "@phosphor-icons/react";
 
 const JobListStatic = () => {

@@ -5,14 +5,17 @@ import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import { useSelector } from "react-redux";
 import "../styles/global.css";
+import { useCurrentLanguage } from "../hooks/useCurrentLanguage.ts";
 
 const AdminLayout = () => {
   const isSidebarCollapsed = useSelector(
     (state: RootState) => state.ui.isSidebarCollapsed,
   );
 
+  const lang = useCurrentLanguage();
+
   return (
-    <div className="flex h-screen overflow-hidden scroll-x-only">
+    <div key={lang} className="flex h-screen overflow-hidden scroll-x-only">
       <div className="fixed top-0 left-0 z-20 h-full shadow-lg md:shadow-none transition-transform duration-300 ease-in-out">
         <Sidebar />
       </div>

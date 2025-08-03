@@ -28,6 +28,19 @@
       "Candidate List": {
         "msgid": "Candidate List",
         "msgstr": ["Danh sách ứng viên"]
+      },
+      "Total Candidates": {
+        "msgid": "Total Candidates",
+        "msgstr": ["Tổng ứng viên"]
+      },
+      "Total Companies": {
+        "msgid": "Total Companies",
+        "msgstr": ["Tổng công ty"]
+      },
+      "Total Reports": { "msgid": "Total Reports", "msgstr": ["Tổng báo cáo"] },
+      "Total Job Applications": {
+        "msgid": "Total Job Applications",
+        "msgstr": ["Tổng đơn ứng tuyển"]
       }
     }
   }

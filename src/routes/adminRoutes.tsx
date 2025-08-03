@@ -4,7 +4,7 @@ import CompanyList from "../features/companylist/pages/CompanyList";
 import ReportList from "../features/reportlist/pages/ReportList";
 import { CandidateListPage } from "../features/candidatelist/pages/CandidateListPage";
 import JobListPage from "../features/jobpostlist/pages/JobListPage";
-import Error404 from "../features/error/Error404";
+import Error404 from "../pages/error/Error404";
 
 const AdminRoutes = (
   <>

@@ -1,5 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import type { Company } from "../mockApi/mockCompany";
+import type { Company } from "../mock/mockCompany";
 
 interface Props {
   company: Company | null;

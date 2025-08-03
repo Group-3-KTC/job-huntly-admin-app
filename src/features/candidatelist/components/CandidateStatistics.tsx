@@ -1,12 +1,8 @@
-import {
-  Users,
-  CheckCircle,
-  Clock,
-  Prohibit
-} from "@phosphor-icons/react";
+import { Users, CheckCircle, Clock, Prohibit } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
 import type { Candidate } from "../mock/mockCandidates";
+import { t } from "ttag";
 
 interface Props {
   candidates: Candidate[];
@@ -14,13 +10,19 @@ interface Props {
 
 const CandidateStatistics = ({ candidates }: Props) => {
   const totalCandidates = candidates.length;
-  const activeCandidates = candidates.filter((c) => c.status === "active").length;
-  const pendingCandidates = candidates.filter((c) => c.status === "pending").length;
-  const blockedCandidates = candidates.filter((c) => c.status === "blocked").length;
+  const activeCandidates = candidates.filter(
+    (c) => c.status === "active",
+  ).length;
+  const pendingCandidates = candidates.filter(
+    (c) => c.status === "pending",
+  ).length;
+  const blockedCandidates = candidates.filter(
+    (c) => c.status === "blocked",
+  ).length;
 
   const statisticData: StatisticCardProps[] = [
     {
-      label: "Total Candidates",
+      label: t`Total Candidates`,
       value: totalCandidates.toString(),
       icon: <Users size={24} />,
       change: {
@@ -74,4 +76,4 @@ const CandidateStatistics = ({ candidates }: Props) => {
   );
 };
 
-export default CandidateStatistics; 
+export default CandidateStatistics;

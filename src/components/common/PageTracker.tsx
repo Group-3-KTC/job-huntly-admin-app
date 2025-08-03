@@ -2,23 +2,27 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setPageTitle } from "../../store/pageSlice.ts";
-
-const routeTitleMap: Record<string, string> = {
-  "/dashboard": "Dashboard",
-  "/candidateList": "Candidate List",
-  "/companyList": "Company List",
-  "/listReport": "Report List",
-  "/jobList": "Job List"
-};
+import { t } from "ttag";
+import { useCurrentLanguage } from "../../hooks/useCurrentLanguage.ts";
 
 export const PageTracker = () => {
+  const routeTitleMap: Record<string, string> = {
+    "/admin/dashboard": t`Dashboard`,
+    "/admin/candidateList": t`Candidate List`,
+    "/admin/companyList": t`Company List`,
+    "/admin/listReport": t`Report List`,
+    "/admin/jobList": t`Job List`,
+  };
+
   const location = useLocation();
   const dispatch = useDispatch();
 
+  useCurrentLanguage();
+
   useEffect(() => {
-    const title = routeTitleMap[location.pathname] || "Trang chủ";
+    const title = routeTitleMap[location.pathname];
     dispatch(setPageTitle(title));
   }, [location.pathname, dispatch]);
 
   return null;
-}
+};

@@ -1,4 +1,4 @@
-import { type Company, mockCompany } from "../mockApi/mockCompany";
+import { type Company, mockCompany } from "../mock/mockCompany";
 
 export const companyService = {
   getAll: (): Promise<Company[]> => {
