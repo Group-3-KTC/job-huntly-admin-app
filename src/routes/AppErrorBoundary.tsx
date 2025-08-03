@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import Error500 from "../features/error/Error500";
+import Error500 from "../pages/error/Error500";
 
 interface State {
   hasError: boolean;

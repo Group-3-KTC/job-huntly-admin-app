@@ -20,3 +20,15 @@ msgstr "Danh sách công việc"
 
 msgid "Candidate List"
 msgstr "Danh sách ứng viên"
+
+msgid "Total Candidates"
+msgstr "Tổng ứng viên"
+
+msgid "Total Companies"
+msgstr "Tổng công ty"
+
+msgid "Total Reports"
+msgstr "Tổng báo cáo"
+
+msgid "Total Job Applications"
+msgstr "Tổng đơn ứng tuyển"

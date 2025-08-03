@@ -26,6 +26,7 @@ export const initI18n = async () => {
 
 const loadLanguage = async (lang: string = "en") => {
   try {
+    console.log("load language", lang);
     const response = await fetch(`/locales/${lang}.po.json`);
     if (!response.ok) throw new Error(`Failed to load ${lang}`);
     const translationsObj = await response.json();

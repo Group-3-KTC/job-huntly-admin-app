@@ -1,6 +1,6 @@
 // src/features/companylist/pages/CompanyListPage.tsx
 import { useEffect, useState } from "react";
-import { type Company, mockCompany } from "../mockApi/mockCompany";
+import { type Company, mockCompany } from "../mock/mockCompany";
 import { CompanyTable } from "../components/CompanyTable";
 import { PlusIcon, FileXlsIcon, Buildings } from "@phosphor-icons/react";
 import {
@@ -9,6 +9,7 @@ import {
 } from "../../../components/common/FilterBar";
 import StatisCard from "../../../components/ui/StatisticCard";
 import AddCompanyModal from "../components/CompanyAdd";
+import { t } from "ttag";
 
 const CompanyListPage = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -87,7 +88,7 @@ const CompanyListPage = () => {
     <div className="w-full px-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatisCard
-          label="Total Companies"
+          label={t`Total Companies`}
           value={companies.length}
           icon={<Buildings size={24} />}
           change={{

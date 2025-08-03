@@ -1,15 +1,15 @@
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
-import { mockJob } from "../mockApi/mockJob";
+import { mockJob } from "../mock/mockJob";
 import { Files, City } from "@phosphor-icons/react";
 
 const JobListStatic = () => {
   const totalJob = mockJob.length;
   const HCMJob = mockJob.filter((r) =>
-    r.location_city.includes("Hồ Chí Minh")
+    r.location_city.includes("Thành phố Hồ Chí Minh")
   ).length;
   const HNJob = mockJob.filter((r) =>
-    r.location_city.includes("Hà Nội")
+    r.location_city.includes("Thành phố Hà Nội")
   ).length;
   const DNJob = mockJob.filter((r) =>
     r.location_city.includes("Đà Nẵng")

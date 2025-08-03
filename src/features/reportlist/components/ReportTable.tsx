@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
-import type { Reports } from "../mockApi/mockReport";
-import { mockReport } from "../mockApi/mockReport";
+import type { Reports } from "../mock/mockReport";
+import { mockReport } from "../mock/mockReport";
 import { Trash, PencilSimpleLine } from "phosphor-react";
 import {
   FilterBar,
@@ -25,14 +25,14 @@ const ReportTable = () => {
   const uniqueStatuses = [...new Set(mockReport.map((r) => r.status))];
 
   useEffect(() => {
-  setLoading(true);
-  const timeout = setTimeout(() => {
-    setData(mockReport);
-    setLoading(false);
-  }, 2000); // 2 giây
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      setData(mockReport);
+      setLoading(false);
+    }, 2000); // 2 giây
 
-  return () => clearTimeout(timeout);
-}, []);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const filters: FilterField[] = [
     {

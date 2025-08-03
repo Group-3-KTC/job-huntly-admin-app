@@ -3,7 +3,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import LoginPage from "./features/auth/pages/LoginPage.tsx";
 import { useAuthInitializer } from "./features/auth/hooks/useAuthInitializer.ts";
-import Error404 from "./features/error/Error404.tsx";
+import Error404 from "./pages/error/Error404.tsx";
 import AdminRoutes from "./routes/adminRoutes.tsx";
 
 function App() {

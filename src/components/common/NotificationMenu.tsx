@@ -21,7 +21,6 @@ import type {
   NotificationType,
 } from "../../types/notification.type.ts";
 
-// --- Dummy notifications ---
 const notifications: Notification[] = [
   {
     id: 1,
@@ -121,6 +120,7 @@ const typeMeta: Record<
 const NotificationMenu = () => {
   const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
+  const [read, setRead] = useState(false);
 
   const visibleNotifications = showAll
     ? notifications
@@ -135,7 +135,7 @@ const NotificationMenu = () => {
               size={22}
               className={clsx("text-blue-500", open && "text-blue-700")}
             />
-            {notifications.length > 0 && (
+            {!read && notifications.length > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                 {notifications.length}
               </span>
@@ -153,7 +153,7 @@ const NotificationMenu = () => {
             <ul
               className={clsx(
                 "overflow-y-auto divide-y divide-gray-100",
-                showAll ? "max-h-96" : "max-h-[340px] overflow-hidden",
+                showAll ? "max-h-96" : "max-h-[340px] overflow-hidden"
               )}
             >
               {visibleNotifications.map((n) => {
@@ -167,7 +167,7 @@ const NotificationMenu = () => {
                     <div
                       className={clsx(
                         "w-8 h-8 rounded-full flex items-center justify-center",
-                        bgColor,
+                        bgColor
                       )}
                     >
                       {icon}
@@ -191,6 +191,14 @@ const NotificationMenu = () => {
                 </button>
               </div>
             )}
+            <div className="text-center p-2 border-t">
+              <button
+                onClick={() => setRead(true)}
+                className="text-sm text-gray-600 hover:underline"
+              >
+                Mark all as read
+              </button>
+            </div>
           </PopoverPanel>
         </>
       )}

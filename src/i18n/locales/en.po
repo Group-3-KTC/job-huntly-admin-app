@@ -20,3 +20,15 @@ msgstr "Job List"
 
 msgid "Candidate List"
 msgstr "Candidate List"
+
+msgid "Total Candidates"
+msgstr "Total Candidates"
+
+msgid "Total Companies"
+msgstr "Total Companies"
+
+msgid "Total Reports"
+msgstr "Total Reports"
+
+msgid "Total Job Applications"
+msgstr "Total Job Applications"

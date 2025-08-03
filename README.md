@@ -1,99 +1,76 @@
-# React + TypeScript + Vite
+# JobHuntly Admin Dashboard
 
-*******Project rule*******
-## 🎨 Tailwind Design Rules
-- Sử dụng class Tailwind ưu tiên `utility-first`, tránh viết CSS custom nếu không cần.
-- Không override màu gốc của Tailwind (gray, blue...) nếu không có lý do rõ ràng.
-- Chỉ mở rộng màu trong `tailwind.config.ts`, ví dụ:
-  
-  ## 🧼 Code Conventions
-- Trang mới: Tạo folder trong features/, thêm vào AdminRoutes và NavLink để hiển thị.
-  ( layout hiện tại đã có sẵn, khi code chỉ cần thêm vào trong AdminRoutes và tạo thêm 1 Item trong navItems để điều hướng )
-- Tên file: Dùng PascalCase cho component, kebab-case cho asset/hình ảnh.
-- Import: Sử dụng alias, ví dụ import { Button } from "@/components/ui/Button";.
-- Quản lý asset: Import vào assets.ts trước, sau đó dùng trong file.
-- Folder features: Dùng CamelCase cho tên folder (ví dụ: reportList, companyList).
+Admin site cho nền tảng tuyển dụng **JobHuntly**. Ứng dụng được xây dựng với **React + Vite**, sử dụng kiến trúc **feature-based**, tích hợp **Redux Toolkit**, **Zustand**, và hỗ trợ đa ngôn ngữ qua `react-i18next`.
 
+---
 
+## 🧱 Tech Stack
 
+- **React 18 + Vite**
+- **Redux Toolkit + Zustand**
+- **TailwindCSS**
+- **ShadCN/UI + Custom UI**
+- **i18n (vi + en)**
+- **Modular (Feature-based) Folder Structure**
 
+---
 
+## 🚀 Scripts
 
+| Command           | Mục đích                        |
+| ----------------- | ------------------------------- |
+| `npm run dev`     | Chạy project ở môi trường local |
+| `npm run build`   | Build project production        |
+| `npm run preview` | Preview sau khi build           |
 
+---
 
+## 📁 Folder Structure
 
-
-
-
-
-
-
-
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+src/
+├── app/                    # Redux store chính
+├── assets/                # Hình ảnh, tài nguyên tĩnh
+├── components/            # UI components dùng chung (common, layout, ui-kit)
+├── config/                # Cấu hình axios, biến môi trường
+├── constants/             # Enum, roles, config hằng số
+├── features/              # Các module chia theo tính năng
+├── hooks/                 # Custom hooks
+├── i18n/                  # Đa ngôn ngữ
+├── layouts/               # Bố cục layout (AdminLayout, v.v.)
+├── pages/                 # Trang đơn (404, 500...)
+├── routes/                # Cấu hình route, protected route
+├── services/              # Dịch vụ toàn cục (ex: notification)
+├── store/                 # Slice ngoài feature
+├── styles/                # CSS toàn cục
+├── types/                 # Các định nghĩa TypeScript
+└── main.tsx, App.tsx      # Điểm khởi động ứng dụng
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📦 Feature Modules
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Ví dụ về features/candidatelist:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+features/
+└── candidatelist/
+    ├── components/       # UI component nội bộ
+    ├── pages/            # Trang chính
+    ├── services/         # API hoặc mock API
+    └── mock/             # Dữ liệu mẫu
+
 ```
+
+## 🔐 Authentication
+
+- **Sử dụng Redux slice authSlice.ts**
+
+- **LoginPage.tsx nằm trong features/auth/pages**
+
+- **Tích hợp guard tại routes/ProtectedRoute.tsx**
+
+## 🌐 Đa ngôn ngữ (i18n)
+- **Cấu hình tại i18n/i18n.ts**
+
+- **File ngôn ngữ tại i18n/locales/vi.po và en.po**
+
