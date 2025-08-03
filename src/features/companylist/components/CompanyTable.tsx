@@ -297,7 +297,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             <p className="mb-4">
               Are you sure
               {confirmAction.type === "delete" ? " Delete " : " Block "}
-              Company<strong>{confirmAction.company.email}</strong>?
+              Company <strong>{confirmAction.company.email}</strong>?
             </p>
             <div className="flex justify-end gap-2">
               <button
