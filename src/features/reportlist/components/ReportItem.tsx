@@ -1,22 +1,20 @@
-import {
-  Files,
-  CheckCircle,
-  Hourglass,
-  XCircle
-} from "@phosphor-icons/react";
-import { mockReport } from "../mockApi/mockReport";
+import { Files, CheckCircle, Hourglass, XCircle } from "@phosphor-icons/react";
+import { mockReport } from "../mock/mockReport";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
+import { t } from "ttag";
 
 const ReportItem = () => {
   const totalReports = mockReport.length;
   const doneReports = mockReport.filter((r) => r.status === "Done").length;
-  const processReports = mockReport.filter((r) => r.status === "Process").length;
+  const processReports = mockReport.filter(
+    (r) => r.status === "Process"
+  ).length;
   const cancelReports = mockReport.filter((r) => r.status === "Cancel").length;
 
   const statisticData: StatisticCardProps[] = [
     {
-      label: "Total Reports",
+      label: t`Total Reports`,
       value: totalReports.toString(),
       icon: <Files size={24} />,
       change: {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
-import type { JobPost } from "../mockApi/mockJob";
-import { mockJob } from "../mockApi/mockJob";
+import type { JobPost } from "../mock/mockJob";
+import { mockJob } from "../mock/mockJob";
 import { PencilSimpleLine } from "phosphor-react";
 import {
   FilterBar,

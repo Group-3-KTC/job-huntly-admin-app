@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
-import type { Company } from "../mockApi/mockCompany";
+import type { Company } from "../mock/mockCompany";
 import {
   EyeIcon,
   PencilSimpleIcon,

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { mockReport } from "../mockApi/mockReport";
+import { mockReport } from "../mock/mockReport";
 import {
   FilterBar,
   type FilterField,
 } from "../../../components/common/FilterBar";
 import { SortAscending, SortDescending } from "@phosphor-icons/react";
-import type { Reports } from "../mockApi/mockReport";
+import type { Reports } from "../mock/mockReport";
 
 const ReportFilter = () => {
   const [filteredReports, setFilteredReports] = useState<Reports[]>([]);
@@ -94,8 +94,9 @@ const ReportFilter = () => {
                 key={report.id}
                 className="p-3 border rounded hover:bg-gray-50 transition"
               >
-                <strong>ID:</strong> {report.id} — <strong>Loại:</strong> {report.reportType} —{" "}
-                <strong>Trạng thái:</strong> {report.status}
+                <strong>ID:</strong> {report.id} — <strong>Loại:</strong>{" "}
+                {report.reportType} — <strong>Trạng thái:</strong>{" "}
+                {report.status}
               </li>
             ))}
           </ul>
