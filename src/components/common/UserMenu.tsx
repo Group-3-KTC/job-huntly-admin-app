@@ -26,9 +26,9 @@ const UserMenu = () => {
   if (isLoggingOut) {
     return (
       <>
-        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center">
+        <div className="fixed inset-0 z-[10] bg-white flex items-center justify-center">
           <div className="text-center">
-            <div className="rounded-lg shadow-sm border border-gray-200 p-30 text-center">
+            <div className="rounded-lg min-w-full shadow-sm border border-gray-200 p-30 text-center">
               <div className="mx-auto loader border-2 border-blue-500"></div>
               <p className="mt-2 text-gray-500">Đang đăng xuất...</p>
             </div>

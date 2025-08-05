@@ -16,7 +16,6 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between px-4 py-4 m-6 bg-white shadow-sm rounded-xl">
       <div className="flex items-center gap-4">
-        {/* Nút hamburger - chỉ hiển thị trên md trở xuống */}
         <button
           className="text-gray-500 md:hidden hover:text-blue-600"
           onClick={() => dispatch(toggleSidebarOpen(!isSidebarOpen))} 
@@ -26,7 +25,6 @@ const Header = () => {
         </button>
         <h1 className="text-xl font-bold text-blue-600">{pageTitle}</h1>
       </div>
-      {/* Right actions */}
       <div className="flex items-center gap-5">
         <LanguageSelector />
         <NotificationMenu />

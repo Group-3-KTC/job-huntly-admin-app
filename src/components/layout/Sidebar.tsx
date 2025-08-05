@@ -67,7 +67,7 @@ const Sidebar = () => {
   return (
     <div
       className={`
-        fixed top-0 left-0 min-h-full bg-white border-r p-4 py-8 z-40 border-gray-300
+        fixed top-0 left-0 min-h-full bg-white border-r p-4 py-8 border-gray-300
         flex flex-col gap-4 shadow-lg transition-all duration-300
         ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"

@@ -35,7 +35,7 @@ const AdminLayout = () => {
 
   return (
     <div key={lang} className="flex h-screen overflow-hidden scroll-x-only">
-      <div className="fixed top-0 left-0 z-20 h-full shadow-lg transition-transform duration-300 ease-in-out">
+      <div className="fixed top-0 left-0 z-11 h-full shadow-lg transition-transform duration-300 ease-in-out">
         <Sidebar />
       </div>
       <main
@@ -49,10 +49,10 @@ const AdminLayout = () => {
                     }`}
       >
         <PageTracker />
-        <div className="sticky top-0 z-10 bg-gray-200">
+        <div className="sticky top-0 z-[20] bg-gray-200">
           <Header />
         </div>
-        <div>
+        <div className="min-w-vh relative z-0">
           <Outlet />
         </div>
       </main>
