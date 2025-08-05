@@ -19,6 +19,7 @@ const ReportTable = () => {
     useState<Reports["status"]>("Process");
   const [data, setData] = useState<Reports[]>(mockReport);
   const [showDetail, setShowDetail] = useState(false);
+  const [reportToDelete, setReportToDelete] = useState<Reports | null>(null);
   const pageSize = 5;
 
   const uniqueReportTypes = [...new Set(mockReport.map((r) => r.reportType))];
@@ -176,7 +177,7 @@ const ReportTable = () => {
       render: (_: any, record: Reports) => (
         <div className="flex justify-center gap-2">
           <button
-            onClick={() => alert(`Xóa báo cáo ID: ${record.id}`)}
+            onClick={() => setReportToDelete(record)}
             className="text-red-500 hover:text-red-700"
             title="Xóa"
           >
@@ -283,6 +284,45 @@ const ReportTable = () => {
         </div>
       )}
 
+      {reportToDelete && (
+        <div className="fixed inset-0 bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-sm space-y-4 shadow-2xl border border-gray-300">
+            <h2 className="text-lg font-semibold text-red-600">Xác nhận xóa</h2>
+            <p>Bạn có chắc muốn xóa báo cáo này không?</p>
+            <div className="space-y-1 text-sm">
+              <div>
+                <strong>ID:</strong> {reportToDelete.id}
+              </div>
+              <div>
+                <strong>Report Type:</strong> {reportToDelete.reportType}
+              </div>
+              <div>
+                <strong>Description:</strong> {reportToDelete.description}
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+              <button
+                onClick={() => setReportToDelete(null)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Quay lại
+              </button>
+              <button
+                onClick={() => {
+                  setData((prev) =>
+                    prev.filter((r) => r.id !== reportToDelete.id)
+                  );
+                  setReportToDelete(null);
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-3 border-t">
           <div className="text-sm text-gray-500">
@@ -297,17 +337,23 @@ const ReportTable = () => {
             >
               &lt;
             </button>
+
             {(() => {
               const pages = [];
-              const maxVisible = 5;
+              const maxVisible = 3;
+
               let startPage = Math.max(
                 1,
                 currentPage - Math.floor(maxVisible / 2)
               );
-              let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-              if (endPage - startPage + 1 < maxVisible) {
-                startPage = Math.max(1, endPage - maxVisible + 1);
+              let endPage = startPage + maxVisible - 1;
+
+              if (endPage >= totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, totalPages - maxVisible + 1);
               }
+
+              // Hiện nút "1" nếu đang ở trang >= 3
               if (startPage > 1) {
                 pages.push(
                   <button
@@ -318,13 +364,16 @@ const ReportTable = () => {
                     1
                   </button>
                 );
-                if (startPage > 2)
+                if (startPage > 2) {
                   pages.push(
-                    <span key="dots1" className="px-3 py-1">
+                    <span key="dots-start" className="px-3 py-1">
                       ...
                     </span>
                   );
+                }
               }
+
+              // Các trang hiện tại
               for (let i = startPage; i <= endPage; i++) {
                 pages.push(
                   <button
@@ -340,13 +389,16 @@ const ReportTable = () => {
                   </button>
                 );
               }
+
+              // Hiện "..." và trang cuối nếu chưa đến cuối
               if (endPage < totalPages) {
-                if (endPage < totalPages - 1)
+                if (endPage < totalPages - 1) {
                   pages.push(
-                    <span key="dots2" className="px-3 py-1">
+                    <span key="dots-end" className="px-3 py-1">
                       ...
                     </span>
                   );
+                }
                 pages.push(
                   <button
                     key="last"
@@ -357,8 +409,10 @@ const ReportTable = () => {
                   </button>
                 );
               }
+
               return pages;
             })()}
+
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
