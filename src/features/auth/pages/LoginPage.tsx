@@ -31,52 +31,55 @@ const Login = () => {
       dispatch(loginSuccess({ user: res.user, token: res.accessToken }));
       navigate("/admin/dashboard");
     } catch (err) {
-      setApiError("Error: " + err);
+      setApiError("Đăng nhập thất bại. Vui lòng kiểm tra lại.");
     }
   };
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#3B82F6]/10">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-30 text-center">
-          <div className="mx-auto loader border-2 border-blue-500"></div>
-          <p className="mt-2 text-gray-500">Đang đăng nhập...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#3B82F6]/10 px-4">
-      <div className="w-full max-w-md p-8 bg-white shadow-md rounded-2xl">
-        <h2 className="mb-2 text-2xl font-semibold text-center">
-          Login to Account
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500">
+      <div className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl border border-blue-100 px-10 py-12">
+        <h2 className="text-3xl font-extrabold text-blue-700 text-center mb-4">
+          Job Huntly Admin 👋
         </h2>
-        <p className="mb-6 text-sm text-center text-gray-500">
-          Please enter your email and password to sign in
+        <p className="text-center text-blue-500 mb-8">
+          Please enter your credentials to continue
         </p>
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          {/* Email */}
           <div>
-            <label className="block mb-1 text-sm font-medium" htmlFor="email">
-              Email address:
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-blue-700"
+            >
+              Email Address
             </label>
             <input
               id="email"
               type="email"
-              placeholder="admin@gmail.com"
-              className="w-full px-4 py-2 bg-gray-100 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your email"
+              autoComplete="username"
+              className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 
+                focus:ring-blue-400 placeholder-blue-400 text-blue-900 
+                ${errors.email ? "border-red-500" : "border-blue-300"}`}
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-sm text-red-500 mt-1">
+              <p className="text-sm mt-1 text-red-600">
                 {errors.email.message}
               </p>
             )}
           </div>
 
+          {/* Password */}
           <div>
             <label
-              className="block mb-1 text-sm font-medium"
               htmlFor="password"
+              className="block mb-2 text-sm font-medium text-blue-700"
             >
               Password
             </label>
@@ -84,34 +87,42 @@ const Login = () => {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="123456"
-                className="w-full px-4 py-2 pr-10 bg-gray-100 border rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                className={`w-full px-4 py-3 pr-12 border rounded-xl text-sm focus:outline-none focus:ring-2 
+                  focus:ring-blue-400 placeholder-blue-400 text-blue-900 
+                  ${errors.password ? "border-red-500" : "border-blue-300"}`}
                 {...register("password")}
               />
-              <div
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+              {/* <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center text-blue-500 hover:text-blue-700"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label="Toggle password visibility"
               >
-                {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
-              </div>
+                {showPassword ? <EyeSlash size={22} /> : <Eye size={22} />}
+              </button> */}
             </div>
             {errors.password && (
-              <p className="text-sm text-red-500 mt-1">
+              <p className="text-sm mt-1 text-red-600">
                 {errors.password.message}
               </p>
             )}
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full py-2 text-white transition bg-blue-500 rounded-md hover:bg-blue-600"
             disabled={isLoading}
+            className="w-full py-3 text-white font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Sign In
+            {isLoading ? "Login..." : "Login"}
           </button>
 
           {apiError && (
-            <p className="mt-2 text-sm text-center text-red-500">{apiError}</p>
+            <p className="text-center text-red-600 font-medium mt-4">
+              {apiError}
+            </p>
           )}
         </form>
       </div>
@@ -120,3 +131,4 @@ const Login = () => {
 };
 
 export default Login;
+

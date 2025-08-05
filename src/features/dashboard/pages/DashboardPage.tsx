@@ -12,7 +12,7 @@ const DashboardPage = () => {
         <ChartUserGrowth />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 my-14">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-1 lg:grid-cols-2 my-6">
         <ChartApplications />
         <ChartReportedJobs />
       </div>
