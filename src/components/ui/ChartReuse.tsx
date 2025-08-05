@@ -21,7 +21,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   Tooltip,
-  Legend
+  Legend,
 );
 
 type Props = ChartData & {
@@ -50,10 +50,14 @@ const ChartReuse: React.FC<Props> = ({
               grid: { display: false },
               stacked,
               ticks: { autoSkip: false },
+              title: { display: true, text: "Time Period" }, // Thêm tiêu đề trục x-axis
             },
             y: {
               stacked,
               ticks: { stepSize: 100 },
+              title: { display: true, text: "Value" }, // Thêm tiêu đề trục y-axis
+              position: "left" as const, // Đảm bảo y-axis nằm bên trái
+              padding: 10, // Thêm padding để tránh trục y bị cắt
             },
           }
         : undefined,
@@ -77,7 +81,7 @@ const ChartReuse: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full max-w-full p-4 bg-white shadow-md rounded-xl h-[340px]">
+    <div className="w-full max-w-full p-4 pb-12  bg-white shadow-md rounded-xl h-[420px]">
       <h3 className="mb-4 text-lg font-semibold text-gray-700">{title}</h3>
       <div className="h-full">{renderChart()}</div>
     </div>

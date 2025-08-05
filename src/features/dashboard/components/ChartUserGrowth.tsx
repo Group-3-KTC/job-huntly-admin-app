@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { ChartData } from "../../../types/chartData.type";
 import ChartReuse from "../../../components/ui/ChartReuse";
 
-const COLORS = ["#3B82F6", "#F97316"];
+const COLORS = ["#3B82F6", "#F97316"]; // Giữ màu gốc nhưng sẽ thêm gradient
 
 const ChartUserGrowth = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -14,9 +14,18 @@ const ChartUserGrowth = () => {
         const datasets = raw.series.map((s: any, i: number) => ({
           label: s.name,
           data: s.values,
-          borderColor: COLORS[i],
-          backgroundColor: COLORS[i],
-          tension: 0.4,
+          borderColor: (context: any) => {
+            const gradient = context.chart.ctx.createLinearGradient(
+              0,
+              0,
+              0,
+              200,
+            );
+            gradient.addColorStop(0, COLORS[i]);
+            return gradient;
+          },
+          backgroundColor: "transparent", // Loại bỏ nền để tập trung vào đường
+          pointHoverRadius: 7, // Điểm khi hover lớn hơn
         }));
 
         setChartData({ title: raw.title, labels: raw.labels, datasets });
