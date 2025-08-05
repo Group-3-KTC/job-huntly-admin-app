@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import type { JobPost } from "../mock/mockJob";
 import { mockJob } from "../mock/mockJob";
-import { PencilSimpleLine } from "phosphor-react";
+import { Eye } from "phosphor-react";
 import {
   FilterBar,
   type FilterField,
@@ -175,7 +175,7 @@ const JobListTable = () => {
             className="text-blue-500 hover:text-blue-700"
             title="Chi tiết"
           >
-            <PencilSimpleLine size={20} />
+            <Eye size={20} />
           </button>
         </div>
       ),

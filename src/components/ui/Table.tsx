@@ -35,7 +35,7 @@ export const Table = <T,>({
   if (loading) {
     return (
       <>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-full shadow-sm border border-gray-200 p-8 text-center">
           <div className="mx-auto loader border-2 border-blue-500"></div>
           <p className="mt-2 text-gray-500">Loading...</p>
         </div>
@@ -55,7 +55,7 @@ export const Table = <T,>({
     <div
       className={` bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}
     >
-      <div className="overflow-x-auto scroll-x-only">
+      <div className="overflow-x-auto rounded-lg scroll-x-only">
         <table className="min-w-full  whitespace-nowrap">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
