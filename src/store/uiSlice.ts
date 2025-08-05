@@ -2,18 +2,24 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface UIState {
   isSidebarCollapsed: boolean;
+  isSidebarOpen: boolean; 
 }
 
 const initialState: UIState = {
   isSidebarCollapsed: false,
+  isSidebarOpen: false, 
 };
 
 const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    toggleSidebar(state) {
-      state.isSidebarCollapsed = !state.isSidebarCollapsed;
+    toggleSidebarCollapse(state) {
+      state.isSidebarCollapsed = !state.isSidebarCollapsed; 
+    },
+    toggleSidebarOpen(state, action) {
+      state.isSidebarOpen =
+        action.payload !== undefined ? action.payload : !state.isSidebarOpen; 
     },
     setSidebarCollapsed(state, action) {
       state.isSidebarCollapsed = action.payload;
@@ -21,5 +27,6 @@ const uiSlice = createSlice({
   },
 });
 
-export const { toggleSidebar, setSidebarCollapsed } = uiSlice.actions;
+export const { toggleSidebarCollapse, toggleSidebarOpen, setSidebarCollapsed } =
+  uiSlice.actions;
 export default uiSlice.reducer;

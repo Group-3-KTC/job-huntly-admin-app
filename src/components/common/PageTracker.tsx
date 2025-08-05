@@ -20,7 +20,7 @@ export const PageTracker = () => {
   useCurrentLanguage();
 
   useEffect(() => {
-    const title = routeTitleMap[location.pathname];
+    const title = routeTitleMap[location.pathname] || "Dashboard";
     dispatch(setPageTitle(title));
   }, [location.pathname, dispatch]);
 
