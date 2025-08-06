@@ -42,7 +42,7 @@ const UserMenu = () => {
     <Popover className="relative">
       {({ open }) => (
         <>
-          <PopoverButton className="flex items-center gap-2 focus:outline-none">
+          <PopoverButton className="flex items-center gap-2 focus:outline-none cursor-pointer">
             {/* Caret icon switch */}
             {open ? (
               <CaretUp size={16} className="text-gray-500" />

@@ -61,7 +61,7 @@ const ReportTable = () => {
 
     if (filterValues.reportType) {
       filtered = filtered.filter(
-        (r) => r.reportType === filterValues.reportType
+        (r) => r.reportType === filterValues.reportType,
       );
     }
 
@@ -90,7 +90,7 @@ const ReportTable = () => {
 
   const filteredData = data.filter((report) => {
     const fieldValue = String(
-      report[searchField as keyof Reports]
+      report[searchField as keyof Reports],
     ).toLowerCase();
     return fieldValue.includes(searchQuery.toLowerCase());
   });
@@ -99,7 +99,7 @@ const ReportTable = () => {
   const totalPages = Math.ceil(total / pageSize);
   const paginatedData = filteredData.slice(
     (currentPage - 1) * pageSize,
-    currentPage * pageSize
+    currentPage * pageSize,
   );
 
   const statusStyle = {
@@ -118,8 +118,8 @@ const ReportTable = () => {
     if (selectedReport) {
       setData((prev) =>
         prev.map((r) =>
-          r.id === selectedReport.id ? { ...r, status: updatedStatus } : r
-        )
+          r.id === selectedReport.id ? { ...r, status: updatedStatus } : r,
+        ),
       );
       setSelectedReport(null);
     }
@@ -178,14 +178,14 @@ const ReportTable = () => {
         <div className="flex justify-center gap-2">
           <button
             onClick={() => setReportToDelete(record)}
-            className="text-red-500 hover:text-red-700"
+            className="text-red-500 hover:text-red-700 cursor-pointer"
             title="Xóa"
           >
             <Trash size={20} />
           </button>
           <button
             onClick={() => handleUpdate(record)}
-            className="text-blue-500 hover:text-blue-700"
+            className="text-blue-500 hover:text-blue-700 cursor-pointer"
             title="Cập nhật"
           >
             <PencilSimpleLine size={20} />
@@ -310,7 +310,7 @@ const ReportTable = () => {
               <button
                 onClick={() => {
                   setData((prev) =>
-                    prev.filter((r) => r.id !== reportToDelete.id)
+                    prev.filter((r) => r.id !== reportToDelete.id),
                   );
                   setReportToDelete(null);
                 }}
@@ -333,7 +333,7 @@ const ReportTable = () => {
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &lt;
             </button>
@@ -344,7 +344,7 @@ const ReportTable = () => {
 
               let startPage = Math.max(
                 1,
-                currentPage - Math.floor(maxVisible / 2)
+                currentPage - Math.floor(maxVisible / 2),
               );
               let endPage = startPage + maxVisible - 1;
 
@@ -362,13 +362,13 @@ const ReportTable = () => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     1
-                  </button>
+                  </button>,
                 );
                 if (startPage > 2) {
                   pages.push(
                     <span key="dots-start" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 }
               }
@@ -386,7 +386,7 @@ const ReportTable = () => {
                     }`}
                   >
                     {i}
-                  </button>
+                  </button>,
                 );
               }
 
@@ -396,7 +396,7 @@ const ReportTable = () => {
                   pages.push(
                     <span key="dots-end" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 }
                 pages.push(
@@ -406,7 +406,7 @@ const ReportTable = () => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     {totalPages}
-                  </button>
+                  </button>,
                 );
               }
 
@@ -416,7 +416,7 @@ const ReportTable = () => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &gt;
             </button>

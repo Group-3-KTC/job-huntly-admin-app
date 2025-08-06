@@ -51,7 +51,7 @@ export const LanguageSelector = () => {
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50 transition-colors"
+        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
       >

@@ -125,18 +125,15 @@ const Sidebar = () => {
 
       <div className="pt-4 border-t border-gray-200">
         <button
-          className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 rounded-lg transition-colors"
+          className="cursor-pointer flex items-center gap-3 px-4 py-3 w-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 rounded-lg transition-colors"
           onClick={() => dispatch(toggleSidebarCollapse())}
           aria-label="Toggle Sidebar Collapse"
         >
           <SidebarSimple size={20} />
           {!isCollapsed && <span>Collapse</span>}
         </button>
-      </div>
-      {/* Nút Logout */}
-      <div className="">
         <button
-          className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
+          className="cursor-pointer flex items-center gap-3 px-4 py-3 w-full text-gray-500 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
           onClick={() => handleLogout()}
           aria-label="Logout"
         >

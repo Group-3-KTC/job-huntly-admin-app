@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -27,8 +27,11 @@ export const Modal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay với backdrop blur */}
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose}></div>
-      
+      <div
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+        onClick={onClose}
+      ></div>
+
       <div
         className={`bg-white rounded-lg shadow-lg ${sizeClass[size]} w-full mx-4 z-10`}
       >
@@ -36,7 +39,7 @@ export const Modal = ({
           <h2 className="text-lg font-medium">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             &times;
           </button>
@@ -45,4 +48,4 @@ export const Modal = ({
       </div>
     </div>
   );
-}; 
+};

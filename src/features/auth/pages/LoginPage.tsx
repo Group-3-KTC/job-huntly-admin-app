@@ -96,7 +96,7 @@ const Login = () => {
               />
               {/* <button
                 type="button"
-                className="absolute inset-y-0 right-3 flex items-center text-blue-500 hover:text-blue-700"
+                className="absolute inset-y-0 right-3 flex items-center text-blue-500 hover:text-blue-700 cursor-pointer"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label="Toggle password visibility"
               >
@@ -114,7 +114,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 text-white font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="cursor-pointer w-full py-3 text-white font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isLoading ? "Login..." : "Login"}
           </button>
@@ -131,4 +131,3 @@ const Login = () => {
 };
 
 export default Login;
-

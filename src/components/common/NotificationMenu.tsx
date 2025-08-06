@@ -127,10 +127,10 @@ const NotificationMenu = () => {
     : notifications.slice(0, 5);
 
   return (
-    <Popover className="relative top-1">
+    <Popover className="relative top-1 ">
       {({ open }) => (
         <>
-          <PopoverButton className="relative focus:outline-none">
+          <PopoverButton className="cursor-pointer relative focus:outline-none">
             <Bell
               size={22}
               className={clsx("text-blue-500", open && "text-blue-700")}
@@ -144,7 +144,7 @@ const NotificationMenu = () => {
 
           <PopoverPanel
             anchor="bottom end"
-            className="absolute right-0 mt-2 w-80 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 z-50"
+            className=" absolute right-0 mt-2 w-80 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 z-50"
           >
             <div className="p-3 font-semibold text-gray-900 border-b">
               Notifications
@@ -153,7 +153,7 @@ const NotificationMenu = () => {
             <ul
               className={clsx(
                 "overflow-y-auto divide-y divide-gray-100",
-                showAll ? "max-h-96" : "max-h-[340px] overflow-hidden"
+                showAll ? "max-h-96" : "max-h-[340px] overflow-hidden",
               )}
             >
               {visibleNotifications.map((n) => {
@@ -167,7 +167,7 @@ const NotificationMenu = () => {
                     <div
                       className={clsx(
                         "w-8 h-8 rounded-full flex items-center justify-center",
-                        bgColor
+                        bgColor,
                       )}
                     >
                       {icon}
@@ -182,19 +182,19 @@ const NotificationMenu = () => {
             </ul>
 
             {notifications.length > 5 && (
-              <div className="text-center p-3 border-t">
+              <div className="text-center p-3 border-t border-gray-200">
                 <button
                   onClick={() => setShowAll((prev) => !prev)}
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm text-blue-600 hover:underline cursor-pointer "
                 >
                   {showAll ? "View less" : "View all notifications"}
                 </button>
               </div>
             )}
-            <div className="text-center p-2 border-t">
+            <div className="text-center p-2">
               <button
                 onClick={() => setRead(true)}
-                className="text-sm text-gray-600 hover:underline"
+                className="text-sm text-gray-600 hover:underline cursor-pointer"
               >
                 Mark all as read
               </button>
