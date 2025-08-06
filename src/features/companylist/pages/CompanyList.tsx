@@ -168,11 +168,11 @@ const CompanyListPage = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setOpenAddModal(true)}
-            className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+            className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 cursor-pointer"
           >
             <PlusIcon size={16} className="mr-2" /> Add Company
           </button>
-          <button className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+          <button className="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer">
             <FileXlsIcon size={16} className="mr-2" /> Export to Excel
           </button>
         </div>

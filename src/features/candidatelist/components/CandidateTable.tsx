@@ -9,12 +9,12 @@ import {
   Trash,
   Plus,
 } from "@phosphor-icons/react";
-import { 
-  ConfirmModal, 
+import {
+  ConfirmModal,
   CandidateDetailsModal,
   CandidateAddModal,
   CandidateEditModal,
-  CandidateCVModal
+  CandidateCVModal,
 } from "./modals";
 
 interface Props {
@@ -219,7 +219,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       render: (_, record) => (
         <div className="flex justify-center space-x-2 text-sm">
           <button
-            className="text-blue-500 hover:text-blue-700"
+            className="text-blue-500 hover:text-blue-700 cursor-pointer"
             title="View details"
             onClick={(e) => {
               e.stopPropagation();
@@ -229,7 +229,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <Eye size={18} weight="regular" />
           </button>
           <button
-            className="text-blue-500 hover:text-blue-700"
+            className="text-blue-500 hover:text-blue-700 cursor-pointer"
             title="View CV"
             onClick={(e) => {
               e.stopPropagation();
@@ -239,7 +239,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <FileText size={18} weight="regular" />
           </button>
           <button
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
             title="Edit"
             onClick={(e) => {
               e.stopPropagation();
@@ -249,7 +249,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <PencilSimple size={18} weight="regular" />
           </button>
           <button
-            className="text-yellow-500 hover:text-yellow-700"
+            className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
             title={record.status === "blocked" ? "Unlock" : "Block"}
             onClick={(e) => {
               e.stopPropagation();
@@ -259,7 +259,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <Prohibit size={18} weight="regular" />
           </button>
           <button
-            className="text-red-500 hover:text-red-700"
+            className="text-red-500 hover:text-red-700 cursor-pointer"
             title="Delete"
             onClick={(e) => {
               e.stopPropagation();
@@ -283,7 +283,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
       <div className="flex justify-between items-center mb-4">
         <div></div>
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded flex items-center gap-2"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded flex items-center gap-2 cursor-pointer"
           onClick={handleAddCandidate}
         >
           <Plus size={16} weight="bold" />
@@ -310,7 +310,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
             <button
               disabled={pagination.page === 1}
               onClick={() => pagination.onPageChange(pagination.page - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &lt;
             </button>
@@ -406,7 +406,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
                 Math.ceil(pagination.total / pagination.pageSize)
               }
               onClick={() => pagination.onPageChange(pagination.page + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &gt;
             </button>

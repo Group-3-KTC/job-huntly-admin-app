@@ -67,7 +67,7 @@ const Sidebar = () => {
   return (
     <div
       className={`
-        fixed top-0 left-0 min-h-full bg-white border-r p-4 py-8 z-40 border-gray-300
+        fixed top-0 left-0 min-h-full bg-white border-r p-4 py-8 border-gray-300
         flex flex-col gap-4 shadow-lg transition-all duration-300
         ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -125,18 +125,15 @@ const Sidebar = () => {
 
       <div className="pt-4 border-t border-gray-200">
         <button
-          className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 rounded-lg transition-colors"
+          className="cursor-pointer flex items-center gap-3 px-4 py-3 w-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 rounded-lg transition-colors"
           onClick={() => dispatch(toggleSidebarCollapse())}
           aria-label="Toggle Sidebar Collapse"
         >
           <SidebarSimple size={20} />
           {!isCollapsed && <span>Collapse</span>}
         </button>
-      </div>
-      {/* Nút Logout */}
-      <div className="">
         <button
-          className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
+          className="cursor-pointer flex items-center gap-3 px-4 py-3 w-full text-gray-500 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
           onClick={() => handleLogout()}
           aria-label="Logout"
         >

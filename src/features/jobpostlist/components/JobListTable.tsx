@@ -64,7 +64,7 @@ const JobListTable = () => {
           ? value.map((v) => v.toString().toLowerCase().trim())
           : [value.toString().toLowerCase().trim()];
         return filterValues.every((filterVal) =>
-          jobValues.some((jobVal) => jobVal.includes(filterVal))
+          jobValues.some((jobVal) => jobVal.includes(filterVal)),
         );
       });
     });
@@ -172,7 +172,7 @@ const JobListTable = () => {
         <div className="flex justify-center gap-2">
           <button
             onClick={() => setSelectedJob([record])}
-            className="text-blue-500 hover:text-blue-700"
+            className="text-blue-500 hover:text-blue-700 cursor-pointer"
             title="Chi tiết"
           >
             <Eye size={20} />
@@ -245,7 +245,7 @@ const JobListTable = () => {
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &lt;
             </button>
@@ -254,7 +254,7 @@ const JobListTable = () => {
               const maxVisible = 5;
               let startPage = Math.max(
                 1,
-                currentPage - Math.floor(maxVisible / 2)
+                currentPage - Math.floor(maxVisible / 2),
               );
               let endPage = Math.min(totalPages, startPage + maxVisible - 1);
               if (endPage - startPage + 1 < maxVisible) {
@@ -268,13 +268,13 @@ const JobListTable = () => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     1
-                  </button>
+                  </button>,
                 );
                 if (startPage > 2)
                   pages.push(
                     <span key="dots1" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
               }
               for (let i = startPage; i <= endPage; i++) {
@@ -289,7 +289,7 @@ const JobListTable = () => {
                     }`}
                   >
                     {i}
-                  </button>
+                  </button>,
                 );
               }
               if (endPage < totalPages) {
@@ -297,7 +297,7 @@ const JobListTable = () => {
                   pages.push(
                     <span key="dots2" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 pages.push(
                   <button
@@ -306,7 +306,7 @@ const JobListTable = () => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     {totalPages}
-                  </button>
+                  </button>,
                 );
               }
               return pages;
@@ -314,7 +314,7 @@ const JobListTable = () => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &gt;
             </button>

@@ -54,7 +54,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
 
   const handleBlock = (id: number) => {
     setData((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: "blocked" } : c))
+      prev.map((c) => (c.id === id ? { ...c, status: "blocked" } : c)),
     );
     setConfirmAction(null);
   };
@@ -97,7 +97,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
       render: (_, record) => (
         <div className="flex justify-center space-x-2 text-sm">
           <button
-            className="text-blue-500 hover:text-blue-700"
+            className="text-blue-500 hover:text-blue-700 cursor-pointer"
             title="View"
             onClick={(e) => {
               e.stopPropagation();
@@ -107,7 +107,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             <EyeIcon size={18} />
           </button>
           <button
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
             title="Edit"
             onClick={(e) => {
               e.stopPropagation();
@@ -122,7 +122,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             </span>
           ) : (
             <button
-              className="text-yellow-500 hover:text-yellow-700"
+              className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
               title="Block"
               onClick={(e) => {
                 e.stopPropagation();
@@ -133,7 +133,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             </button>
           )}
           <button
-            className="text-red-500 hover:text-red-700"
+            className="text-red-500 hover:text-red-700 cursor-pointer"
             title="Delete"
             onClick={(e) => {
               e.stopPropagation();
@@ -168,7 +168,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             <button
               disabled={pagination.page === 1}
               onClick={() => pagination.onPageChange(pagination.page - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &lt;
             </button>
@@ -176,18 +176,18 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             {/* Hiển thị các nút số trang */}
             {(() => {
               const totalPages = Math.ceil(
-                pagination.total / pagination.pageSize
+                pagination.total / pagination.pageSize,
               );
               const pages = [];
               const maxVisible = 5;
 
               let startPage = Math.max(
                 1,
-                pagination.page - Math.floor(maxVisible / 2)
+                pagination.page - Math.floor(maxVisible / 2),
               );
               const initialEndPage = Math.min(
                 totalPages,
-                startPage + maxVisible - 1
+                startPage + maxVisible - 1,
               );
 
               if (initialEndPage - startPage + 1 < maxVisible) {
@@ -205,14 +205,14 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     1
-                  </button>
+                  </button>,
                 );
 
                 if (startPage > 2) {
                   pages.push(
                     <span key="dots1" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 }
               }
@@ -230,7 +230,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                     }`}
                   >
                     {i}
-                  </button>
+                  </button>,
                 );
               }
 
@@ -239,7 +239,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                   pages.push(
                     <span key="dots2" className="px-3 py-1">
                       ...
-                    </span>
+                    </span>,
                   );
                 }
 
@@ -250,7 +250,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                     className="px-3 py-1 border rounded hover:bg-gray-100"
                   >
                     {totalPages}
-                  </button>
+                  </button>,
                 );
               }
 
@@ -263,7 +263,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                 Math.ceil(pagination.total / pagination.pageSize)
               }
               onClick={() => pagination.onPageChange(pagination.page + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
             >
               &gt;
             </button>
