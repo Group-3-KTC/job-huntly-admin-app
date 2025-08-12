@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
+import Pagination from "../../../components/common/Pagination"; 
 import type { JobPost } from "../mock/mockJob";
 import { mockJob } from "../mock/mockJob";
 import { Eye } from "phosphor-react";
@@ -13,13 +14,12 @@ const JobListTable = () => {
   const [searchField] = useState<keyof JobPost>("title");
   const [searchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10); 
   const [sortOrder, setSortOrder] = useState("");
   const [selectedJob, setSelectedJob] = useState<JobPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState<JobPost[]>([]);
   const [cityOptions, setCityOptions] = useState<string[]>([]);
-
-  const pageSize = 5;
 
   useEffect(() => {
     axios
@@ -129,12 +129,17 @@ const JobListTable = () => {
   }, [searchQuery, searchField, sortOrder, jobs]);
 
   const total = sortedAndFilteredData.length;
-  const totalPages = Math.ceil(total / pageSize);
+  const totalPages = Math.ceil(total / itemsPerPage);
 
   const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return sortedAndFilteredData.slice(start, start + pageSize);
-  }, [sortedAndFilteredData, currentPage]);
+    const start = (currentPage - 1) * itemsPerPage;
+    return sortedAndFilteredData.slice(start, start + itemsPerPage);
+  }, [sortedAndFilteredData, currentPage, itemsPerPage]);
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when items per page changes
+  };
 
   const columns: TableColumn<JobPost>[] = [
     { key: "id", title: "ID", width: "80px", align: "left" },
@@ -149,7 +154,7 @@ const JobListTable = () => {
     {
       key: "location_city",
       title: "City",
-      align: "center",
+      align: "left",
       render: (value: string[]) => value.join(", "),
     },
     {
@@ -190,6 +195,7 @@ const JobListTable = () => {
         onReset={() => {
           setJobs(mockJob);
           setSortOrder("desc");
+          setCurrentPage(1);
         }}
       />
 
@@ -235,91 +241,16 @@ const JobListTable = () => {
         </div>
       )}
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-6 py-3 border-t">
-          <div className="text-sm text-gray-500">
-            Hiển thị {(currentPage - 1) * pageSize + 1}–
-            {Math.min(currentPage * pageSize, total)} trên {total} báo cáo
-          </div>
-          <div className="flex gap-1">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &lt;
-            </button>
-            {(() => {
-              const pages = [];
-              const maxVisible = 5;
-              let startPage = Math.max(
-                1,
-                currentPage - Math.floor(maxVisible / 2),
-              );
-              let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-              if (endPage - startPage + 1 < maxVisible) {
-                startPage = Math.max(1, endPage - maxVisible + 1);
-              }
-              if (startPage > 1) {
-                pages.push(
-                  <button
-                    key="first"
-                    onClick={() => setCurrentPage(1)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    1
-                  </button>,
-                );
-                if (startPage > 2)
-                  pages.push(
-                    <span key="dots1" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-              }
-              for (let i = startPage; i <= endPage; i++) {
-                pages.push(
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i)}
-                    className={`px-3 py-1 border rounded ${
-                      currentPage === i
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    {i}
-                  </button>,
-                );
-              }
-              if (endPage < totalPages) {
-                if (endPage < totalPages - 1)
-                  pages.push(
-                    <span key="dots2" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                pages.push(
-                  <button
-                    key="last"
-                    onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    {totalPages}
-                  </button>,
-                );
-              }
-              return pages;
-            })()}
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
+      {totalPages > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={total}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          showItemsPerPage={true}
+        />
       )}
     </div>
   );

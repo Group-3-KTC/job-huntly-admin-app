@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
+import Pagination from "../../../components/common/Pagination";
 import type { Candidate } from "../mock/mockCandidates";
 import {
   Eye,
@@ -25,6 +26,7 @@ interface Props {
     pageSize: number;
     total: number;
     onPageChange: (page: number) => void;
+    onItemsPerPageChange: (itemsPerPage: number) => void; // Add this
   };
 }
 
@@ -35,7 +37,6 @@ const statusLabel = {
 };
 
 export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
-  // State cho các modal
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
@@ -46,7 +47,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
   const [cvModalOpen, setCvModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
 
-  // Form state cho add/edit
   const [formData, setFormData] = useState<Partial<Candidate>>({
     name: "",
     username: "",
@@ -112,21 +112,18 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Thực hiện thêm mới ứng viên
     console.log("Thêm ứng viên:", formData);
     setAddModalOpen(false);
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Thực hiện cập nhật ứng viên
     console.log("Cập nhật ứng viên:", selectedCandidate?.id, formData);
     setEditModalOpen(false);
   };
 
   const handleConfirmBlock = () => {
     if (!selectedCandidate) return;
-    // TODO: Thực hiện block/unblock ứng viên
     console.log(
       selectedCandidate.status === "blocked"
         ? "Unlock candidate"
@@ -137,7 +134,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
 
   const handleConfirmDelete = () => {
     if (!selectedCandidate) return;
-    // TODO: Thực hiện xóa ứng viên
     console.log("Xóa ứng viên:", selectedCandidate.id);
   };
 
@@ -145,11 +141,12 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
     {
       key: "id",
       title: "ID",
-      width: "80px",
+      width: "50px",
     },
     {
       key: "name",
       title: "Name",
+      width: "180px",
       render: (value) => <span className="font-medium">{value}</span>,
     },
     {
@@ -163,7 +160,7 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         />
       ),
       align: "right",
-      width: "80px",
+      width: "50px",
     },
     {
       key: "username",
@@ -206,12 +203,10 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         </div>
       ),
     },
-
     {
       key: "location_city",
       title: "City",
     },
-
     {
       key: "actions",
       title: "Actions",
@@ -290,7 +285,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           Add candidate
         </button>
       </div>
-
       <Table
         columns={columns}
         data={candidates}
@@ -299,129 +293,23 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         loading={loading}
         emptyMessage="No candidate found"
       />
-      {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 border-t ">
-          <div className="text-sm text-gray-500">
-            Display {(pagination.page - 1) * pagination.pageSize + 1}–
-            {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
-            of {pagination.total} candidates
-          </div>
-          <div className="flex gap-1">
-            <button
-              disabled={pagination.page === 1}
-              onClick={() => pagination.onPageChange(pagination.page - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &lt;
-            </button>
-
-            {/* Hiển thị các nút số trang */}
-            {(() => {
-              const totalPages = Math.ceil(
-                pagination.total / pagination.pageSize,
-              );
-              const pages = [];
-              const maxVisible = 5;
-
-              let startPage = Math.max(
-                1,
-                pagination.page - Math.floor(maxVisible / 2),
-              );
-              const initialEndPage = Math.min(
-                totalPages,
-                startPage + maxVisible - 1,
-              );
-
-              if (initialEndPage - startPage + 1 < maxVisible) {
-                startPage = Math.max(1, initialEndPage - maxVisible + 1);
-              }
-
-              const endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-              // Hiển thị nút trang đầu và "..." nếu cần
-              if (startPage > 1) {
-                pages.push(
-                  <button
-                    key="first"
-                    onClick={() => pagination.onPageChange(1)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    1
-                  </button>,
-                );
-
-                if (startPage > 2) {
-                  pages.push(
-                    <span key="dots1" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                }
-              }
-
-              // Hiển thị các trang giữa
-              for (let i = startPage; i <= endPage; i++) {
-                pages.push(
-                  <button
-                    key={i}
-                    onClick={() => pagination.onPageChange(i)}
-                    className={`px-3 py-1 border rounded ${
-                      pagination.page === i
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    {i}
-                  </button>,
-                );
-              }
-
-              // Hiển thị "..." và nút trang cuối nếu cần
-              if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                  pages.push(
-                    <span key="dots2" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                }
-
-                pages.push(
-                  <button
-                    key="last"
-                    onClick={() => pagination.onPageChange(totalPages)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    {totalPages}
-                  </button>,
-                );
-              }
-
-              return pages;
-            })()}
-
-            <button
-              disabled={
-                pagination.page ===
-                Math.ceil(pagination.total / pagination.pageSize)
-              }
-              onClick={() => pagination.onPageChange(pagination.page + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
+      {!loading && pagination && pagination.total > 0 && (
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+          totalItems={pagination.total}
+          itemsPerPage={pagination.pageSize}
+          onPageChange={pagination.onPageChange}
+          onItemsPerPageChange={pagination.onItemsPerPageChange}
+          showItemsPerPage={true}
+        />
       )}
-
-      {/* Sử dụng các modal đã tách */}
       <CandidateDetailsModal
         isOpen={viewModalOpen}
         onClose={() => setViewModalOpen(false)}
         candidate={selectedCandidate}
         onViewCV={handleViewCV}
       />
-
       <CandidateAddModal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
@@ -429,7 +317,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         onFormChange={handleFormChange}
         onSubmit={handleAddSubmit}
       />
-
       <CandidateEditModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
@@ -438,13 +325,11 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
         onFormChange={handleFormChange}
         onSubmit={handleEditSubmit}
       />
-
       <CandidateCVModal
         isOpen={cvModalOpen}
         onClose={() => setCvModalOpen(false)}
         candidate={selectedCandidate}
       />
-
       <ConfirmModal
         isOpen={blockModalOpen}
         onClose={() => setBlockModalOpen(false)}
@@ -464,7 +349,6 @@ export const CandidateTable = ({ candidates, loading, pagination }: Props) => {
           selectedCandidate?.status === "blocked" ? "Unlock" : "Block"
         }
       />
-
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

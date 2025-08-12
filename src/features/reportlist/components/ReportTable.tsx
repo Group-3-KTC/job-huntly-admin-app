@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
+import Pagination from "../../../components/common/Pagination";
 import type { Reports } from "../mock/mockReport";
 import { mockReport } from "../mock/mockReport";
 import { Trash, PencilSimpleLine } from "phosphor-react";
@@ -12,6 +13,7 @@ const ReportTable = () => {
   const [searchField] = useState("reportType");
   const [searchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Manage itemsPerPage
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState("desc");
   const [selectedReport, setSelectedReport] = useState<Reports | null>(null);
@@ -20,7 +22,6 @@ const ReportTable = () => {
   const [data, setData] = useState<Reports[]>(mockReport);
   const [showDetail, setShowDetail] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<Reports | null>(null);
-  const pageSize = 5;
 
   const uniqueReportTypes = [...new Set(mockReport.map((r) => r.reportType))];
   const uniqueStatuses = [...new Set(mockReport.map((r) => r.status))];
@@ -30,8 +31,7 @@ const ReportTable = () => {
     const timeout = setTimeout(() => {
       setData(mockReport);
       setLoading(false);
-    }, 2000); // 2 giây
-
+    }, 2000);
     return () => clearTimeout(timeout);
   }, []);
 
@@ -58,21 +58,17 @@ const ReportTable = () => {
 
   const handleFilterChange = (filterValues: Record<string, any>) => {
     let filtered = [...mockReport];
-
     if (filterValues.reportType) {
       filtered = filtered.filter(
         (r) => r.reportType === filterValues.reportType,
       );
     }
-
     if (filterValues.status) {
       filtered = filtered.filter((r) => r.status === filterValues.status);
     }
-
     if (filterValues.sortOrder) {
       setSortOrder(filterValues.sortOrder);
     }
-
     setData(filtered);
   };
 
@@ -96,10 +92,10 @@ const ReportTable = () => {
   });
 
   const total = filteredData.length;
-  const totalPages = Math.ceil(total / pageSize);
+  const totalPages = Math.ceil(total / itemsPerPage);
   const paginatedData = filteredData.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
   );
 
   const statusStyle = {
@@ -123,6 +119,11 @@ const ReportTable = () => {
       );
       setSelectedReport(null);
     }
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when items per page changes
   };
 
   const columns: TableColumn<Reports>[] = [
@@ -196,7 +197,7 @@ const ReportTable = () => {
   ];
 
   return (
-    <div className="space-y-4 max-w-full mt-2">
+    <div className="max-w-full mt-2">
       <FilterBar
         filters={filters}
         onFilterChange={handleFilterChange}
@@ -205,7 +206,6 @@ const ReportTable = () => {
           setSortOrder("desc");
         }}
       />
-
       <Table
         columns={columns}
         data={paginatedData}
@@ -213,10 +213,19 @@ const ReportTable = () => {
         loading={loading}
         emptyMessage="Không có báo cáo nào"
       />
-
+      {!loading && totalPages > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={total}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          showItemsPerPage={true}
+        />
+      )}
       {selectedReport && (
         <div className="fixed inset-0 bg-opacity-40 flex justify-center items-center z-50">
-          {/* Popup chính */}
           <div className="relative bg-white p-6 rounded-xl w-full max-w-md space-y-4 shadow-2xl border border-gray-300">
             <h2 className="text-lg font-semibold">
               Cập nhật trạng thái báo cáo
@@ -273,8 +282,6 @@ const ReportTable = () => {
                 Xác nhận
               </button>
             </div>
-
-            {/* Popup phụ */}
             {showDetail && (
               <div className="absolute top-0 right-[-320px] w-72 bg-white border shadow-lg rounded-xl p-4">
                 <h1 className="text-lg font-bold">Detail...</h1>
@@ -283,7 +290,6 @@ const ReportTable = () => {
           </div>
         </div>
       )}
-
       {reportToDelete && (
         <div className="fixed inset-0 bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl w-full max-w-sm space-y-4 shadow-2xl border border-gray-300">
@@ -319,107 +325,6 @@ const ReportTable = () => {
                 Xác nhận
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-6 py-3 border-t">
-          <div className="text-sm text-gray-500">
-            Hiển thị {(currentPage - 1) * pageSize + 1}–
-            {Math.min(currentPage * pageSize, total)} trên {total} báo cáo
-          </div>
-          <div className="flex gap-1">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &lt;
-            </button>
-
-            {(() => {
-              const pages = [];
-              const maxVisible = 3;
-
-              let startPage = Math.max(
-                1,
-                currentPage - Math.floor(maxVisible / 2),
-              );
-              let endPage = startPage + maxVisible - 1;
-
-              if (endPage >= totalPages) {
-                endPage = totalPages;
-                startPage = Math.max(1, totalPages - maxVisible + 1);
-              }
-
-              // Hiện nút "1" nếu đang ở trang >= 3
-              if (startPage > 1) {
-                pages.push(
-                  <button
-                    key="first"
-                    onClick={() => setCurrentPage(1)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    1
-                  </button>,
-                );
-                if (startPage > 2) {
-                  pages.push(
-                    <span key="dots-start" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                }
-              }
-
-              // Các trang hiện tại
-              for (let i = startPage; i <= endPage; i++) {
-                pages.push(
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i)}
-                    className={`px-3 py-1 border rounded ${
-                      currentPage === i
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    {i}
-                  </button>,
-                );
-              }
-
-              // Hiện "..." và trang cuối nếu chưa đến cuối
-              if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                  pages.push(
-                    <span key="dots-end" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                }
-                pages.push(
-                  <button
-                    key="last"
-                    onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    {totalPages}
-                  </button>,
-                );
-              }
-
-              return pages;
-            })()}
-
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &gt;
-            </button>
           </div>
         </div>
       )}

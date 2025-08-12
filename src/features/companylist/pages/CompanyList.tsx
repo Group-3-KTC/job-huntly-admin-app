@@ -1,4 +1,3 @@
-// src/features/companylist/pages/CompanyListPage.tsx
 import { useEffect, useState } from "react";
 import { type Company, mockCompany } from "../mock/mockCompany";
 import { CompanyTable } from "../components/CompanyTable";
@@ -14,14 +13,13 @@ import { t } from "ttag";
 const CompanyListPage = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const pageSize = 5;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -64,14 +62,11 @@ const CompanyListPage = () => {
         c.email.toLowerCase().includes(searchText.toLowerCase()) ||
         c.id.toString().includes(searchText) ||
         c.quantity_employee.toString().includes(searchText);
-
       const matchStatus = statusFilter ? c.status === statusFilter : true;
-
       const matchCity =
         selectedCities.length > 0
           ? c.location_city.some((city) => selectedCities.includes(city))
           : true;
-
       return matchSearch && matchStatus && matchCity;
     })
     .sort((a, b) => {
@@ -82,7 +77,15 @@ const CompanyListPage = () => {
       return 0;
     });
 
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const paginated = filtered.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage,
+  );
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setPage(1);
+  };
 
   return (
     <div className="w-full px-6 space-y-6">
@@ -184,9 +187,10 @@ const CompanyListPage = () => {
           loading={loading}
           pagination={{
             page,
-            pageSize,
+            pageSize: itemsPerPage,
             total: filtered.length,
             onPageChange: setPage,
+            onItemsPerPageChange: handleItemsPerPageChange, // Pass handler to table
           }}
         />
       </div>

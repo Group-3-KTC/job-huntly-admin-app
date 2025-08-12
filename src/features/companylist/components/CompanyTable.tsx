@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
+import Pagination from "../../../components/common/Pagination";
 import type { Company } from "../mock/mockCompany";
 import {
   EyeIcon,
@@ -8,7 +9,6 @@ import {
   TrashIcon,
   CheckCircleIcon,
 } from "@phosphor-icons/react";
-
 import CompanyDetailModal from "./CompanyDetail";
 import CompanyEditModal from "./CompanyEdit";
 
@@ -20,6 +20,7 @@ interface Props {
     pageSize: number;
     total: number;
     onPageChange: (page: number) => void;
+    onItemsPerPageChange: (itemsPerPage: number) => void; // Add this
   };
 }
 
@@ -156,128 +157,23 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
         loading={loading}
         emptyMessage="No companies found"
       />
-
-      {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 border-t ">
-          <div className="text-sm text-gray-500">
-            Display {(pagination.page - 1) * pagination.pageSize + 1}–
-            {Math.min(pagination.page * pagination.pageSize, pagination.total)}{" "}
-            of {pagination.total} candidates
-          </div>
-          <div className="flex gap-1">
-            <button
-              disabled={pagination.page === 1}
-              onClick={() => pagination.onPageChange(pagination.page - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &lt;
-            </button>
-
-            {/* Hiển thị các nút số trang */}
-            {(() => {
-              const totalPages = Math.ceil(
-                pagination.total / pagination.pageSize,
-              );
-              const pages = [];
-              const maxVisible = 5;
-
-              let startPage = Math.max(
-                1,
-                pagination.page - Math.floor(maxVisible / 2),
-              );
-              const initialEndPage = Math.min(
-                totalPages,
-                startPage + maxVisible - 1,
-              );
-
-              if (initialEndPage - startPage + 1 < maxVisible) {
-                startPage = Math.max(1, initialEndPage - maxVisible + 1);
-              }
-
-              const endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-              // Hiển thị nút trang đầu và "..." nếu cần
-              if (startPage > 1) {
-                pages.push(
-                  <button
-                    key="first"
-                    onClick={() => pagination.onPageChange(1)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    1
-                  </button>,
-                );
-
-                if (startPage > 2) {
-                  pages.push(
-                    <span key="dots1" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                }
-              }
-
-              // Hiển thị các trang giữa
-              for (let i = startPage; i <= endPage; i++) {
-                pages.push(
-                  <button
-                    key={i}
-                    onClick={() => pagination.onPageChange(i)}
-                    className={`px-3 py-1 border rounded ${
-                      pagination.page === i
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    {i}
-                  </button>,
-                );
-              }
-
-              if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                  pages.push(
-                    <span key="dots2" className="px-3 py-1">
-                      ...
-                    </span>,
-                  );
-                }
-
-                pages.push(
-                  <button
-                    key="last"
-                    onClick={() => pagination.onPageChange(totalPages)}
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                  >
-                    {totalPages}
-                  </button>,
-                );
-              }
-
-              return pages;
-            })()}
-
-            <button
-              disabled={
-                pagination.page ===
-                Math.ceil(pagination.total / pagination.pageSize)
-              }
-              onClick={() => pagination.onPageChange(pagination.page + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
+      {!loading && pagination && pagination.total > 0 && (
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+          totalItems={pagination.total}
+          itemsPerPage={pagination.pageSize}
+          onPageChange={pagination.onPageChange}
+          onItemsPerPageChange={pagination.onItemsPerPageChange}
+          showItemsPerPage={true}
+        />
       )}
-
       {selectedCompany && (
         <CompanyDetailModal
           company={selectedCompany}
           onClose={() => setSelectedCompany(null)}
         />
       )}
-
       {editingCompany && (
         <CompanyEditModal
           company={editingCompany}
@@ -285,14 +181,13 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
           onSave={handleSaveEdit}
         />
       )}
-
       {confirmAction && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/10 flex items-center justify-center">
           <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm">
             <h2 className="text-lg font-semibold mb-4">
               {confirmAction.type === "delete"
                 ? "Confirm company deletion"
-                : "Confirm company key"}
+                : "Confirm company block"}
             </h2>
             <p className="mb-4">
               Are you sure
