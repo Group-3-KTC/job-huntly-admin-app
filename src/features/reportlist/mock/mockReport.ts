@@ -16,7 +16,7 @@ export const mockReport: Reports[] = [
     userId: 10,
     reportedContentId: 5,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const mockReport: Reports[] = [
     userId: 12,
     reportedContentId: 3,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 3,
@@ -34,7 +34,7 @@ export const mockReport: Reports[] = [
     userId: 11,
     reportedContentId: 21,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 4,
@@ -43,7 +43,7 @@ export const mockReport: Reports[] = [
     userId: 15,
     reportedContentId: 8,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 5,
@@ -52,7 +52,7 @@ export const mockReport: Reports[] = [
     userId: 16,
     reportedContentId: 7,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 6,
@@ -61,7 +61,7 @@ export const mockReport: Reports[] = [
     userId: 14,
     reportedContentId: 25,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 7,
@@ -70,7 +70,7 @@ export const mockReport: Reports[] = [
     userId: 17,
     reportedContentId: 11,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 8,
@@ -79,7 +79,7 @@ export const mockReport: Reports[] = [
     userId: 18,
     reportedContentId: 6,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 9,
@@ -88,7 +88,7 @@ export const mockReport: Reports[] = [
     userId: 19,
     reportedContentId: 30,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 10,
@@ -97,7 +97,7 @@ export const mockReport: Reports[] = [
     userId: 13,
     reportedContentId: 9,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 11,
@@ -106,7 +106,7 @@ export const mockReport: Reports[] = [
     userId: 20,
     reportedContentId: 4,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 12,
@@ -115,7 +115,7 @@ export const mockReport: Reports[] = [
     userId: 22,
     reportedContentId: 27,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 13,
@@ -124,7 +124,7 @@ export const mockReport: Reports[] = [
     userId: 23,
     reportedContentId: 14,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 14,
@@ -133,7 +133,7 @@ export const mockReport: Reports[] = [
     userId: 24,
     reportedContentId: 2,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 15,
@@ -142,7 +142,7 @@ export const mockReport: Reports[] = [
     userId: 25,
     reportedContentId: 35,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 16,
@@ -151,7 +151,7 @@ export const mockReport: Reports[] = [
     userId: 26,
     reportedContentId: 10,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 17,
@@ -160,7 +160,7 @@ export const mockReport: Reports[] = [
     userId: 27,
     reportedContentId: 12,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 18,
@@ -169,7 +169,7 @@ export const mockReport: Reports[] = [
     userId: 28,
     reportedContentId: 33,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 19,
@@ -178,7 +178,7 @@ export const mockReport: Reports[] = [
     userId: 29,
     reportedContentId: 17,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 20,
@@ -187,7 +187,7 @@ export const mockReport: Reports[] = [
     userId: 30,
     reportedContentId: 19,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 21,
@@ -196,7 +196,7 @@ export const mockReport: Reports[] = [
     userId: 31,
     reportedContentId: 31,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 22,
@@ -205,7 +205,7 @@ export const mockReport: Reports[] = [
     userId: 32,
     reportedContentId: 16,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 23,
@@ -214,7 +214,7 @@ export const mockReport: Reports[] = [
     userId: 33,
     reportedContentId: 13,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 24,
@@ -223,7 +223,7 @@ export const mockReport: Reports[] = [
     userId: 34,
     reportedContentId: 28,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 25,
@@ -232,7 +232,7 @@ export const mockReport: Reports[] = [
     userId: 35,
     reportedContentId: 20,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
   },
   {
     id: 26,
@@ -241,7 +241,7 @@ export const mockReport: Reports[] = [
     userId: 36,
     reportedContentId: 15,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 27,
@@ -250,7 +250,7 @@ export const mockReport: Reports[] = [
     userId: 37,
     reportedContentId: 36,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 28,
@@ -259,7 +259,7 @@ export const mockReport: Reports[] = [
     userId: 38,
     reportedContentId: 18,
     createAt: new Date(),
-    status: "Process"
+    status: "Process",
   },
   {
     id: 29,
@@ -268,7 +268,7 @@ export const mockReport: Reports[] = [
     userId: 39,
     reportedContentId: 24,
     createAt: new Date(),
-    status: "Cancel"
+    status: "Cancel",
   },
   {
     id: 30,
@@ -277,6 +277,186 @@ export const mockReport: Reports[] = [
     userId: 40,
     reportedContentId: 40,
     createAt: new Date(),
-    status: "Done"
+    status: "Done",
+  },
+  {
+    id: 31,
+    reportType: "Report Post",
+    description: "Bài đăng chứa ngôn ngữ phân biệt đối xử",
+    userId: 41,
+    reportedContentId: 41,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 32,
+    reportType: "Report Company",
+    description: "Công ty đăng tin không đúng vị trí tuyển dụng",
+    userId: 42,
+    reportedContentId: 42,
+    createAt: new Date(),
+    status: "Cancel",
+  },
+  {
+    id: 33,
+    reportType: "Report User",
+    description: "Người dùng đăng bài lặp lại nhiều lần",
+    userId: 43,
+    reportedContentId: 43,
+    createAt: new Date(),
+    status: "Process",
+  },
+  {
+    id: 34,
+    reportType: "Report Post",
+    description: "Tiêu đề bài viết không liên quan nội dung",
+    userId: 44,
+    reportedContentId: 44,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 35,
+    reportType: "Report Company",
+    description: "Công ty yêu cầu phỏng vấn tại địa điểm không an toàn",
+    userId: 45,
+    reportedContentId: 45,
+    createAt: new Date(),
+    status: "Cancel",
+  },
+  {
+    id: 36,
+    reportType: "Report User",
+    description: "Người này dùng tên giả",
+    userId: 46,
+    reportedContentId: 46,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 37,
+    reportType: "Report Post",
+    description: "Bài viết có nội dung lừa đảo việc làm",
+    userId: 47,
+    reportedContentId: 47,
+    createAt: new Date(),
+    status: "Process",
+  },
+  {
+    id: 38,
+    reportType: "Report Company",
+    description: "Thông tin công ty không thể xác minh",
+    userId: 48,
+    reportedContentId: 48,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 39,
+    reportType: "Report User",
+    description: "Người dùng có hành vi bắt nạt",
+    userId: 49,
+    reportedContentId: 49,
+    createAt: new Date(),
+    status: "Process",
+  },
+  {
+    id: 40,
+    reportType: "Report Post",
+    description: "Bài viết đăng sai mục",
+    userId: 50,
+    reportedContentId: 50,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 41,
+    reportType: "Report Company",
+    description: "Công ty đưa thông tin không rõ ràng về mức lương",
+    userId: 51,
+    reportedContentId: 51,
+    createAt: new Date(),
+    status: "Process",
+  },
+  {
+    id: 42,
+    reportType: "Report User",
+    description: "Người này thường xuyên spam bình luận",
+    userId: 52,
+    reportedContentId: 52,
+    createAt: new Date(),
+    status: "Cancel",
+  },
+  {
+    id: 43,
+    reportType: "Report Post",
+    description: "Thông tin trong bài đã lỗi thời",
+    userId: 53,
+    reportedContentId: 53,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 44,
+    reportType: "Report Company",
+    description: "Công ty yêu cầu nộp tiền để được phỏng vấn",
+    userId: 54,
+    reportedContentId: 54,
+    createAt: new Date(),
+    status: "Cancel",
+  },
+  {
+    id: 45,
+    reportType: "Report User",
+    description: "Người dùng đăng thông tin sai sự thật",
+    userId: 55,
+    reportedContentId: 55,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 46,
+    reportType: "Report Post",
+    description: "Bài viết không có nội dung cụ thể",
+    userId: 56,
+    reportedContentId: 56,
+    createAt: new Date(),
+    status: "Process",
+  },
+  {
+    id: 47,
+    reportType: "Report Company",
+    description: "Công ty yêu cầu làm bài test không liên quan vị trí",
+    userId: 57,
+    reportedContentId: 57,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 48,
+    reportType: "Report User",
+    description: "Người này mạo danh nhà tuyển dụng",
+    userId: 58,
+    reportedContentId: 58,
+    createAt: new Date(),
+    status: "Cancel",
+  },
+  {
+    id: 49,
+    reportType: "Report Post",
+    description: "Thông tin tuyển dụng sai mức độ kinh nghiệm",
+    userId: 59,
+    reportedContentId: 59,
+    createAt: new Date(),
+    status: "Done",
+  },
+  {
+    id: 50,
+    reportType: "Report Company",
+    description: "Công ty chậm phản hồi sau phỏng vấn",
+    userId: 60,
+    reportedContentId: 60,
+    createAt: new Date(),
+    status: "Process",
   }
 ];

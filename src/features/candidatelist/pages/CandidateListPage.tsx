@@ -1,4 +1,3 @@
-// src/features/candidatelist/pages/CandidateListPage.tsx
 import { useEffect, useState } from "react";
 import { CandidateTable } from "../components/CandidateTable";
 import { type Candidate, mockCandidates } from "../mock/mockCandidates";
@@ -22,8 +21,8 @@ export const CandidateListPage = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const pageSize = 5;
-  // filter state
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const [filterValues, setFilterValues] = useState<FilterValues>({
     searchText: "",
     status: "",
@@ -39,80 +38,74 @@ export const CandidateListPage = () => {
       setCandidates(mockCandidates);
       setLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
-const candidateFilters: FilterField[] = [
-  {
-    key: "searchText",
-    label: "Search",
-    type: "text",
-    placeholder: "Search by name or username",
-  },
-  {
-    key: "status",
-    label: "Status",
-    type: "select",
-    options: ["active", "blocked", "pending"],
-    placeholder: "Select status",
-  },
-  {
-    key: "skills",
-    label: "Skills",
-    type: "multiselect",
-    options: ["Java", "Python", "React", "SQL"],
-    placeholder: "Select skills",
-  },
-  {
-    key: "location_city",
-    label: "City",
-    type: "multiselect",
-    options: ["Ho Chi Minh", "Hanoi", "Da Nang", "Can Tho", "Nha Trang"],
-    placeholder: "Select city",
-  },
-  {
-    key: "created_from",
-    label: "Created Date",
-    type: "date",
-    placeholder: "From date",
-    prefixLabel: "From:",
-  },
-  {
-    key: "created_to",
-    label: "Created Date",
-    type: "date",
-    placeholder: "To date",
-    prefixLabel: "To:",
-  },
-  {
-    key: "sort",
-    label: "Sort",
-    type: "select",
-    options: ["id", "asc", "desc", "recent"],
-    placeholder: "Select sort order",
-    prefixLabel: "Sort by:",
-  },
-];
+  const candidateFilters: FilterField[] = [
+    {
+      key: "searchText",
+      label: "Search",
+      type: "text",
+      placeholder: "Search by name or username",
+    },
+    {
+      key: "status",
+      label: "Status",
+      type: "select",
+      options: ["active", "blocked", "pending"],
+      placeholder: "Select status",
+    },
+    {
+      key: "skills",
+      label: "Skills",
+      type: "multiselect",
+      options: ["Java", "Python", "React", "SQL"],
+      placeholder: "Select skills",
+    },
+    {
+      key: "location_city",
+      label: "City",
+      type: "multiselect",
+      options: ["Ho Chi Minh", "Hanoi", "Da Nang", "Can Tho", "Nha Trang"],
+      placeholder: "Select city",
+    },
+    {
+      key: "created_from",
+      label: "Created Date",
+      type: "date",
+      placeholder: "From date",
+      prefixLabel: "From:",
+    },
+    {
+      key: "created_to",
+      label: "Created Date",
+      type: "date",
+      placeholder: "To date",
+      prefixLabel: "To:",
+    },
+    {
+      key: "sort",
+      label: "Sort",
+      type: "select",
+      options: ["id", "asc", "desc", "recent"],
+      placeholder: "Select sort order",
+      prefixLabel: "Sort by:",
+    },
+  ];
 
-  // filter + sort
   const filtered = candidates
     .filter((c) => {
       const { searchText, status, skills, location_city } = filterValues;
       const matchSearch =
         c.name.toLowerCase().includes(searchText.toLowerCase()) ||
         c.username.toLowerCase().includes(searchText.toLowerCase());
-
       const matchStatus = status ? c.status === status : true;
-
       const matchSkills = skills.length
         ? skills.every((s: string) => c.skills?.includes(s))
         : true;
-
       const matchLocation = location_city.length
         ? location_city.includes(c.location_city)
         : true;
-
       return matchSearch && matchStatus && matchSkills && matchLocation;
     })
     .sort((a, b) => {
@@ -124,74 +117,50 @@ const candidateFilters: FilterField[] = [
       return 0;
     });
 
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const paginated = filtered.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage,
+  );
 
-  // const handleAddCandidate = () => {
-  //   alert("Add Candidate");
-  // };
-
-  // const handleExportExcel = () => {
-  //   alert("Xuất Excel");
-  // };
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setPage(1);
+  };
 
   return (
-    <>
-      <div className="w-full px-6">
-        {/* Thống kê nhanh */}
-        <CandidateStatistics candidates={candidates} />
-        
-        {/* Bộ lọc dùng FilterBar */}
-        <FilterBar
-          filters={candidateFilters}
-          initialValues={filterValues}
-          onFilterChange={(filters) => {
-            setFilterValues(filters as unknown as FilterValues);
-            setPage(1); // reset về trang đầu khi filter
-          }}
-          onReset={() => {
-            const reset: FilterValues = {
-              searchText: "",
-              status: "",
-              sort: "",
-              skills: [],
-              location_city: [],
-              created_from: "",
-              created_to: "",
-            };
-            setFilterValues(reset);
-            setPage(1);
-          }}
-        />
-
-        {/* <div className="flex items-center justify-end my-6">
-          <div className="flex gap-2">
-            <button
-              onClick={handleAddCandidate}
-              className="flex items-center px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-            >
-              <Plus size={16} className="mr-2" /> Thêm Ứng Viên
-            </button>
-            <button
-              onClick={handleExportExcel}
-              className="flex items-center px-4 py-2 bg-green-500 rounded hover:bg-gray-300"
-            >
-              <FileXls size={16} className="mr-2" /> Xuất Excel
-            </button>
-          </div>
-        </div> */}
-
-        {/* Bảng dữ liệu */}
-        <CandidateTable
-          candidates={paginated}
-          loading={loading}
-          pagination={{
-            page,
-            pageSize,
-            total: filtered.length,
-            onPageChange: setPage,
-          }}
-        />
-      </div>
-    </>
+    <div className="w-full px-6">
+      <CandidateStatistics candidates={candidates} />
+      <FilterBar
+        filters={candidateFilters}
+        initialValues={filterValues}
+        onFilterChange={(filters) => {
+          setFilterValues(filters as unknown as FilterValues);
+          setPage(1);
+        }}
+        onReset={() => {
+          setFilterValues({
+            searchText: "",
+            status: "",
+            sort: "",
+            skills: [],
+            location_city: [],
+            created_from: "",
+            created_to: "",
+          });
+          setPage(1);
+        }}
+      />
+      <CandidateTable
+        candidates={paginated}
+        loading={loading}
+        pagination={{
+          page,
+          pageSize: itemsPerPage,
+          total: filtered.length,
+          onPageChange: setPage,
+          onItemsPerPageChange: handleItemsPerPageChange, // Pass handler to table
+        }}
+      />
+    </div>
   );
 };

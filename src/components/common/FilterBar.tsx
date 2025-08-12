@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import {
   Calendar,
@@ -139,7 +140,7 @@ export const FilterBar = ({
                     ))}
 
                   <select
-                    className="bg-transparent text-sm text-gray-500 outline-none"
+                    className="bg-transparent text-sm text-gray-500 outline-none w-full"
                     onChange={(e) => {
                       const selectedValue = e.target.value;
                       if (selectedValue && !value.includes(selectedValue)) {
