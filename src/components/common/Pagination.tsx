@@ -118,7 +118,7 @@ export default function Pagination({
                 />
               </span>
             </Listbox.Button>
-            <Listbox.Options className="absolute bottom-10 w-20 rounded-lg bg-white py-1.5 text-sm font-medium shadow-lg ring-1 ring-gray-200 focus:outline-none z-10">
+            <Listbox.Options className="absolute bottom-10 w-20 rounded-lg bg-white text-sm font-medium shadow-lg ring-1 ring-gray-200 focus:outline-none z-10">
               {itemsPerPageOptions.map((opt) => (
                 <Listbox.Option
                   key={opt.value}
