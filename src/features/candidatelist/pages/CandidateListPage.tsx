@@ -66,7 +66,7 @@ export const CandidateListPage = () => {
       key: "location_city",
       label: "City",
       type: "multiselect",
-      options: ["Ho Chi Minh", "Hanoi", "Da Nang", "Can Tho", "Nha Trang"],
+      options: ["Ho Chi Minh", "Ha noi", "Da Nang", "Can Tho", "Nha Trang"],
       placeholder: "Select city",
     },
     {
