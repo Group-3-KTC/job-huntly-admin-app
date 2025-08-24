@@ -2,9 +2,9 @@ name: Build and Deploy React TS App
 
 on:
   push:
-    branches: [dev] # Chỉ deploy khi merge vào dev
+    branches: [dev]  
   pull_request:
-    branches: [dev] # Chỉ build/check khi tạo PR
+    branches: [dev]  
 
 concurrency:
   group: fe-deploy
@@ -19,60 +19,62 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: "npm"
 
-      - name: Build (PR check)
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint and Test
         run: |
-          npm install
-          npm run build
+          npm run lint  # Giả sử có script lint (ESLint/TSLint)
+          npm run test:ci  # Giả sử có script test (Jest/Vitest)
+
+      - name: Build React TS
+        run: npm run build
 
   docker-build-push:
-    if: github.event_name == 'push' 
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    needs: build  
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login Docker Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        run: |
-          docker build \
-            --build-arg VITE_API_BASE_URL="${{ secrets.PRODUCTION_API_BASE_URL }}" \
-            --no-cache \
-            -t $DOCKER_IMAGE:$DOCKER_TAG .
-          docker push $DOCKER_IMAGE:$DOCKER_TAG
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+          build-args: |
+            VITE_API_BASE_URL=${{ secrets.PRODUCTION_API_BASE_URL }}
+          cache-from: type=gha  
+          cache-to: type=gha,mode=max
 
-      - name: Copy docker-compose.yml to EC2
+      - name: Copy docker-compose.yml to EC2 if changed
+        if: contains(github.event.commits[0].modified, 'docker-compose.yml') || contains(github.event.commits[0].added, 'docker-compose.yml')
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
-          port: 22
           target: "${{ env.REMOTE_DIR }}"
           overwrite: true
-          debug: true
 
   deploy:
-    if: github.event_name == 'push' 
+    if: ${{ github.event_name == 'push' }}
     needs: docker-build-push
     runs-on: ubuntu-latest
     steps:
@@ -82,7 +84,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
           script: |
             if docker compose version >/dev/null 2>&1; then
               COMPOSE="docker compose"
@@ -92,10 +93,15 @@ jobs:
 
             cd ${{ env.REMOTE_DIR }}
 
+            echo "Tạo network (nếu chưa có)..."
             docker network create jobhuntly-network || true
-            $COMPOSE -f docker-compose.yml pull
-            $COMPOSE -f docker-compose.yml stop frontend || true
-            $COMPOSE -f docker-compose.yml rm -f frontend || true
-            docker rm -f frontend || true
-            $COMPOSE -f docker-compose.yml up -d --remove-orphans
+
+            echo "Pull latest image..."
+            $COMPOSE -f docker-compose.yml pull frontend  # Chỉ pull service frontend nếu có nhiều service
+
+            echo "Restart container..."
+            $COMPOSE -f docker-compose.yml down frontend || true  # Chỉ down frontend để tránh ảnh hưởng service khác
+            $COMPOSE -f docker-compose.yml up -d frontend --remove-orphans
+
+            echo "Check status..."
             $COMPOSE -f docker-compose.yml ps
