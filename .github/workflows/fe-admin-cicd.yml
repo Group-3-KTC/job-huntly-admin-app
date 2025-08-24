@@ -15,7 +15,7 @@ env:
   REMOTE_DIR: ~/jobhuntly-fe
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,6 +24,37 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint code (if available)
+        run: |
+          if npm run | grep -q "lint"; then
+            npm run lint -- --max-warnings 20
+          else
+            echo "No lint script found, skipping"
+          fi
+        continue-on-error: true
+      - name: Build application
+        run: npm run build
+      - name: Run tests (if available)
+        run: |
+          if npm run | grep -q "test"; then
+            npm test -- --coverage --watchAll=false
+          else
+            echo "No test script found, skipping tests"
+          fi
+        continue-on-error: true
+
+  docker-build-push:
+    if: github.event_name == 'push'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: development
+    outputs:
+      image-tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
       - name: Setup Docker Buildx
@@ -49,7 +80,7 @@ jobs:
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.DEV_HOST }}
+          host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
@@ -57,13 +88,15 @@ jobs:
           overwrite: true
 
   deploy:
-    needs: build
+    if: github.event_name == 'push'
+    needs: docker-build-push
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.DEV_HOST }}
+          host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -80,3 +113,23 @@ jobs:
             docker rm -f frontend || true
             $COMPOSE -f docker-compose.yml up -d --remove-orphans
             $COMPOSE -f docker-compose.yml ps
+
+  notify:
+    if: always()
+    needs: [build-and-test, docker-build-push, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify deployment status
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          ENV="development"
+          
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "🎉 Deployment to $ENV ($BRANCH_NAME) completed successfully!"
+          elif [ "${{ needs.deploy.result }}" == "failure" ]; then
+            echo "💥 Deployment to $ENV ($BRANCH_NAME) failed!"
+          elif [ "${{ needs.deploy.result }}" == "skipped" ]; then
+            echo "⏭️ Deployment was skipped (PR only builds/tests)"
+          else
+            echo "ℹ️ Deployment status: ${{ needs.deploy.result }}"
+          fi
