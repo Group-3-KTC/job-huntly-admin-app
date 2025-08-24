@@ -30,7 +30,7 @@ const ReportFilter = () => {
     },
   ];
 
-  const handleFilterChange = (filterValues: Record<string, any>) => {
+  const handleFilterChange = (filterValues: Record<string, string>) => {
     let results = [...mockReport];
 
     if (filterValues.reportType) {

@@ -25,7 +25,7 @@ const JobListTable = () => {
     axios
       .get("https://provinces.open-api.vn/api/")
       .then((res) => {
-        const names = res.data.map((city: any) => city.name);
+        const names = res.data.map((city: { name: string }) => city.name);
         setCityOptions(names);
       })
       .catch((err) => {
@@ -113,7 +113,7 @@ const JobListTable = () => {
   ];
 
   const sortedAndFilteredData = useMemo(() => {
-    let temp = [...jobs];
+    const temp = [...jobs];
 
     if (sortOrder === "recent") {
       temp.sort((a, b) => b.id - a.id);
