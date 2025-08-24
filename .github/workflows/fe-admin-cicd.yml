@@ -2,9 +2,9 @@ name: Build and Deploy React TS App
 
 on:
   push:
-    branches: [dev] 
+    branches: [dev] # Chỉ deploy khi merge vào dev
   pull_request:
-    branches: [dev] 
+    branches: [dev] # Chỉ build/check khi tạo PR
 
 concurrency:
   group: fe-deploy
