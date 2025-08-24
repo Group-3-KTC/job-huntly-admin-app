@@ -56,7 +56,7 @@ const ReportTable = () => {
     },
   ];
 
-  const handleFilterChange = (filterValues: Record<string, any>) => {
+  const handleFilterChange = (filterValues: Record<string, string>) => {
     let filtered = [...mockReport];
     if (filterValues.reportType) {
       filtered = filtered.filter(
@@ -175,7 +175,7 @@ const ReportTable = () => {
       key: "actions",
       title: "Actions",
       align: "center",
-      render: (_: any, record: Reports) => (
+      render: (_: String, record: Reports) => (
         <div className="flex justify-center gap-2">
           <button
             onClick={() => setReportToDelete(record)}
