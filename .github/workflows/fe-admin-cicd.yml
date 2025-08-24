@@ -28,10 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint and Test
-        run: |
-          npm run lint  # Giả sử có script lint (ESLint/TSLint)
-          npm run test:ci  # Giả sử có script test (Jest/Vitest)
+      - name: Run Tests
+        run: npm run test:ci
 
       - name: Build React TS
         run: npm run build

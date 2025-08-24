@@ -22,7 +22,7 @@ export const PageTracker = () => {
   useEffect(() => {
     const title = routeTitleMap[location.pathname] || "Dashboard";
     dispatch(setPageTitle(title));
-  }, [location.pathname, dispatch]);
+  }, [location.pathname, dispatch, routeTitleMap]);
 
   return null;
 };
