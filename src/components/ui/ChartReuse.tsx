@@ -14,7 +14,6 @@ import type { ChartOptions, ChartData as ChartJSData } from "chart.js";
 import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
 import type { ChartData } from "../../types/chartData.type";
 
-// Register Chart.js components
 ChartJS.register(
   LineElement,
   BarElement,
@@ -33,7 +32,7 @@ interface Props extends ChartData {
   stacked?: boolean;
 }
 
-const chartComponents: Record<ChartType, React.ElementType> = {
+const chartComponents: Record<ChartType, React.ComponentType<any>> = {
   line: Line,
   bar: Bar,
   pie: Pie,
@@ -47,30 +46,21 @@ const ChartReuse: React.FC<Props> = ({
   type,
   stacked = false,
 }) => {
-  // Chart data
-  const data: ChartJSData<any, number[], string> = {
+  const data: ChartJSData<ChartType, number[], string> = {
     labels,
-    datasets: datasets.map((d) => ({
-      ...d,
-      borderColor: d.borderColor,
-      backgroundColor: d.backgroundColor,
-      tension: d.tension,
-      stack: d.stack,
-      pointHoverRadius: d.pointHoverRadius,
-    })),
+    datasets,
   };
 
-  // Chart options
-  const options: ChartOptions<any> = {
+  const options: ChartOptions<ChartType> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true },
       tooltip: { mode: "index", intersect: false },
     },
-    scales:
-      type === "bar" || type === "line"
-        ? {
+    ...(type === "bar" || type === "line"
+      ? {
+          scales: {
             x: {
               grid: { display: false },
               stacked,
@@ -81,11 +71,11 @@ const ChartReuse: React.FC<Props> = ({
               stacked,
               ticks: { stepSize: 100 },
               title: { display: true, text: "Value" },
-              position: "left",
-              padding: 10,
+              position: "left" as const,
             },
-          }
-        : undefined,
+          },
+        }
+      : {}),
   };
 
   const ChartComponent = chartComponents[type];
