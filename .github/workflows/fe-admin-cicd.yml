@@ -2,9 +2,9 @@ name: Build and Deploy React TS App
 
 on:
   push:
-    branches: [dev]
+    branches: [dev] # Chỉ deploy khi merge vào dev
   pull_request:
-    branches: [dev]
+    branches: [dev] # Chỉ build/check khi tạo PR
 
 concurrency:
   group: fe-deploy
@@ -26,6 +26,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+
+      - name: Build (PR check)
+        run: |
+          npm install
+          npm run build
+
+  docker-build-push:
+    if: github.event_name == 'push' 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
@@ -58,8 +70,10 @@ jobs:
           target: "${{ env.REMOTE_DIR }}"
           overwrite: true
           debug: true
+
   deploy:
-    needs: build
+    if: github.event_name == 'push' 
+    needs: docker-build-push
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to EC2
@@ -71,17 +85,17 @@ jobs:
           port: 22
           script: |
             if docker compose version >/dev/null 2>&1; then
-                COMPOSE="docker compose"
+              COMPOSE="docker compose"
             else
-                COMPOSE="docker-compose"
+              COMPOSE="docker-compose"
             fi
 
             cd ${{ env.REMOTE_DIR }}
 
             docker network create jobhuntly-network || true
             $COMPOSE -f docker-compose.yml pull
-            $COMPOSE -f docker-compose.yml down --remove-orphans || true
-            docker image prune -af || true
-            $COMPOSE -f docker-compose.yml up -d --force-recreate --remove-orphans
+            $COMPOSE -f docker-compose.yml stop frontend || true
+            $COMPOSE -f docker-compose.yml rm -f frontend || true
+            docker rm -f frontend || true
+            $COMPOSE -f docker-compose.yml up -d --remove-orphans
             $COMPOSE -f docker-compose.yml ps
-
