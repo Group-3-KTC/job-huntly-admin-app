@@ -68,7 +68,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          port: 2
+          port: 22
           script: |
             if docker compose version >/dev/null 2>&1; then
               COMPOSE="docker compose"
