@@ -2,20 +2,20 @@ name: Build and Deploy React TS App
 
 on:
   push:
-    branches: [dev]
+    branches: [main, dev]
   pull_request:
-    branches: [dev]
+    branches: [main, dev]
 
 concurrency:
-  group: fe-deploy-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  DOCKER_IMAGE: vohoangphuc/jobhuntly-admin-app
+  DOCKER_IMAGE: vohoangphuc/jobhuntly-frontend
   REMOTE_DIR: ~/jobhuntly-fe
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,21 +24,40 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
           cache: 'npm'
        
       - name: Install dependencies
         run: npm ci
        
-      - name: Build (PR check)
+      - name: Lint code (if available)
+        run: |
+          if npm run | grep -q "lint"; then
+            npm run lint -- --max-warnings 20
+          else
+            echo "No lint script found, skipping"
+          fi
+        continue-on-error: true
+       
+      - name: Build application
         run: npm run build
+        
+      - name: Run tests (if available)
+        run: |
+          if npm run | grep -q "test"; then
+            npm test -- --coverage --watchAll=false
+          else
+            echo "No test script found, skipping tests"
+          fi
+        continue-on-error: true
 
   docker-build-push:
-    if: github.event_name == 'push' 
-    needs: build
+    if: github.event_name == 'push'
+    needs: build-and-test
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     outputs:
-      image-digest: ${{ steps.build.outputs.digest }}
+      image-tag: ${{ steps.meta.outputs.tag }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -60,45 +79,67 @@ jobs:
         run: |
           echo "build-time=$(date +%s)" >> $GITHUB_OUTPUT
           echo "short-sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "env=production" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+            echo "api_url_secret=PRODUCTION_API_BASE_URL" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            echo "env=development" >> $GITHUB_OUTPUT  
+            echo "tag=latest" >> $GITHUB_OUTPUT
+            echo "api_url_secret=DEV_API_BASE_URL" >> $GITHUB_OUTPUT
+          fi
        
       - name: Build and Push Docker Image
-        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: |
-            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.tag }}
             ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.short-sha }}
           build-args: |
-            VITE_API_BASE_URL=${{ secrets.PRODUCTION_API_BASE_URL }}
+            VITE_API_BASE_URL=${{ secrets[steps.meta.outputs.api_url_secret] }}
             BUILD_TIME=${{ steps.meta.outputs.build-time }}
             GIT_COMMIT=${{ github.sha }}
+            NODE_ENV=${{ steps.meta.outputs.env }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          no-cache: true
+          no-cache: false
 
-      - name: Copy docker-compose.yml to EC2
+      - name: Copy docker-compose to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ github.ref == 'refs/heads/main' && secrets.PROD_HOST || secrets.DEV_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "docker-compose.yml"
-          port: 22
           target: "${{ env.REMOTE_DIR }}"
           overwrite: true
 
   deploy:
-    if: github.event_name == 'push' 
+    if: github.event_name == 'push'
     needs: docker-build-push
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     steps:
-      - name: Deploy to EC2
+      - name: Set deployment variables
+        id: vars
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "env=production" >> $GITHUB_OUTPUT
+            echo "host=${{ secrets.PROD_HOST }}" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            echo "env=development" >> $GITHUB_OUTPUT
+            echo "host=${{ secrets.DEV_HOST }}" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to ${{ steps.vars.outputs.env }}
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ steps.vars.outputs.host }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
@@ -106,60 +147,86 @@ jobs:
           script: |
             set -e
             
+            # Detect compose command
             if command -v docker-compose &> /dev/null; then
               COMPOSE="docker-compose"
             elif docker compose version &> /dev/null; then
               COMPOSE="docker compose"
             else
-              echo "Docker Compose not found"
+              echo "❌ Docker Compose not found"
               exit 1
             fi
             
-            echo "Using compose command: $COMPOSE"
+            echo "🚀 Deploying to ${{ steps.vars.outputs.env }} environment..."
+            echo "Using compose: $COMPOSE"
             
             cd ${{ env.REMOTE_DIR }}
             
+            # Debug information
+            echo "📂 Current directory: $(pwd)"
+            echo "📋 Files in directory:"
+            ls -la
+            echo "🔧 Available services:"
+            $COMPOSE config --services || echo "Failed to read services"
+            
+            # Create network if not exists
             docker network create jobhuntly-network 2>/dev/null || true
             
-            docker image rm ${{ env.DOCKER_IMAGE }}:latest 2>/dev/null || true
+            # Set environment variables for compose
+            export DOCKER_IMAGE=${{ env.DOCKER_IMAGE }}:${{ steps.vars.outputs.tag }}
+            export NODE_ENV=${{ steps.vars.outputs.env }}
             
-            echo "Pulling latest image..."
-            $COMPOSE pull jobhuntly-frontend
+            echo "📦 Pulling image: $DOCKER_IMAGE"
+            docker pull $DOCKER_IMAGE
             
-            echo "Stopping old containers..."
-            $COMPOSE down jobhuntly-frontend 2>/dev/null || true
+            # Backup current version tag
+            docker tag ${{ env.DOCKER_IMAGE }}:${{ steps.vars.outputs.tag }} ${{ env.DOCKER_IMAGE }}:previous-${{ steps.vars.outputs.env }} 2>/dev/null || true
             
+            echo "🛑 Stopping old containers..."
+            $COMPOSE down frontend 2>/dev/null || true
+            
+            # Clean up
             docker container prune -f
             docker image prune -f
             
-            echo "Starting new containers..."
-            $COMPOSE up -d --force-recreate --remove-orphans jobhuntly-frontend
+            echo "🚀 Starting new containers..."
+            $COMPOSE up -d --force-recreate frontend
             
-            echo "Waiting for container to be ready..."
-            sleep 15
+            echo "⏳ Waiting for container to be ready..."
+            sleep 20
             
-            echo "Verifying deployment..."
-            $COMPOSE ps jobhuntly-frontend
-            
-            echo "Container logs:"
-            docker logs jobhuntly-frontend --tail 20
-            
-            if $COMPOSE ps jobhuntly-frontend | grep -q "Up"; then
-              echo "✅ Deployment successful!"
+            echo "🔍 Verifying deployment..."
+            if $COMPOSE ps frontend | grep -q "Up"; then
+              echo "✅ Deployment to ${{ steps.vars.outputs.env }} successful!"
+              echo "📋 Container status:"
+              $COMPOSE ps frontend
+              echo "📝 Recent logs:"
+              docker logs frontend --tail 10 2>/dev/null || true
             else
               echo "❌ Deployment failed!"
+              echo "📋 Container status:"
+              $COMPOSE ps frontend || true
+              echo "📝 Error logs:"
+              docker logs frontend --tail 50 2>/dev/null || true
               exit 1
             fi
 
   notify:
     if: always()
-    needs: [build, docker-build-push, deploy]
+    needs: [build-and-test, docker-build-push, deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Notify deployment status
         run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          ENV="${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}"
+          
           if [ "${{ needs.deploy.result }}" == "success" ]; then
-            echo "🎉 Deployment to production completed successfully!"
+            echo "🎉 Deployment to $ENV ($BRANCH_NAME) completed successfully!"
+          elif [ "${{ needs.deploy.result }}" == "failure" ]; then
+            echo "💥 Deployment to $ENV ($BRANCH_NAME) failed!"
+          elif [ "${{ needs.deploy.result }}" == "skipped" ]; then
+            echo "⏭️ Deployment was skipped (PR only builds/tests)"
           else
-            echo "💥 Deployment failed. Check the logs above."
+            echo "ℹ️ Deployment status: ${{ needs.deploy.result }}"
           fi
