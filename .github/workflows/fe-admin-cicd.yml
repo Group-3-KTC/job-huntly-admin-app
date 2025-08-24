@@ -1,0 +1,87 @@
+name: Build and Deploy React TS App
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev, feature/001-layout-admin]
+
+concurrency:
+  group: fe-deploy
+  cancel-in-progress: true
+
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/jobhuntly-frontend
+  DOCKER_TAG: latest
+  REMOTE_DIR: ~/jobhuntly-fe
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build \
+            --build-arg VITE_API_BASE_URL="${{ secrets.PRODUCTION_API_BASE_URL }}" \
+            --no-cache \
+            -t $DOCKER_IMAGE:$DOCKER_TAG .
+          docker push $DOCKER_IMAGE:$DOCKER_TAG
+
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "docker-compose.yml"
+          port: 22
+          target: "${{ env.REMOTE_DIR }}"
+          overwrite: true
+          debug: true
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE="docker compose"
+            else
+              COMPOSE="docker-compose"
+            fi
+
+            cd ${{ env.REMOTE_DIR }}
+
+            docker network create jobhuntly-network || true
+            $COMPOSE -f docker-compose.yml pull
+            $COMPOSE -f docker-compose.yml stop frontend || true
+            $COMPOSE -f docker-compose.yml rm -f frontend || true
+            docker rm -f frontend || true
+            $COMPOSE -f docker-compose.yml up -d --remove-orphans
+            $COMPOSE -f docker-compose.yml ps
