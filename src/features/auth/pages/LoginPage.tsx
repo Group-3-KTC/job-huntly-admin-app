@@ -31,7 +31,7 @@ const Login = () => {
       dispatch(loginSuccess({ user: res.user, token: res.accessToken }));
       navigate("/admin/dashboard");
     } catch (err) {
-      setApiError("Đăng nhập thất bại. Vui lòng kiểm tra lại.");
+      setApiError("Đăng nhập thất bại. Vui lòng kiểm tra lại." + err);
     }
   };
 

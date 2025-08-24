@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { ChartData } from "../../../types/chartData.type";
+import type { ChartData, ChartDataset } from "../../../types/chartData.type";
 import ChartReuse from "../../../components/ui/ChartReuse";
 
-const COLORS = ["#3B82F6", "#F97316"]; // Giữ màu gốc nhưng sẽ thêm gradient
+const COLORS = ["#3B82F6", "#F97316"];
 
 const ChartUserGrowth = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -10,26 +10,35 @@ const ChartUserGrowth = () => {
   useEffect(() => {
     fetch("https://dummyjson.com/c/07be-8b55-434e-8dad")
       .then((res) => res.json())
-      .then((raw) => {
-        const datasets = raw.series.map((s: any, i: number) => ({
-          label: s.name,
-          data: s.values,
-          borderColor: (context: any) => {
-            const gradient = context.chart.ctx.createLinearGradient(
-              0,
-              0,
-              0,
-              200,
-            );
-            gradient.addColorStop(0, COLORS[i]);
-            return gradient;
-          },
-          backgroundColor: "transparent", // Loại bỏ nền để tập trung vào đường
-          pointHoverRadius: 7, // Điểm khi hover lớn hơn
-        }));
+      .then(
+        (raw: {
+          title: string;
+          labels: string[];
+          series: { name: string; values: number[] }[];
+        }) => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
-        setChartData({ title: raw.title, labels: raw.labels, datasets });
-      });
+          const datasets: ChartDataset[] = raw.series.map((s, i) => {
+            let gradient: string | CanvasGradient = COLORS[i];
+            if (ctx) {
+              gradient = ctx.createLinearGradient(0, 0, 0, 200);
+              gradient.addColorStop(0, COLORS[i]);
+              gradient.addColorStop(1, "transparent");
+            }
+
+            return {
+              label: s.name,
+              data: s.values,
+              borderColor: gradient,
+              backgroundColor: "transparent",
+              pointHoverRadius: 7,
+            };
+          });
+
+          setChartData({ title: raw.title, labels: raw.labels, datasets });
+        },
+      );
   }, []);
 
   if (!chartData) return <p>Loading...</p>;

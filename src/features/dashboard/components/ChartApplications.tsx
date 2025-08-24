@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ChartData } from "../../../types/chartData.type";
+import type { ChartData, ChartDataset } from "../../../types/chartData.type";
 import ChartReuse from "../../../components/ui/ChartReuse";
 
 const COLORS = ["#6366F1", "#EC4899", "#22D3EE"];
@@ -10,17 +10,23 @@ const ChartApplications = () => {
   useEffect(() => {
     fetch("https://dummyjson.com/c/e4cb-572c-4c1b-928f")
       .then((res) => res.json())
-      .then((raw) => {
-        const datasets = raw.series.map((s: any, i: number) => ({
-          label: s.name,
-          data: s.values,
-          borderColor: COLORS[i],
-          backgroundColor: COLORS[i],
-          stack: "stack-1",
-        }));
+      .then(
+        (raw: {
+          title: string;
+          labels: string[];
+          series: { name: string; values: number[] }[];
+        }) => {
+          const datasets: ChartDataset[] = raw.series.map((s, i) => ({
+            label: s.name,
+            data: s.values,
+            borderColor: COLORS[i],
+            backgroundColor: COLORS[i],
+            stack: "stack-1",
+          }));
 
-        setChartData({ title: raw.title, labels: raw.labels, datasets });
-      });
+          setChartData({ title: raw.title, labels: raw.labels, datasets });
+        },
+      );
   }, []);
 
   if (!chartData) return <p>Loading...</p>;
