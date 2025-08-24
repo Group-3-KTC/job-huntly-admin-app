@@ -10,9 +10,11 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import type { ChartOptions, ChartData as ChartJSData } from "chart.js";
 import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
 import type { ChartData } from "../../types/chartData.type";
 
+// Register Chart.js components
 ChartJS.register(
   LineElement,
   BarElement,
@@ -24,9 +26,18 @@ ChartJS.register(
   Legend,
 );
 
-type Props = ChartData & {
-  type: "line" | "bar" | "pie" | "doughnut";
+type ChartType = "line" | "bar" | "pie" | "doughnut";
+
+interface Props extends ChartData {
+  type: ChartType;
   stacked?: boolean;
+}
+
+const chartComponents: Record<ChartType, React.ElementType> = {
+  line: Line,
+  bar: Bar,
+  pie: Pie,
+  doughnut: Doughnut,
 };
 
 const ChartReuse: React.FC<Props> = ({
@@ -36,12 +47,26 @@ const ChartReuse: React.FC<Props> = ({
   type,
   stacked = false,
 }) => {
-  const options = {
+  // Chart data
+  const data: ChartJSData<any, number[], string> = {
+    labels,
+    datasets: datasets.map((d) => ({
+      ...d,
+      borderColor: d.borderColor,
+      backgroundColor: d.backgroundColor,
+      tension: d.tension,
+      stack: d.stack,
+      pointHoverRadius: d.pointHoverRadius,
+    })),
+  };
+
+  // Chart options
+  const options: ChartOptions<any> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true },
-      tooltip: { mode: "index" as const, intersect: false },
+      tooltip: { mode: "index", intersect: false },
     },
     scales:
       type === "bar" || type === "line"
@@ -50,40 +75,27 @@ const ChartReuse: React.FC<Props> = ({
               grid: { display: false },
               stacked,
               ticks: { autoSkip: false },
-              title: { display: true, text: "Time Period" }, // Thêm tiêu đề trục x-axis
+              title: { display: true, text: "Time Period" },
             },
             y: {
               stacked,
               ticks: { stepSize: 100 },
-              title: { display: true, text: "Value" }, // Thêm tiêu đề trục y-axis
-              position: "left" as const, // Đảm bảo y-axis nằm bên trái
-              padding: 10, // Thêm padding để tránh trục y bị cắt
+              title: { display: true, text: "Value" },
+              position: "left",
+              padding: 10,
             },
           }
         : undefined,
   };
 
-  const data = { labels, datasets };
-
-  const renderChart = () => {
-    switch (type) {
-      case "line":
-        return <Line data={data} options={options} />;
-      case "bar":
-        return <Bar data={data} options={options} />;
-      case "pie":
-        return <Pie data={data} options={options} />;
-      case "doughnut":
-        return <Doughnut data={data} options={options} />;
-      default:
-        return <p>Invalid chart type</p>;
-    }
-  };
+  const ChartComponent = chartComponents[type];
 
   return (
-    <div className="w-full max-w-full p-4 pb-12  bg-white shadow-md rounded-xl h-[420px]">
+    <div className="w-full max-w-full p-4 pb-12 bg-white shadow-md rounded-xl h-[420px]">
       <h3 className="mb-4 text-lg font-semibold text-gray-700">{title}</h3>
-      <div className="h-full">{renderChart()}</div>
+      <div className="h-full">
+        <ChartComponent data={data} options={options} />
+      </div>
     </div>
   );
 };

@@ -175,7 +175,7 @@ const ReportTable = () => {
       key: "actions",
       title: "Actions",
       align: "center",
-      render: (_: String, record: Reports) => (
+      render: (_: string, record: Reports) => (
         <div className="flex justify-center gap-2">
           <button
             onClick={() => setReportToDelete(record)}
