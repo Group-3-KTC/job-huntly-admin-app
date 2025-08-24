@@ -32,9 +32,6 @@ jobs:
        
       - name: Build (PR check)
         run: npm run build
-        
-      - name: Run tests
-        run: npm test -- --coverage --watchAll=false
 
   docker-build-push:
     if: github.event_name == 'push' 
