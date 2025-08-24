@@ -1,7 +1,22 @@
 services:
   frontend:
-    image: vohoangphuc/jobhuntly-admin-app:latest
-    container_name: jobhuntly-frontend
-    restart: always
+    image: vohoangphuc/jobhuntly-frontend:latest
+    container_name: frontend
+    restart: unless-stopped
     ports:
       - "5173:5173"
+    networks:
+      - jobhuntly-network
+    pull_policy: always
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  jobhuntly-network:
+    external: true

@@ -2,17 +2,16 @@ name: Build and Deploy React TS App
 
 on:
   push:
-    branches: [dev] # Chỉ deploy khi merge vào dev
+    branches: [dev]
   pull_request:
-    branches: [dev] # Chỉ build/check khi tạo PR
+    branches: [dev]
 
 concurrency:
-  group: fe-deploy
+  group: fe-deploy-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/jobhuntly-frontend
-  DOCKER_TAG: latest
+  DOCKER_IMAGE: vohoangphuc/jobhuntly-admin-app
   REMOTE_DIR: ~/jobhuntly-fe
 
 jobs:
@@ -21,43 +20,63 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+       
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "18"
-
+          cache: 'npm'
+       
+      - name: Install dependencies
+        run: npm ci
+       
       - name: Build (PR check)
-        run: |
-          npm install
-          npm run build
+        run: npm run build
 
   docker-build-push:
     if: github.event_name == 'push' 
+    needs: build
     runs-on: ubuntu-latest
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+       
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
-
+       
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
-
+       
       - name: Login Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push Docker Image
+       
+      - name: Generate build metadata
+        id: meta
         run: |
-          docker build \
-            --build-arg VITE_API_BASE_URL="${{ secrets.PRODUCTION_API_BASE_URL }}" \
-            --no-cache \
-            -t $DOCKER_IMAGE:$DOCKER_TAG .
-          docker push $DOCKER_IMAGE:$DOCKER_TAG
+          echo "build-time=$(date +%s)" >> $GITHUB_OUTPUT
+          echo "short-sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+       
+      - name: Build and Push Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.short-sha }}
+          build-args: |
+            VITE_API_BASE_URL=${{ secrets.PRODUCTION_API_BASE_URL }}
+            BUILD_TIME=${{ steps.meta.outputs.build-time }}
+            GIT_COMMIT=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          no-cache: true
 
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -69,12 +88,12 @@ jobs:
           port: 22
           target: "${{ env.REMOTE_DIR }}"
           overwrite: true
-          debug: true
 
   deploy:
     if: github.event_name == 'push' 
     needs: docker-build-push
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -83,19 +102,64 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
+          command_timeout: 10m
           script: |
-            if docker compose version >/dev/null 2>&1; then
+            set -e
+            
+            if command -v docker-compose &> /dev/null; then
+              COMPOSE="docker-compose"
+            elif docker compose version &> /dev/null; then
               COMPOSE="docker compose"
             else
-              COMPOSE="docker-compose"
+              echo "Docker Compose not found"
+              exit 1
+            fi
+            
+            echo "Using compose command: $COMPOSE"
+            
+            cd ${{ env.REMOTE_DIR }}
+            
+            docker network create jobhuntly-network 2>/dev/null || true
+            
+            docker image rm ${{ env.DOCKER_IMAGE }}:latest 2>/dev/null || true
+            
+            echo "Pulling latest image..."
+            $COMPOSE pull jobhuntly-frontend
+            
+            echo "Stopping old containers..."
+            $COMPOSE down jobhuntly-frontend 2>/dev/null || true
+            
+            docker container prune -f
+            docker image prune -f
+            
+            echo "Starting new containers..."
+            $COMPOSE up -d --force-recreate --remove-orphans jobhuntly-frontend
+            
+            echo "Waiting for container to be ready..."
+            sleep 15
+            
+            echo "Verifying deployment..."
+            $COMPOSE ps jobhuntly-frontend
+            
+            echo "Container logs:"
+            docker logs jobhuntly-frontend --tail 20
+            
+            if $COMPOSE ps jobhuntly-frontend | grep -q "Up"; then
+              echo "✅ Deployment successful!"
+            else
+              echo "❌ Deployment failed!"
+              exit 1
             fi
 
-            cd ${{ env.REMOTE_DIR }}
-
-            docker network create jobhuntly-network || true
-            $COMPOSE -f docker-compose.yml pull
-            $COMPOSE -f docker-compose.yml stop frontend || true
-            $COMPOSE -f docker-compose.yml rm -f frontend || true
-            docker rm -f frontend || true
-            $COMPOSE -f docker-compose.yml up -d --remove-orphans
-            $COMPOSE -f docker-compose.yml ps
+  notify:
+    if: always()
+    needs: [build, docker-build-push, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify deployment status
+        run: |
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "🎉 Deployment to production completed successfully!"
+          else
+            echo "💥 Deployment failed. Check the logs above."
+          fi
