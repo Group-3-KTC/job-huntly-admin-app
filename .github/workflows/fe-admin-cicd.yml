@@ -1,4 +1,4 @@
-name: Build and Deploy React TS App (Dev Only)
+name: Build and Deploy Jobhuntly Admin App 
 
 on:
   push:
@@ -7,12 +7,12 @@ on:
     branches: [dev]
 
 concurrency:
-  group: fe-deploy
+  group: admin-deploy
   cancel-in-progress: true
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/jobhuntly-frontend
-  REMOTE_DIR: ~/jobhuntly-fe
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/jobhuntly-admin-app
+  REMOTE_DIR: ~/jobhuntly-admin
 
 jobs:
   build-and-test:
@@ -20,12 +20,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+
       - name: Install dependencies
         run: npm ci
+
       - name: Lint code (if available)
         run: |
           if npm run | grep -q "lint"; then
@@ -34,8 +37,10 @@ jobs:
             echo "No lint script found, skipping"
           fi
         continue-on-error: true
+
       - name: Build application
         run: npm run build
+
       - name: Run tests (if available)
         run: |
           if npm run | grep -q "test"; then
@@ -55,21 +60,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Login Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Set build variables
         id: vars
         run: |
           echo "TAG=dev" >> $GITHUB_OUTPUT
           echo "API_URL=${{ secrets.DEV_API_BASE_URL }}" >> $GITHUB_OUTPUT
           echo "ENV=development" >> $GITHUB_OUTPUT
+
       - name: Build and Push Docker Image
         run: |
           docker build \
@@ -77,6 +87,7 @@ jobs:
             --no-cache \
             -t $DOCKER_IMAGE:${{ steps.vars.outputs.TAG }} .
           docker push $DOCKER_IMAGE:${{ steps.vars.outputs.TAG }}
+
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -105,23 +116,22 @@ jobs:
             else
               COMPOSE="docker-compose"
             fi
+
             cd ${{ env.REMOTE_DIR }}
-            docker network create jobhuntly-network || true
-            $COMPOSE -f docker-compose.yml pull
-            echo "📦 Pulled images: $(docker images)"
-            $COMPOSE -f docker-compose.yml stop frontend || true
-            $COMPOSE -f docker-compose.yml rm -f frontend || true
-            docker rm -f frontend || true
-            $COMPOSE -f docker-compose.yml up -d --remove-orphans
+            $COMPOSE down --remove-orphans || true
+            docker rm -f jobhuntly-admin-app || true
+            docker image prune -af || true
+            $COMPOSE pull
+            $COMPOSE up -d
             echo "⏳ Waiting for container to be ready..."
             sleep 10
-            $COMPOSE -f docker-compose.yml ps
-            if ! $COMPOSE -f docker-compose.yml ps | grep -q "Up"; then
+            $COMPOSE ps
+            if ! $COMPOSE ps | grep -q "Up"; then
               echo "❌ Container failed to start!"
               exit 1
             fi
             echo "📝 Container logs:"
-            docker logs frontend --tail 20
+            docker logs jobhuntly-admin-app --tail 20
 
   notify:
     if: always()
@@ -132,7 +142,7 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.ref_name }}"
           ENV="development"
-          
+
           if [ "${{ needs.deploy.result }}" == "success" ]; then
             echo "🎉 Deployment to $ENV ($BRANCH_NAME) completed successfully!"
           elif [ "${{ needs.deploy.result }}" == "failure" ]; then

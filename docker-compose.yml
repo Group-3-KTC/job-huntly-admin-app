@@ -1,7 +1,7 @@
 services:
   frontend:
-    image: vohoangphuc/jobhuntly-frontend:dev
-    container_name: frontend
+    image: vohoangphuc/jobhuntly-admin-app:dev
+    container_name: jobhuntly-admin-app
     restart: unless-stopped
     ports:
       - "5173:5173"
