@@ -33,7 +33,7 @@ jobs:
       - name: Lint code (if available)
         run: |
           if npm run | grep -q "lint"; then
-            npm run lint
+            npm run lint -- --max-warnings 20
           else
             echo "No lint script found, skipping"
           fi
