@@ -108,11 +108,20 @@ jobs:
             cd ${{ env.REMOTE_DIR }}
             docker network create jobhuntly-network || true
             $COMPOSE -f docker-compose.yml pull
+            echo "📦 Pulled images: $(docker images)"
             $COMPOSE -f docker-compose.yml stop frontend || true
             $COMPOSE -f docker-compose.yml rm -f frontend || true
             docker rm -f frontend || true
             $COMPOSE -f docker-compose.yml up -d --remove-orphans
+            echo "⏳ Waiting for container to be ready..."
+            sleep 10
             $COMPOSE -f docker-compose.yml ps
+            if ! $COMPOSE -f docker-compose.yml ps | grep -q "Up"; then
+              echo "❌ Container failed to start!"
+              exit 1
+            fi
+            echo "📝 Container logs:"
+            docker logs frontend --tail 20
 
   notify:
     if: always()
