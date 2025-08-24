@@ -15,7 +15,7 @@ import type { RootState } from "../../app/store";
 import { t } from "ttag";
 import { useCurrentLanguage } from "../../hooks/useCurrentLanguage";
 import { logout } from "../../features/auth/store/authSlice.ts";
-import { useState } from "react";
+// import { useState } from "react";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -25,10 +25,10 @@ const Sidebar = () => {
   const isSidebarOpen = useSelector(
     (state: RootState) => state.ui.isSidebarOpen,
   );
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  // const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const handleLogout = async () => {
-      setIsLoggingOut(true);
+      // setIsLoggingOut(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       dispatch(logout());
       navigate("/login");

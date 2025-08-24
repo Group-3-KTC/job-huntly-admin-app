@@ -23,7 +23,6 @@ const itemsPerPageOptions = [
 export default function Pagination({
   currentPage,
   totalPages,
-  totalItems,
   itemsPerPage,
   onPageChange,
   onItemsPerPageChange,
