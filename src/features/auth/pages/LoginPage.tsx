@@ -39,7 +39,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500">
       <div className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl border border-blue-100 px-10 py-12">
         <h2 className="text-3xl font-extrabold text-blue-700 text-center mb-4">
-          Job Huntly Admin test👋
+          Job Huntly Admin second👋
         </h2>
         <p className="text-center text-blue-500 mb-8">
           Please enter your credentials to continue
