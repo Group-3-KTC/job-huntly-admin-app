@@ -9,7 +9,7 @@ services:
       - jobhuntly-network
     pull_policy: always
     environment:
-      - NODE_ENV=development
+       - .env.production
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5173"]
       interval: 30s
