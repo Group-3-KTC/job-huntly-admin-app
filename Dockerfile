@@ -11,11 +11,11 @@ RUN npm install
 COPY . .
 
 # Nhận env khi build (API_URL, ENV, ...)
-ARG VITE_API_URL
+ARG VITE_API_BASE_URL
 ARG NODE_ENV=production
 
 # Truyền env vào build
-ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV NODE_ENV=$NODE_ENV
 
 RUN npm run build

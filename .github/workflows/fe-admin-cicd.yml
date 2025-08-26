@@ -82,7 +82,7 @@ jobs:
         run: |
           docker build \
             --no-cache \
-            --build-arg VITE_API_URL=${{ secrets.PRODUCTION_API_BASE_URL }} \
+            --build-arg VITE_API_BASE_URL=${{ secrets.PRODUCTION_API_BASE_URL }} \
             --build-arg NODE_ENV=development \
             -t $DOCKER_IMAGE:${{ steps.vars.outputs.TAG }} .
           docker push $DOCKER_IMAGE:${{ steps.vars.outputs.TAG }}
