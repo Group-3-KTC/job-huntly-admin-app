@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import Pagination from "../../../components/common/Pagination";
-import type { Company } from "../mock/mockCompany";
+import type { Company } from "../types/companyType";
 import {
   EyeIcon,
   PencilSimpleIcon,
   ProhibitIcon,
   TrashIcon,
   CheckCircleIcon,
+  StarIcon,
 } from "@phosphor-icons/react";
 import CompanyDetailModal from "./CompanyDetail";
 import CompanyEditModal from "./CompanyEdit";
@@ -20,7 +21,7 @@ interface Props {
     pageSize: number;
     total: number;
     onPageChange: (page: number) => void;
-    onItemsPerPageChange: (itemsPerPage: number) => void; // Add this
+    onItemsPerPageChange: (itemsPerPage: number) => void;
   };
 }
 
@@ -55,7 +56,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
 
   const handleBlock = (id: number) => {
     setData((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: "blocked" } : c)),
+      prev.map((c) => (c.id === id ? { ...c, status: "blocked" } : c))
     );
     setConfirmAction(null);
   };
@@ -64,20 +65,47 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
     setData((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
   };
 
+  const getLocationDisplay = (city: string, country: string) => {
+    return `${city}${country ? `, ${country}` : ""}`;
+  };
+
   const columns: TableColumn<Company>[] = [
-    { key: "id", title: "ID", width: "80px" },
+    { key: "id", title: "ID", width: "60px" },
+    { key: "companyName", title: "Company Name" },
     { key: "email", title: "Email" },
-    { key: "address", title: "Address", align: "left" },
+    { key: "phoneNumber", title: "Phone Number" },
+    { key: "address", title: "Address", align: "left", width: "180px" },
     {
-      key: "location_city",
+      key: "location",
       title: "City",
-      render: (cities) => cities.join(", "),
+      render: (_, record) =>
+        getLocationDisplay(record.locationCity, record.locationCountry),
     },
-    { key: "location_ward", title: "Ward" },
     {
-      key: "quantity_employee",
-      title: "Employees",
+      key: "parentCategories",
+      title: "Categories",
+      render: (categories) =>
+        Array.isArray(categories) ? categories.join(", ") : "",
+    },
+    {
+      key: "jobsCount",
+      title: "Jobs",
       align: "center",
+    },
+    {
+      key: "isProCompany",
+      title: "Pro",
+      align: "center",
+      render: (isPro) =>
+        isPro ? (
+          <StarIcon
+            size={16}
+            weight="fill"
+            className="text-yellow-500 mx-auto"
+          />
+        ) : (
+          <span className="text-xs text-gray-500">-</span>
+        ),
     },
     {
       key: "status",

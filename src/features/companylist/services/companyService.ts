@@ -1,48 +1,118 @@
-import { type Company, mockCompany } from "../mock/mockCompany";
+import axios from "axios";
+import { API_CONFIG } from "../../../config/config";
+import type {
+  Company,
+  CompanyResponse,
+  CompanyLocation,
+} from "../types/companyType";
+import {
+  API_COMPANY_LIST,
+  API_COMPANY_DETAIL,
+  API_COMPANY_CREATE,
+  API_COMPANY_UPDATE,
+  API_COMPANY_DELETE,
+  API_COMPANY_STATUS,
+  API_COMPANY_PAGINATION,
+  API_COMPANY_LOCATIONS,
+} from "../../../constants/apiCompanyConstants";
+
+const axiosInstance = axios.create({
+  baseURL: API_CONFIG.BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
+});
 
 export const companyService = {
-  getAll: (): Promise<Company[]> => {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(mockCompany), 500);
-    });
+  getAll: async (): Promise<Company[]> => {
+    try {
+      const response = await axiosInstance.get<CompanyResponse>(
+        API_COMPANY_LIST
+      );
+      return response.data.content;
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      throw error;
+    }
   },
 
-  getById: (id: number): Promise<Company | undefined> => {
-    return new Promise((resolve) => {
-      const result = mockCompany.find((c) => c.id === id);
-      setTimeout(() => resolve(result), 300);
-    });
+  getPaginated: async (page = 0, size = 10): Promise<CompanyResponse> => {
+    try {
+      const response = await axiosInstance.get<CompanyResponse>(
+        API_COMPANY_PAGINATION(page, size)
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching paginated companies:", error);
+      throw error;
+    }
   },
 
-  add: (company: Company): Promise<Company> => {
-    return new Promise((resolve) => {
-      const newCompany = { ...company, id: Date.now() };
-      mockCompany.push(newCompany);
-      setTimeout(() => resolve(newCompany), 300);
-    });
+  getById: async (id: number): Promise<Company | undefined> => {
+    try {
+      const response = await axiosInstance.get<Company>(API_COMPANY_DETAIL(id));
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching company with id ${id}:`, error);
+      throw error;
+    }
   },
 
-  update: (id: number, patch: Partial<Company>): Promise<Company | null> => {
-    return new Promise((resolve) => {
-      const index = mockCompany.findIndex((c) => c.id === id);
-      if (index !== -1) {
-        mockCompany[index] = { ...mockCompany[index], ...patch };
-        setTimeout(() => resolve(mockCompany[index]), 300);
-      } else {
-        resolve(null);
-      }
-    });
+  getLocations: async (): Promise<CompanyLocation[]> => {
+    try {
+      const response = await axiosInstance.get<CompanyLocation[]>(
+        API_COMPANY_LOCATIONS
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching company locations:", error);
+      throw error;
+    }
   },
 
-  delete: (id: number): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const index = mockCompany.findIndex((c) => c.id === id);
-      if (index !== -1) {
-        mockCompany.splice(index, 1);
-        setTimeout(() => resolve(true), 200);
-      } else {
-        resolve(false);
-      }
-    });
+  add: async (company: Omit<Company, "id">): Promise<Company> => {
+    try {
+      const response = await axiosInstance.post<Company>(
+        API_COMPANY_CREATE,
+        company
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error adding company:", error);
+      throw error;
+    }
+  },
+
+  update: async (id: number, patch: Partial<Company>): Promise<Company> => {
+    try {
+      const response = await axiosInstance.put<Company>(
+        API_COMPANY_UPDATE(id),
+        patch
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating company with id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  delete: async (id: number): Promise<boolean> => {
+    try {
+      await axiosInstance.delete(API_COMPANY_DELETE(id));
+      return true;
+    } catch (error) {
+      console.error(`Error deleting company with id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  updateStatus: async (id: number, status: string): Promise<Company> => {
+    try {
+      const response = await axiosInstance.put<Company>(
+        API_COMPANY_STATUS(id, status)
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating company status with id ${id}:`, error);
+      throw error;
+    }
   },
 };

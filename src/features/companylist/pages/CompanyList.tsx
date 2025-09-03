@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { type Company, mockCompany } from "../mock/mockCompany";
+import axios from "axios";
+import type { Company, Province, CategoryRoot } from "../types/companyType";
 import { CompanyTable } from "../components/CompanyTable";
 import { PlusIcon, FileXlsIcon, Buildings } from "@phosphor-icons/react";
 import {
@@ -9,6 +10,12 @@ import {
 import StatisCard from "../../../components/ui/StatisticCard";
 import AddCompanyModal from "../components/CompanyAdd";
 import { t } from "ttag";
+import { companyService } from "../services/companyService";
+import {
+  PROVINCES_API_URL,
+  API_CATEGORY_ROOTS,
+} from "../../../constants/apiCompanyConstants";
+import { API_CONFIG } from "../../../config/config";
 
 const CompanyListPage = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -17,22 +24,101 @@ const CompanyListPage = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [page, setPage] = useState(1);
+  const [isProFilter, setIsProFilter] = useState<string>("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [page, setPage] = useState(0); // API sử dụng zero-based index
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [stats, setStats] = useState({
+    hcmCount: 0,
+    hanoiCount: 0,
+    danangCount: 0,
+  });
+  const [cities, setCities] = useState<string[]>([]);
+  const [loadingCities, setLoadingCities] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+
+  // Lấy danh sách tỉnh thành từ API provinces
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      setLoadingCities(true);
+      try {
+        const response = await axios.get<Province[]>(PROVINCES_API_URL);
+        const cityNames = response.data.map((province) => province.name);
+        setCities(cityNames);
+      } catch (error) {
+        console.error("Không thể lấy danh sách tỉnh thành:", error);
+        setCities(["TP.HCM", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"]);
+      } finally {
+        setLoadingCities(false);
+      }
+    };
+
+    fetchProvinces();
+  }, []);
+
+  // Lấy danh sách danh mục từ API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoadingCategories(true);
+      try {
+        const response = await axios.get<CategoryRoot[]>(
+          `${API_CONFIG.BASE_URL}${API_CATEGORY_ROOTS}`
+        );
+        const categoryNames = response.data.map((category) => category.name);
+        setCategories(categoryNames);
+      } catch (error) {
+        console.error("Không thể lấy danh sách danh mục:", error);
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Lấy dữ liệu từ API
+  const fetchCompanies = async () => {
+    setLoading(true);
+    try {
+      const response = await companyService.getPaginated(page, itemsPerPage);
+      setCompanies(response.content);
+      setTotalItems(response.totalElements);
+
+      // Tính toán số lượng công ty theo thành phố
+      const hcmCount = response.content.filter(
+        (c) =>
+          c.locationCity === "Thành phố Hồ Chí Minh" ||
+          c.locationCity === "TP.HCM"
+      ).length;
+      const hanoiCount = response.content.filter(
+        (c) =>
+          c.locationCity === "Thành phố Hà Nội" || c.locationCity === "Hà Nội"
+      ).length;
+      const danangCount = response.content.filter(
+        (c) =>
+          c.locationCity === "Thành phố Đà Nẵng" || c.locationCity === "Đà Nẵng"
+      ).length;
+
+      setStats({ hcmCount, hanoiCount, danangCount });
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setCompanies(mockCompany);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    fetchCompanies();
+  }, [page, itemsPerPage]); // Reload khi thay đổi trang hoặc số item mỗi trang
 
   const filters: FilterField[] = [
     {
       key: "searchText",
-      label: "Search (ID, Email, Employees)",
+      label: "Search (ID, Email, Name)",
       type: "text",
     },
     {
@@ -42,49 +128,80 @@ const CompanyListPage = () => {
       options: ["active", "blocked", "pending"],
     },
     {
+      key: "is_pro",
+      label: "Pro Company",
+      type: "select",
+      options: ["yes", "no"],
+    },
+    {
       key: "sort",
       label: "Sort",
       type: "select",
-      options: ["ID", "Ascending", "Descending", "Recent"],
+      options: ["ID", "Name", "Jobs"],
     },
     {
       key: "location_city",
       label: "City",
       type: "multiselect",
-      options: ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ", "Nha Trang"],
+      options: cities,
       placeholder: "Chọn thành phố",
+      loading: loadingCities,
+      searchable: true
+    },
+    {
+      key: "category",
+      label: "Category",
+      type: "multiselect",
+      options: categories,
+      placeholder: "Chọn danh mục",
+      loading: loadingCategories,
+      searchable: true
     },
   ];
 
-  const filtered = companies
-    .filter((c) => {
-      const matchSearch =
-        c.email.toLowerCase().includes(searchText.toLowerCase()) ||
-        c.id.toString().includes(searchText) ||
-        c.quantity_employee.toString().includes(searchText);
-      const matchStatus = statusFilter ? c.status === statusFilter : true;
-      const matchCity =
-        selectedCities.length > 0
-          ? c.location_city.some((city) => selectedCities.includes(city))
-          : true;
-      return matchSearch && matchStatus && matchCity;
-    })
-    .sort((a, b) => {
-      if (sortOrder === "Ascending") return a.email.localeCompare(b.email);
-      if (sortOrder === "Descending") return b.email.localeCompare(a.email);
-      if (sortOrder === "ID") return a.id - b.id;
-      if (sortOrder === "Recent") return b.id - a.id;
-      return 0;
-    });
+  // Lọc dữ liệu theo tiêu chí
+  const filtered = companies.filter((c) => {
+    // Lọc theo text
+    const matchSearch =
+      c.email.toLowerCase().includes(searchText.toLowerCase()) ||
+      c.id.toString().includes(searchText) ||
+      c.companyName.toLowerCase().includes(searchText.toLowerCase());
 
-  const paginated = filtered.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
-  );
+    // Lọc theo trạng thái
+    const matchStatus = statusFilter ? c.status === statusFilter : true;
+
+    // Lọc theo thành phố
+    const matchCity =
+      selectedCities.length > 0
+        ? selectedCities.includes(c.locationCity)
+        : true;
+
+    // Lọc theo Pro Company
+    const matchPro = isProFilter
+      ? isProFilter === "yes"
+        ? c.isProCompany
+        : !c.isProCompany
+      : true;
+
+    // Lọc theo danh mục
+    const matchCategory =
+      selectedCategories.length > 0
+        ? c.parentCategories.some((cat) => selectedCategories.includes(cat))
+        : true;
+
+    return matchSearch && matchStatus && matchCity && matchPro && matchCategory;
+  });
+
+  // Sắp xếp dữ liệu
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortOrder === "Name") return a.companyName.localeCompare(b.companyName);
+    if (sortOrder === "Jobs") return b.jobsCount - a.jobsCount;
+    return a.id - b.id; // Mặc định sắp xếp theo ID
+  });
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
-    setPage(1);
+    setPage(0); // Reset về trang đầu tiên khi thay đổi số lượng item mỗi trang
   };
 
   return (
@@ -92,7 +209,7 @@ const CompanyListPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatisCard
           label={t`Total Companies`}
-          value={companies.length}
+          value={totalItems}
           icon={<Buildings size={24} />}
           change={{
             direction: "up",
@@ -103,10 +220,7 @@ const CompanyListPage = () => {
         />
         <StatisCard
           label="Company in HCM"
-          value={
-            companies.filter((c) => c.location_city.includes("Hồ Chí Minh"))
-              .length
-          }
+          value={stats.hcmCount}
           icon={<Buildings size={24} />}
           change={{
             direction: "up",
@@ -117,9 +231,7 @@ const CompanyListPage = () => {
         />
         <StatisCard
           label="Company in Hà Nội"
-          value={
-            companies.filter((c) => c.location_city.includes("Hà Nội")).length
-          }
+          value={stats.hanoiCount}
           icon={<Buildings size={24} />}
           change={{
             direction: "down",
@@ -130,9 +242,7 @@ const CompanyListPage = () => {
         />
         <StatisCard
           label="Company in Đà Nẵng"
-          value={
-            companies.filter((c) => c.location_city.includes("Đà Nẵng")).length
-          }
+          value={stats.danangCount}
           icon={<Buildings size={24} />}
           change={{
             direction: "down",
@@ -148,22 +258,28 @@ const CompanyListPage = () => {
         initialValues={{
           searchText,
           status: statusFilter,
+          is_pro: isProFilter,
           sort: sortOrder,
           location_city: selectedCities,
+          category: selectedCategories,
         }}
         onFilterChange={(values) => {
           setSearchText(values.searchText || "");
           setStatusFilter(values.status || "");
+          setIsProFilter(values.is_pro || "");
           setSortOrder(values.sort || "");
           setSelectedCities(values.location_city || []);
-          setPage(1);
+          setSelectedCategories(values.category || []);
+          setPage(0); // Reset về trang đầu tiên khi thay đổi bộ lọc
         }}
         onReset={() => {
           setSearchText("");
           setStatusFilter("");
+          setIsProFilter("");
           setSortOrder("");
           setSelectedCities([]);
-          setPage(1);
+          setSelectedCategories([]);
+          setPage(0);
         }}
       />
 
@@ -183,20 +299,25 @@ const CompanyListPage = () => {
 
       <div className="mt-6">
         <CompanyTable
-          companies={paginated}
+          companies={sorted}
           loading={loading}
           pagination={{
-            page,
+            page: page + 1, // Chuyển về 1-based index cho UI
             pageSize: itemsPerPage,
-            total: filtered.length,
-            onPageChange: setPage,
-            onItemsPerPageChange: handleItemsPerPageChange, // Pass handler to table
+            total: totalItems,
+            onPageChange: (newPage) => setPage(newPage - 1), // Chuyển về 0-based index cho API
+            onItemsPerPageChange: handleItemsPerPageChange,
           }}
         />
       </div>
 
       {openAddModal && (
-        <AddCompanyModal onClose={() => setOpenAddModal(false)} />
+        <AddCompanyModal
+          onClose={() => {
+            setOpenAddModal(false);
+            fetchCompanies(); // Tải lại dữ liệu sau khi thêm công ty
+          }}
+        />
       )}
     </div>
   );

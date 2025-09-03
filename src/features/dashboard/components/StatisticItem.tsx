@@ -1,7 +1,6 @@
 import { Briefcase, Buildings, ReadCvLogo, User } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import { mockCandidates } from "../../candidatelist/mock/mockCandidates";
-import { mockCompany } from "../../companylist/mock/mockCompany.ts";
 import { mockReport } from "../../reportlist/mock/mockReport.ts";
 import { mockJob } from "../../jobpostlist/mock/mockJob.ts";
 import StatisCard from "../../../components/ui/StatisticCard";
@@ -22,17 +21,6 @@ export default function StatisticItem() {
         description: "Up from yesterday",
       },
       colorScheme: "green",
-    },
-    {
-      label: t`Total Companies`,
-      value: mockCompany.length.toLocaleString(),
-      icon: <Buildings />,
-      change: {
-        percentage: "1.3%",
-        direction: "up",
-        description: "Up from past week",
-      },
-      colorScheme: "orange",
     },
     {
       label: t`Total Reports`,
