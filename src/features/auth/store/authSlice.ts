@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { API_CONFIG } from "../../../config/config";
 
 interface User {
   id: string;
@@ -10,14 +11,32 @@ interface User {
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
-  token: string | null;
+  token: string | null; // Giữ lại để tương thích với code cũ
   authInitialized: boolean;
 }
 
+// Kiểm tra user từ cả localStorage và sessionStorage
+const getStoredUser = (): User | null => {
+  const userFromLocal = localStorage.getItem("admin_user");
+  const userFromSession = sessionStorage.getItem("admin_user");
+  const userData = userFromLocal || userFromSession;
+  
+  if (!userData) return null;
+  
+  try {
+    return JSON.parse(userData);
+  } catch (e) {
+    console.error("Lỗi parse user data:", e);
+    return null;
+  }
+};
+
+// Cookie được xử lý tự động bởi browser, chỉ cần kiểm tra xem có thông tin user lưu trữ không
 const initialState: AuthState = {
-  isAuthenticated: !!localStorage.getItem("admin_token"),
-  user: JSON.parse(localStorage.getItem("admin_user") || "null"),
-  token: localStorage.getItem("admin_token"),
+  // Đã đăng nhập nếu có thông tin user trong storage
+  isAuthenticated: !!getStoredUser(),
+  user: getStoredUser(),
+  token: "", // Không sử dụng token từ localStorage nữa
   authInitialized: false,
 };
 
@@ -27,12 +46,12 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess: (
       state,
-      action: PayloadAction<{ user: User; token: string }>,
+      action: PayloadAction<{ user: User; token?: string }>,
     ) => {
-      const { user, token } = action.payload;
+      const { user } = action.payload;
       state.isAuthenticated = true;
       state.user = user;
-      state.token = token;
+      // Không cần lưu token vào state nữa
     },
     setAuthInitialized: (state) => {
       state.authInitialized = true;
@@ -41,8 +60,12 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
-      localStorage.removeItem("admin_token");
+      // Xóa thông tin user lưu trữ
       localStorage.removeItem("admin_user");
+      sessionStorage.removeItem("admin_user");
+      
+      // Redirect đến API logout endpoint để backend xóa cookie
+      window.location.href = `${API_CONFIG.BASE_URL}/auth/logout`;
     },
   },
 });

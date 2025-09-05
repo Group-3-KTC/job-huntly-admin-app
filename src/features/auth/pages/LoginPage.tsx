@@ -1,15 +1,16 @@
-import { useLoginMutation } from "../services/mockAuthApi.ts";
+import { useLoginMutation } from "../services/authApi";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { type LoginForm, loginSchema } from "../schemas/loginSchema.ts";
 import { yupResolver } from "@hookform/resolvers/yup";
-// import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice.ts";
 import { useState } from "react";
 
 const Login = () => {
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
@@ -25,13 +26,26 @@ const Login = () => {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const res = await login(data).unwrap();
-      localStorage.setItem("admin_token", res.accessToken);
-      localStorage.setItem("admin_user", JSON.stringify(res.user));
-      dispatch(loginSuccess({ user: res.user, token: res.accessToken }));
+      const res = await login({ ...data, rememberMe }).unwrap();
+      
+      // Không cần lưu token khi sử dụng cookie
+      // Chỉ lưu thông tin user để tiện sử dụng
+      if (rememberMe) {
+        localStorage.setItem("admin_user", JSON.stringify(res.user));
+      } else {
+        sessionStorage.setItem("admin_user", JSON.stringify(res.user));
+      }
+      
+      // Lưu trạng thái đăng nhập vào Redux store
+      dispatch(loginSuccess({ 
+        user: res.user, 
+        token: "" // Token rỗng vì đã lưu trong cookie
+      }));
+      
       navigate("/admin/dashboard");
     } catch (err) {
-      setApiError("Đăng nhập thất bại. Vui lòng kiểm tra lại." + err);
+      console.error("Login error:", err);
+      setApiError("Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.");
     }
   };
 
@@ -94,20 +108,37 @@ const Login = () => {
                   ${errors.password ? "border-red-500" : "border-blue-300"}`}
                 {...register("password")}
               />
-              {/* <button
+              <button
                 type="button"
                 className="absolute inset-y-0 right-3 flex items-center text-blue-500 hover:text-blue-700 cursor-pointer"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label="Toggle password visibility"
               >
                 {showPassword ? <EyeSlash size={22} /> : <Eye size={22} />}
-              </button> */}
+              </button>
             </div>
             {errors.password && (
               <p className="text-sm mt-1 text-red-600">
                 {errors.password.message}
               </p>
             )}
+          </div>
+
+          {/* Remember me */}
+          <div className="flex items-center">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500"
+            />
+            <label 
+              htmlFor="rememberMe" 
+              className="ml-2 text-sm font-medium text-blue-700 cursor-pointer"
+            >
+              Remember me
+            </label>
           </div>
 
           {/* Submit */}

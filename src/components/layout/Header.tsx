@@ -3,14 +3,18 @@ import type { RootState } from "../../app/store.ts";
 import UserMenu from "../common/UserMenu.tsx";
 import NotificationMenu from "../common/NotificationMenu.tsx";
 import { LanguageSelector } from "../common/LanguageSelector.tsx";
-import { List } from "@phosphor-icons/react";
+import { List, SignIn } from "@phosphor-icons/react";
 import { toggleSidebarOpen } from "../../store/uiSlice";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const dispatch = useDispatch();
   const pageTitle = useSelector((state: RootState) => state.page.title);
   const isSidebarOpen = useSelector(
     (state: RootState) => state.ui.isSidebarOpen,
+  );
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
   );
 
   return (
@@ -27,21 +31,34 @@ const Header = () => {
       </div>
       <div className="flex items-center gap-5">
         <LanguageSelector />
-        <div className="cursor-pointer ">
-          <NotificationMenu />
-        </div>
-        <div className="flex items-center gap-2 cursor-pointer">
-          <div className="text-sm text-right">
-            <p className="font-medium">Moni Roy</p>
-            <p className="text-xs text-gray-400">Admin</p>
-          </div>
-          <img
-            src="https://i.pravatar.cc/40?img=3"
-            alt="User"
-            className="object-cover w-8 h-8 rounded-full"
-          />
-        </div>
-        <UserMenu />
+        
+        {isAuthenticated ? (
+          <>
+            <div className="cursor-pointer">
+              <NotificationMenu />
+            </div>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <div className="text-sm text-right">
+                <p className="font-medium">{user?.name || 'Người dùng'}</p>
+                <p className="text-xs text-gray-400">{user?.role || 'Admin'}</p>
+              </div>
+              <img
+                src="https://i.pravatar.cc/40?img=3"
+                alt="User"
+                className="object-cover w-8 h-8 rounded-full"
+              />
+            </div>
+            <UserMenu />
+          </>
+        ) : (
+          <Link 
+            to="/login" 
+            className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          >
+            <SignIn size={18} />
+            Đăng nhập
+          </Link>
+        )}
       </div>
     </div>
   );

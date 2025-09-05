@@ -7,13 +7,32 @@ type RawChartData = {
   series: { name: string; values: number[] }[];
 };
 
+// Cache lưu trữ kết quả fetch
+const apiCache = new Map<string, { data: ChartData; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 phút
+
 const useFetchChartData = (url: string, colors?: string[]) => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch(url)
-      .then((res) => res.json())
-      .then((raw: RawChartData) => {
+    const fetchData = async () => {
+      // Kiểm tra xem có dữ liệu trong cache không và cache còn mới
+      const cachedData = apiCache.get(url);
+      const now = Date.now();
+      
+      if (cachedData && now - cachedData.timestamp < CACHE_TTL) {
+        console.log('Using cached chart data for:', url);
+        setChartData(cachedData.data);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('Fetching chart data from API:', url);
+        const response = await fetch(url);
+        const raw: RawChartData = await response.json();
+        
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
@@ -37,12 +56,35 @@ const useFetchChartData = (url: string, colors?: string[]) => {
           };
         });
 
-        setChartData({ title: raw.title, labels: raw.labels, datasets });
-      })
-      .catch((err) => console.error("Failed to fetch chart data:", err));
+        const chartDataResult = { 
+          title: raw.title, 
+          labels: raw.labels, 
+          datasets 
+        };
+        
+        // Lưu kết quả vào cache
+        apiCache.set(url, {
+          data: chartDataResult,
+          timestamp: now
+        });
+        
+        setChartData(chartDataResult);
+      } catch (err) {
+        console.error("Failed to fetch chart data:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+    
+    // Cleanup function nếu component unmounted trước khi fetch hoàn tất
+    return () => {
+      // Không cần làm gì nếu đang sử dụng fetch API thông thường
+    };
   }, [url, colors]);
 
-  return chartData;
+  return { chartData, isLoading };
 };
 
 export default useFetchChartData;

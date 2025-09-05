@@ -16,10 +16,29 @@ import {
   API_COMPANY_LOCATIONS,
 } from "../../../constants/apiCompanyConstants";
 
+// Tạo instance axios với cấu hình cơ bản
 const axiosInstance = axios.create({
   baseURL: API_CONFIG.BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
 });
+
+// Thêm interceptor để tự động đính kèm token vào mỗi request
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Lấy token từ localStorage
+    const token = localStorage.getItem("admin_token");
+    
+    // Nếu có token, thêm vào header Authorization
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const companyService = {
   getAll: async (): Promise<Company[]> => {
@@ -83,7 +102,7 @@ export const companyService = {
 
   update: async (id: number, patch: Partial<Company>): Promise<Company> => {
     try {
-      const response = await axiosInstance.put<Company>(
+      const response = await axiosInstance.patch<Company>(
         API_COMPANY_UPDATE(id),
         patch
       );

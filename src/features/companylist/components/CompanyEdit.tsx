@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import type { Company, Province, District, Ward } from "../types/companyType";
 import { PROVINCES_API_URL, PROVINCES_DISTRICT_API_URL, PROVINCES_WARD_API_URL } from "../../../constants/apiCompanyConstants";
+import { companyService } from "../services/companyService";
 
 interface Props {
   company: Company | null;
   onClose: () => void;
-  onSave: (updated: Company) => void;
+  onSave?: (updated: Company) => void;
 }
 
 export default function CompanyEditModal({ company, onClose, onSave }: Props) {
@@ -16,6 +17,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [selectedProvince, setSelectedProvince] = useState<number | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<number | null>(null);
 
@@ -77,10 +79,44 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
   };
 
-  const handleSubmit = () => {
-    if (form) {
-      onSave(form);
+  const handleSubmit = async () => {
+    if (!form || !form.id) return;
+    
+    setSubmitting(true);
+    try {
+      const updatedCompany = await companyService.update(form.id, form);
+      if (onSave) {
+        onSave(updatedCompany);
+      }
+      console.log(`Công ty ${form.companyName} đã được cập nhật thành công`);
+      alert(`Công ty ${form.companyName} đã được cập nhật thành công`);
       onClose();
+    } catch (error) {
+      console.error("Lỗi khi cập nhật công ty:", error);
+      alert(`Có lỗi xảy ra khi cập nhật công ty: ${(error as Error).message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleToggleStatus = async (newStatus: "active" | "blocked") => {
+    if (!form || !form.id) return;
+    
+    setSubmitting(true);
+    try {
+      const updatedCompany = await companyService.updateStatus(form.id, newStatus);
+      if (onSave) {
+        onSave(updatedCompany);
+      }
+      const statusText = newStatus === "active" ? "mở khóa" : "khóa";
+      console.log(`Công ty ${form.companyName} đã được ${statusText} thành công`);
+      alert(`Công ty ${form.companyName} đã được ${statusText} thành công`);
+      setForm(updatedCompany);
+    } catch (error) {
+      console.error(`Lỗi khi ${newStatus === "active" ? "mở khóa" : "khóa"} công ty:`, error);
+      alert(`Có lỗi xảy ra: ${(error as Error).message}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -275,19 +311,43 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
               />
             </div>
           </div>
-          <div className="mt-6 text-right space-x-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save
-            </button>
+          
+          <div className="mt-6 flex justify-between">
+            <div>
+              {form.status === "active" ? (
+                <button
+                  onClick={() => handleToggleStatus("blocked")}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  disabled={submitting}
+                >
+                  {submitting ? "Đang xử lý..." : "Khóa công ty"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleToggleStatus("active")}
+                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  disabled={submitting}
+                >
+                  {submitting ? "Đang xử lý..." : "Mở khóa công ty"}
+                </button>
+              )}
+            </div>
+            <div className="space-x-2">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 border rounded hover:bg-gray-100"
+                disabled={submitting}
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                disabled={submitting}
+              >
+                {submitting ? "Đang lưu..." : "Lưu thay đổi"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
