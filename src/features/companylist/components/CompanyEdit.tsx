@@ -4,11 +4,13 @@ import axios from "axios";
 import type { Company, Province, District, Ward } from "../types/companyType";
 import { PROVINCES_API_URL, PROVINCES_DISTRICT_API_URL, PROVINCES_WARD_API_URL } from "../../../constants/apiCompanyConstants";
 import { companyService } from "../services/companyService";
+import toast from "react-hot-toast";
 
 interface Props {
   company: Company | null;
   onClose: () => void;
   onSave?: (updated: Company) => void;
+  onDelete?: (id: number) => void;
 }
 
 export default function CompanyEditModal({ company, onClose, onSave }: Props) {
@@ -25,7 +27,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
     setForm(company);
   }, [company]);
 
-  // Lấy danh sách tỉnh thành
+  // Get provinces list
   useEffect(() => {
     const fetchProvinces = async () => {
       setLoading(true);
@@ -33,7 +35,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
         const response = await axios.get<Province[]>(PROVINCES_API_URL);
         setProvinces(response.data);
       } catch (error) {
-        console.error("Không thể lấy danh sách tỉnh thành:", error);
+        console.error("Could not fetch provinces:", error);
       } finally {
         setLoading(false);
       }
@@ -42,7 +44,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
     fetchProvinces();
   }, []);
 
-  // Lấy danh sách quận/huyện khi chọn tỉnh/thành phố
+  // Get districts when province selected
   const handleProvinceChange = async (provinceCode: number) => {
     setSelectedProvince(provinceCode);
     setSelectedDistrict(null);
@@ -57,11 +59,11 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
         setDistricts(response.data.districts);
       }
     } catch (error) {
-      console.error("Không thể lấy danh sách quận/huyện:", error);
+      console.error("Could not fetch districts:", error);
     }
   };
 
-  // Lấy danh sách phường/xã khi chọn quận/huyện
+  // Get wards when district selected
   const handleDistrictChange = async (districtCode: number) => {
     setSelectedDistrict(districtCode);
     
@@ -71,7 +73,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
         setWards(response.data.wards);
       }
     } catch (error) {
-      console.error("Không thể lấy danh sách phường/xã:", error);
+      console.error("Could not fetch wards:", error);
     }
   };
 
@@ -88,12 +90,11 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
       if (onSave) {
         onSave(updatedCompany);
       }
-      console.log(`Công ty ${form.companyName} đã được cập nhật thành công`);
-      alert(`Công ty ${form.companyName} đã được cập nhật thành công`);
+      toast.success(`Company ${form.companyName} updated successfully`);
       onClose();
     } catch (error) {
-      console.error("Lỗi khi cập nhật công ty:", error);
-      alert(`Có lỗi xảy ra khi cập nhật công ty: ${(error as Error).message}`);
+      console.error("Error updating company:", error);
+      toast.error(`Update failed: ${(error as Error).message}`);
     } finally {
       setSubmitting(false);
     }
@@ -104,17 +105,26 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
     
     setSubmitting(true);
     try {
-      const updatedCompany = await companyService.updateStatus(form.id, newStatus);
+      let updatedCompany: Company;
+      
+      if (newStatus === "active") {
+        // Kích hoạt công ty
+        updatedCompany = await companyService.setActive(form.id);
+        toast.success(`Company ${form.companyName} activated successfully`);
+      } else {
+        // Khóa công ty
+        updatedCompany = await companyService.setInactive(form.id);
+        toast.success(`Company ${form.companyName} blocked successfully`);
+      }
+      
       if (onSave) {
         onSave(updatedCompany);
       }
-      const statusText = newStatus === "active" ? "mở khóa" : "khóa";
-      console.log(`Công ty ${form.companyName} đã được ${statusText} thành công`);
-      alert(`Công ty ${form.companyName} đã được ${statusText} thành công`);
+      
       setForm(updatedCompany);
     } catch (error) {
-      console.error(`Lỗi khi ${newStatus === "active" ? "mở khóa" : "khóa"} công ty:`, error);
-      alert(`Có lỗi xảy ra: ${(error as Error).message}`);
+      console.error(`Error ${newStatus === "active" ? "activating" : "blocking"} company:`, error);
+      toast.error(`Action failed: ${(error as Error).message}`);
     } finally {
       setSubmitting(false);
     }
@@ -204,14 +214,14 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Province</label>
                 <select
                   className="w-full px-3 py-2 border rounded"
                   value={selectedProvince || ""}
                   onChange={(e) => handleProvinceChange(Number(e.target.value))}
                   disabled={loading}
                 >
-                  <option value="">Chọn Tỉnh/Thành phố</option>
+                  <option value="">Select Province</option>
                   {provinces.map((province) => (
                     <option key={province.code} value={province.code}>
                       {province.name}
@@ -220,14 +230,14 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">District</label>
                 <select
                   className="w-full px-3 py-2 border rounded"
                   value={selectedDistrict || ""}
                   onChange={(e) => handleDistrictChange(Number(e.target.value))}
                   disabled={!selectedProvince || loading}
                 >
-                  <option value="">Chọn Quận/Huyện</option>
+                  <option value="">Select District</option>
                   {districts.map((district) => (
                     <option key={district.code} value={district.code}>
                       {district.name}
@@ -239,12 +249,12 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phường/Xã</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ward</label>
                 <select
                   className="w-full px-3 py-2 border rounded"
                   disabled={!selectedDistrict || loading}
                 >
-                  <option value="">Chọn Phường/Xã</option>
+                  <option value="">Select Ward</option>
                   {wards.map((ward) => (
                     <option key={ward.code} value={ward.code}>
                       {ward.name}
@@ -280,11 +290,11 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
                 <select
                   className="w-full px-3 py-2 border rounded"
                   value={form.status}
-                  onChange={(e) => handleChange("status", e.target.value as "active" | "blocked" | "pending")}
+                  onChange={(e) => handleChange("status", e.target.value as "active" | "banned" | "inactive")}
                 >
                   <option value="active">Active</option>
-                  <option value="blocked">Blocked</option>
-                  <option value="pending">Pending</option>
+                  <option value="banned">Blocked</option>
+                  <option value="inactive">Pending</option>
                 </select>
               </div>
             </div>
@@ -320,7 +330,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                   disabled={submitting}
                 >
-                  {submitting ? "Đang xử lý..." : "Khóa công ty"}
+                  {submitting ? "Processing..." : "Block Company"}
                 </button>
               ) : (
                 <button
@@ -328,7 +338,7 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
                   className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                   disabled={submitting}
                 >
-                  {submitting ? "Đang xử lý..." : "Mở khóa công ty"}
+                  {submitting ? "Processing..." : "Activate Company"}
                 </button>
               )}
             </div>
@@ -338,14 +348,14 @@ export default function CompanyEditModal({ company, onClose, onSave }: Props) {
                 className="px-4 py-2 border rounded hover:bg-gray-100"
                 disabled={submitting}
               >
-                Hủy
+                Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 disabled={submitting}
               >
-                {submitting ? "Đang lưu..." : "Lưu thay đổi"}
+                {submitting ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>

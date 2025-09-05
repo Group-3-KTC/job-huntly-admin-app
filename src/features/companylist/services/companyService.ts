@@ -1,5 +1,4 @@
-import axios from "axios";
-import { API_CONFIG } from "../../../config/config";
+import api from "../../../config/api";
 import type {
   Company,
   CompanyResponse,
@@ -16,26 +15,19 @@ import {
   API_COMPANY_LOCATIONS,
 } from "../../../constants/apiCompanyConstants";
 
-// Tạo instance axios với cấu hình cơ bản
-const axiosInstance = axios.create({
-  baseURL: API_CONFIG.BASE_URL,
-  timeout: API_CONFIG.TIMEOUT,
-});
+// Sử dụng instance đã được cấu hình từ config/api.ts
+const axiosInstance = api;
 
-// Thêm interceptor để tự động đính kèm token vào mỗi request
-axiosInstance.interceptors.request.use(
-  (config) => {
-    // Lấy token từ localStorage
-    const token = localStorage.getItem("admin_token");
-    
-    // Nếu có token, thêm vào header Authorization
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return config;
-  },
+// Thêm interceptor để xử lý lỗi
+axiosInstance.interceptors.response.use(
+  (response) => response,
   (error) => {
+    // Xử lý lỗi 401 (Unauthorized)
+    if (error.response && error.response.status === 401) {
+      console.log('Phiên đăng nhập hết hạn, chuyển hướng đến trang login...');
+      // Chuyển hướng đến trang login
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
@@ -134,4 +126,32 @@ export const companyService = {
       throw error;
     }
   },
+
+  // Phương thức chuyên biệt để kích hoạt công ty (isActive = true)
+  setActive: async (id: number): Promise<Company> => {
+    try {
+      const response = await axiosInstance.patch<Company>(
+        API_COMPANY_UPDATE(id),
+        { status: "active" }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error activating company with id ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Phương thức chuyên biệt để khóa công ty (isActive = false) 
+  setInactive: async (id: number): Promise<Company> => {
+    try {
+      const response = await axiosInstance.patch<Company>(
+        API_COMPANY_UPDATE(id),
+        { status: "banned" }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error deactivating company with id ${id}:`, error);
+      throw error;
+    }
+  }
 };

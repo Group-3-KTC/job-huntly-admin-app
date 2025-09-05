@@ -40,7 +40,7 @@ export interface Company {
   locationCountry: string;
   foundedYear: number;
   quantityEmployee: number;
-  status: "active" | "blocked" | "pending";
+  status: "active" | "banned" | "inactive";
   isProCompany: boolean;
   followersCount: number;
   jobsCount: number;

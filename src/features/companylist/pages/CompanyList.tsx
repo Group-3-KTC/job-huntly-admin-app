@@ -9,6 +9,7 @@ import {
 } from "../../../components/common/FilterBar";
 import StatisCard from "../../../components/ui/StatisticCard";
 import AddCompanyModal from "../components/CompanyAdd";
+import CompanyEditModal from "../components/CompanyEdit";
 import { t } from "ttag";
 import { companyService } from "../services/companyService";
 import {
@@ -39,6 +40,7 @@ const CompanyListPage = () => {
   const [loadingCities, setLoadingCities] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
   // Lấy danh sách tỉnh thành từ API provinces
   useEffect(() => {
@@ -204,6 +206,24 @@ const CompanyListPage = () => {
     setPage(0); // Reset về trang đầu tiên khi thay đổi số lượng item mỗi trang
   };
 
+  const handleEditCompany = (company: Company) => {
+    setSelectedCompany(company);
+  };
+
+  const handleSaveCompany = (updatedCompany: Company) => {
+    // Cập nhật danh sách công ty sau khi chỉnh sửa
+    setCompanies(companies.map(c => c.id === updatedCompany.id ? updatedCompany : c));
+    setSelectedCompany(null);
+    fetchCompanies(); // Tải lại dữ liệu từ server
+  };
+
+  const handleDeleteCompany = (id: number) => {
+    // Xóa công ty khỏi danh sách
+    setCompanies(companies.filter(c => c.id !== id));
+    setSelectedCompany(null);
+    fetchCompanies(); // Tải lại dữ liệu từ server
+  };
+
   return (
     <div className="w-full px-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -301,6 +321,8 @@ const CompanyListPage = () => {
         <CompanyTable
           companies={sorted}
           loading={loading}
+          onEdit={handleEditCompany}
+          onRefresh={fetchCompanies}
           pagination={{
             page: page + 1, // Chuyển về 1-based index cho UI
             pageSize: itemsPerPage,
@@ -317,6 +339,15 @@ const CompanyListPage = () => {
             setOpenAddModal(false);
             fetchCompanies(); // Tải lại dữ liệu sau khi thêm công ty
           }}
+        />
+      )}
+
+      {selectedCompany && (
+        <CompanyEditModal
+          company={selectedCompany}
+          onClose={() => setSelectedCompany(null)}
+          onSave={handleSaveCompany}
+          onDelete={handleDeleteCompany}
         />
       )}
     </div>
