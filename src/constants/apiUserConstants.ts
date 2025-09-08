@@ -30,3 +30,11 @@ export const CANDIDATE_API = {
   UPDATE_STATUS: (id: number) => `${API_USER_BASE}/${id}`,
   DELETE: (id: number) => API_USER_DELETE(id),
 };
+
+// API cho các thao tác với Recruiter
+export const RECRUITER_API = {
+  GET_ALL: API_USER_FILTER_BY_ROLE('RECRUITER', 0, 10),
+  GET_BY_ID: (id: number) => `${API_USER_BASE}/${id}`,
+  UPDATE_STATUS: (id: number) => `${API_USER_BASE}/${id}`,
+  DELETE: (id: number) => API_USER_DELETE(id),
+};

@@ -7,6 +7,7 @@ import {
   ReadCvLogo,
   SignOut,
   SidebarSimple, 
+  UsersThree,
 } from "@phosphor-icons/react";
 import { assets } from "../../assets/assets";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,6 +62,11 @@ const Sidebar = () => {
       to: "/admin/candidateList",
       label: t`Candidate List`,
       icon: <UsersFour size={20} />,
+    },
+    {
+      to: "/admin/recruiterList",
+      label: t`Recruiter List`,
+      icon: <UsersThree size={20} />,
     },
   ];
 
