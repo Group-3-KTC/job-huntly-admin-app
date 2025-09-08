@@ -11,13 +11,13 @@ interface Props {
 const CandidateStatistics = ({ candidates }: Props) => {
   const totalCandidates = candidates.length;
   const activeCandidates = candidates.filter(
-    (c) => c.status === "active",
+    (c) => c.status && c.status.toUpperCase() === "ACTIVE",
   ).length;
-  const pendingCandidates = candidates.filter(
-    (c) => c.status === "pending",
+  const inactiveCandidates = candidates.filter(
+    (c) => c.status && c.status.toUpperCase() === "INACTIVE",
   ).length;
   const bannedCandidates = candidates.filter(
-    (c) => c.status === "banned",
+    (c) => c.status && c.status.toUpperCase() === "BANNED",
   ).length;
 
   const statisticData: StatisticCardProps[] = [
@@ -44,8 +44,8 @@ const CandidateStatistics = ({ candidates }: Props) => {
       colorScheme: "green",
     },
     {
-      label: "Pending Candidates",
-      value: pendingCandidates.toString(),
+      label: "Inactive Candidates",
+      value: inactiveCandidates.toString(),
       icon: <Clock size={24} />,
       change: {
         percentage: "3.1%",
