@@ -27,6 +27,6 @@ export const USER_API = {
 export const CANDIDATE_API = {
   GET_ALL: API_USER_FILTER_BY_ROLE('CANDIDATE', 0, 10),
   GET_BY_ID: (id: number) => `${API_USER_BASE}/${id}`,
-  UPDATE_STATUS: (id: number, status: string) => `${API_USER_BASE}/${id}/status/${status}`,
+  UPDATE_STATUS: (id: number) => `${API_USER_BASE}/${id}`,
   DELETE: (id: number) => API_USER_DELETE(id),
 };

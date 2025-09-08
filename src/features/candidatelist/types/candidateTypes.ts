@@ -7,7 +7,7 @@ export interface Candidate {
   username?: string;
   email: string;
   phone?: string;
-  status: "active" | "inactive" | "banned" | "pending";
+  status: "ACTIVE" | "INACTIVE" | "BANNED";
   skills: string[];
   location_city?: string;
   cvUrl?: string;

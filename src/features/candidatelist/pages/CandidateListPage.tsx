@@ -41,25 +41,20 @@ export const CandidateListPage = () => {
       const response = await candidateApi.getCandidates({
         page,
         size: itemsPerPage,
-        searchText: filterValues.searchText,
-        status: filterValues.status,
-        sort: filterValues.sort,
       });
 
       const mappedCandidates: Candidate[] = response.content.map((profile) => ({
         id: profile.id,
         name: profile.fullName,
         avatarUrl:
-          profile.avatarUrl || "https://randomuser.me/api/portraits/lego/1.jpg", // Fallback avatar
+          profile.avatarUrl || "https://randomuser.me/api/portraits/lego/1.jpg",
         email: profile.email,
         phone: profile.phone || "",
-        status:
-          (profile.status?.toLowerCase() === "blocked"
-            ? "banned"
-            : (profile.status?.toLowerCase() as
-                | "active"
-                | "inactive"
-                | "pending")) || "pending",
+        status: profile.status 
+          ? (profile.status.toLowerCase && profile.status.toLowerCase() === "blocked"
+              ? "BANNED"
+              : profile.status.toUpperCase && profile.status.toUpperCase() as "ACTIVE" | "INACTIVE" | "BANNED" || "INACTIVE")
+          : "INACTIVE",
         skills: profile.skills || [],
         location_city: profile.city || "",
         cvUrl: profile.cvUrl || "",
@@ -67,31 +62,49 @@ export const CandidateListPage = () => {
 
       setCandidates(mappedCandidates);
       setTotalItems(response.totalElements);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching candidates:", error);
+    } finally {
       setLoading(false);
     }
-  }, [
-    page,
-    itemsPerPage,
-    filterValues.searchText,
-    filterValues.status,
-    filterValues.sort,
-  ]);
+  }, [page, itemsPerPage]);
 
   useEffect(() => {
     fetchCandidates();
   }, [fetchCandidates]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (filterValues.searchText) {
-        fetchCandidates();
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [filterValues.searchText, fetchCandidates]);
+  // Lọc dữ liệu theo tiêu chí
+  const filtered = candidates.filter((c) => {
+
+    const matchSearch =
+      c.email.toLowerCase().includes(filterValues.searchText.toLowerCase()) ||
+      c.id.toString().includes(filterValues.searchText) ||
+      c.name.toLowerCase().includes(filterValues.searchText.toLowerCase());
+
+    const matchStatus = filterValues.status 
+      ? c.status === filterValues.status 
+      : true;
+
+    const matchCity =
+      filterValues.location_city.length > 0
+        ? c.location_city && filterValues.location_city.includes(c.location_city)
+        : true;
+
+    const matchSkills =
+      filterValues.skills.length > 0
+        ? c.skills.some(skill => filterValues.skills.includes(skill))
+        : true;
+
+
+    const matchCreatedDate = true;
+    return matchSearch && matchStatus && matchCity && matchSkills && matchCreatedDate;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (filterValues.sort === "name") return a.name.localeCompare(b.name);
+    if (filterValues.sort === "email") return a.email.localeCompare(b.email);
+    return a.id - b.id; // Mặc định sắp xếp theo ID
+  });
 
   const candidateFilters: FilterField[] = [
     {
@@ -104,7 +117,7 @@ export const CandidateListPage = () => {
       key: "status",
       label: "Status",
       type: "select",
-      options: ["active", "banned", "pending", "inactive"],
+      options: ["ACTIVE", "BANNED", "INACTIVE"],
       placeholder: "Select status",
     },
     {
@@ -139,7 +152,7 @@ export const CandidateListPage = () => {
       key: "sort",
       label: "Sort",
       type: "select",
-      options: ["id", "asc", "desc", "recent"],
+      options: ["id", "name", "email"],
       placeholder: "Select sort order",
       prefixLabel: "Sort by:",
     },
@@ -156,13 +169,12 @@ export const CandidateListPage = () => {
 
   return (
     <div className="w-full px-6">
-      <CandidateStatistics candidates={candidates} />
+      <CandidateStatistics candidates={sorted} />
       <FilterBar
         filters={candidateFilters}
         initialValues={filterValues}
         onFilterChange={(filters) => {
           setFilterValues(filters as unknown as FilterValues);
-          setPage(0); 
         }}
         onReset={() => {
           setFilterValues({
@@ -174,11 +186,10 @@ export const CandidateListPage = () => {
             created_from: "",
             created_to: "",
           });
-          setPage(0);
         }}
       />
       <CandidateTable
-        candidates={candidates}
+        candidates={sorted}
         loading={loading}
         pagination={{
           page: page + 1,

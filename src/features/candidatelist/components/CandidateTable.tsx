@@ -28,10 +28,9 @@ interface CandidateTableProps {
 }
 
 const statusLabel = {
-  active: { text: "Active", style: "bg-green-100 text-green-700" },
-  banned: { text: "Banned", style: "bg-red-100 text-red-700" },
-  inactive: { text: "Inactive", style: "bg-yellow-100 text-yellow-700" },
-  pending: { text: "Pending", style: "bg-purple-100 text-purple-700" },
+  ACTIVE: { text: "ACTIVE", style: "bg-green-100 text-green-700" },
+  BANNED: { text: "BANNED", style: "bg-red-100 text-red-700" },
+  INACTIVE: { text: "INACTIVE", style: "bg-yellow-100 text-yellow-700" },
 };
 
 export const CandidateTable = ({
@@ -81,7 +80,7 @@ export const CandidateTable = ({
   const handleBlockCandidate = async (candidate: Candidate) => {
     setProcessingIds((prev) => [...prev, candidate.id]);
     try {
-      await candidateApi.updateCandidateStatus(candidate.id, "banned");
+      await candidateApi.blockCandidate(candidate.id);
       toast.success(`Candidate ${candidate.name} has been banned`);
       if (onCandidateUpdated) onCandidateUpdated();
     } catch (error) {
@@ -97,7 +96,7 @@ export const CandidateTable = ({
   const handleActivateCandidate = async (candidate: Candidate) => {
     setProcessingIds((prev) => [...prev, candidate.id]);
     try {
-      await candidateApi.updateCandidateStatus(candidate.id, "active");
+      await candidateApi.unlockCandidate(candidate.id);
       toast.success(`Candidate ${candidate.name} has been activated`);
       if (onCandidateUpdated) onCandidateUpdated();
     } catch (error) {
@@ -112,6 +111,12 @@ export const CandidateTable = ({
   const isProcessing = (id: number) => processingIds.includes(id);
 
   const columns: TableColumn<Candidate>[] = [
+    {
+      key: "index",
+      title: "STT",
+      align: "center",
+      render: (_, __, index) => index + 1 + (pagination.page - 1) * pagination.pageSize,
+    },
     {
       key: "name",
       title: "Candidate",
@@ -155,8 +160,8 @@ export const CandidateTable = ({
       title: "Status",
       align: "center",
       render: (_, row) => {
-        const status = row.status?.toLowerCase() || "pending";
-        const statusInfo = statusLabel[status as keyof typeof statusLabel] || statusLabel.pending;
+        const status = row.status?.toUpperCase() || "INACTIVE";
+        const statusInfo = statusLabel[status as keyof typeof statusLabel] || statusLabel.INACTIVE;
         
         return (
           <span className={`px-2 py-1 rounded-full text-xs ${statusInfo.style}`}>
@@ -169,7 +174,8 @@ export const CandidateTable = ({
       key: "actions",
       title: "Actions",
       align: "center",
-      render: (_, row) => (
+      render: (_, row) => {
+        return (
         <div className="flex justify-center space-x-2 text-sm">
           <button
             className="text-blue-500 hover:text-blue-700 cursor-pointer"
@@ -181,7 +187,19 @@ export const CandidateTable = ({
           >
             <EyeIcon size={18} />
           </button>
-          {row.status === "banned" ? (
+          {row.status && row.status.toUpperCase() === "BANNED" ? (
+            <button
+              className="text-green-500 hover:text-green-700 cursor-pointer"
+              title="Unlock"
+              disabled={isProcessing(row.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmAction({ type: "activate", candidate: row });
+              }}
+            >
+              <CheckCircleIcon size={18} />
+            </button>
+          ) : row.status && row.status.toUpperCase() === "INACTIVE" ? (
             <button
               className="text-green-500 hover:text-green-700 cursor-pointer"
               title="Activate"
@@ -193,7 +211,7 @@ export const CandidateTable = ({
             >
               <CheckCircleIcon size={18} />
             </button>
-          ) : (
+          ) : row.status && row.status.toUpperCase() === "ACTIVE" ? (
             <button
               className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
               title="Block"
@@ -205,7 +223,7 @@ export const CandidateTable = ({
             >
               <ProhibitIcon size={18} />
             </button>
-          )}
+          ) : null}
           <button
             className="text-red-500 hover:text-red-700 cursor-pointer"
             title="Delete"
@@ -230,7 +248,8 @@ export const CandidateTable = ({
             </button>
           )}
         </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -277,6 +296,8 @@ export const CandidateTable = ({
                 ? "Confirm Delete"
                 : confirmAction.type === "block"
                 ? "Confirm Block"
+                : confirmAction.candidate.status && confirmAction.candidate.status.toUpperCase() === "BANNED"
+                ? "Confirm Unlock"
                 : "Confirm Activation"}
             </h2>
             <p className="mb-4">
@@ -285,6 +306,8 @@ export const CandidateTable = ({
                 ? " delete "
                 : confirmAction.type === "block"
                 ? " block "
+                : confirmAction.candidate.status && confirmAction.candidate.status.toUpperCase() === "BANNED"
+                ? " unlock "
                 : " activate "}
               <strong>{confirmAction.candidate.name}</strong>?
               {confirmAction.type === "delete" &&
@@ -322,6 +345,8 @@ export const CandidateTable = ({
                   ? "Delete"
                   : confirmAction.type === "block"
                   ? "Block"
+                  : confirmAction.candidate.status && confirmAction.candidate.status.toUpperCase() === "BANNED"
+                  ? "Unlock"
                   : "Activate"}
               </button>
             </div>
