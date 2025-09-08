@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from './Modal';
-import type { Candidate } from '../../mock/mockCandidates';
+import type { Candidate } from '../../types/candidateTypes';
 
 interface CandidateEditModalProps {
   isOpen: boolean;
@@ -91,7 +91,7 @@ export const CandidateEditModal: React.FC<CandidateEditModalProps> = ({
             >
               <option value="active">Active</option>
               <option value="pending">Pending</option>
-              <option value="blocked">Blocked</option>
+              <option value="banned">Banned</option>
             </select>
           </div>
           <div>

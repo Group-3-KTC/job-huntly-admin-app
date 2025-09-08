@@ -104,7 +104,7 @@ export const CandidateListPage = () => {
       key: "status",
       label: "Status",
       type: "select",
-      options: ["active", "blocked", "pending"],
+      options: ["active", "banned", "pending", "inactive"],
       placeholder: "Select status",
     },
     {

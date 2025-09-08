@@ -1,4 +1,4 @@
-import { Briefcase, ReadCvLogo, User } from "@phosphor-icons/react";
+import { Briefcase, ReadCvLogo } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import { mockReport } from "../../reportlist/mock/mockReport.ts";
 import { mockJob } from "../../jobpostlist/mock/mockJob.ts";
