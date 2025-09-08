@@ -16,6 +16,8 @@ export interface FilterField {
   options?: string[];
   placeholder?: string;
   prefixLabel?: string;
+  loading?: boolean;
+  searchable?: boolean; // Thêm tùy chọn để bật tìm kiếm trong multiselect
 }
 
 interface FilterBarProps {
@@ -32,6 +34,7 @@ export const FilterBar = ({
   onReset,
 }: FilterBarProps) => {
   const [values, setValues] = useState<Record<string, any>>(initialValues);
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
 
   const handleChange = (key: string, value: any) => {
     const newValues = { ...values, [key]: value };
@@ -41,8 +44,24 @@ export const FilterBar = ({
 
   const handleReset = () => {
     setValues({});
+    setSearchQueries({});
     onFilterChange({});
     onReset?.();
+  };
+
+  // Xử lý tìm kiếm cho multiselect
+  const handleSearchChange = (key: string, searchQuery: string) => {
+    setSearchQueries((prev) => ({ ...prev, [key]: searchQuery }));
+  };
+
+  // Lọc options dựa trên chuỗi tìm kiếm
+  const getFilteredOptions = (options: string[], key: string) => {
+    const searchQuery = searchQueries[key] || "";
+    if (!searchQuery) return options;
+    
+    return options.filter((option) => 
+      option.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   };
 
   return (
@@ -175,19 +194,48 @@ export const FilterBar = ({
                     }}
                   >
                     <div className="relative w-full">
-                      <Listbox.Button className="flex items-center  justify-between h-8 bg-transparent text-sm text-gray-500 outline-none w-full">
-                        + Add
+                      <Listbox.Button 
+                        className="flex items-center justify-between h-8 bg-transparent text-sm text-gray-500 outline-none w-full" 
+                        disabled={field.loading}
+                      >
+                        {field.loading ? 'Đang tải...' : '+ Add'}
                         <CaretDown className="h-4 w-4 text-gray-500" />
                       </Listbox.Button>
-                      <Listbox.Options className="absolute z-10 p-2 mt-1 font-semibold w-full bg-white border border-gray-200 rounded-lg shadow-lg text-sm max-h-40 overflow-auto">
-                        {field.options
-                          ?.filter((opt) => !value.includes(opt))
+                      <Listbox.Options className="absolute z-10 p-2 mt-1 font-semibold w-full bg-white border border-gray-200 rounded-lg shadow-lg text-sm max-h-60 overflow-auto">
+                        {/* Ô tìm kiếm trong multiselect */}
+                        {field.searchable && (
+                          <div className="sticky top-0 bg-white pb-2 pt-0 z-10">
+                            <div className="relative">
+                              <MagnifyingGlass
+                                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+                                size={16}
+                              />
+                              <input
+                                type="text"
+                                className="pl-8 pr-2 py-1.5 border border-gray-300 rounded w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Tìm kiếm..."
+                                value={searchQueries[field.key] || ""}
+                                onChange={(e) => handleSearchChange(field.key, e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            {(searchQueries[field.key] && getFilteredOptions(field.options || [], field.key).length === 0) && (
+                              <div className="text-gray-500 text-center py-2 text-xs">
+                                Không tìm thấy kết quả
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {/* Danh sách options */}
+                        {getFilteredOptions(field.options || [], field.key)
+                          .filter((opt) => !value.includes(opt))
                           .map((opt) => (
                             <Listbox.Option
                               key={opt}
                               value={opt}
                               className={({ active }) =>
-                                `cursor-pointer select-none rounded-sm  py-1.5 px-3 ${
+                                `cursor-pointer select-none rounded-sm py-1.5 px-3 ${
                                   active
                                     ? "bg-blue-50 text-blue-800"
                                     : "text-gray-700"

@@ -3,26 +3,31 @@ import {
   CaretDown,
   CaretUp,
   SignOut,
-  Lightning,
   TrendUp,
   ChartBar,
+  User
 } from "@phosphor-icons/react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/store/authSlice.ts";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const UserMenu = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    dispatch(logout());
-    navigate("/login");
+    try {
+      // Đợi chút để hiển thị loading state
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Gọi action logout sẽ tự redirect đến API logout 
+      dispatch(logout());
+    } catch (error) {
+      console.error("Lỗi khi đăng xuất:", error);
+      setIsLoggingOut(false);
+    }
   };
+  
   if (isLoggingOut) {
     return (
       <>
@@ -61,10 +66,10 @@ const UserMenu = () => {
                 className="block rounded-lg px-3 py-2 hover:bg-gray-100 transition"
               >
                 <div className="font-semibold text-gray-900 flex items-center gap-2">
-                  <TrendUp size={16} /> Insights
+                  <User size={16} /> Hồ sơ cá nhân
                 </div>
                 <p className="text-sm text-gray-500">
-                  Measure actions your users take
+                  Xem và cập nhật thông tin tài khoản
                 </p>
               </a>
 
@@ -73,10 +78,10 @@ const UserMenu = () => {
                 className="block rounded-lg px-3 py-2 hover:bg-gray-100 transition"
               >
                 <div className="font-semibold text-gray-900 flex items-center gap-2">
-                  <Lightning size={16} /> Automations
+                  <TrendUp size={16} /> Thống kê
                 </div>
                 <p className="text-sm text-gray-500">
-                  Create your own targeted content
+                  Xem báo cáo hoạt động trong tháng
                 </p>
               </a>
 
@@ -85,10 +90,10 @@ const UserMenu = () => {
                 className="block rounded-lg px-3 py-2 hover:bg-gray-100 transition"
               >
                 <div className="font-semibold text-gray-900 flex items-center gap-2">
-                  <ChartBar size={16} /> Reports
+                  <ChartBar size={16} /> Báo cáo
                 </div>
                 <p className="text-sm text-gray-500">
-                  Keep track of your growth
+                  Báo cáo dữ liệu người dùng
                 </p>
               </a>
             </div>
@@ -99,7 +104,7 @@ const UserMenu = () => {
                 className="w-full flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-gray-100 transition rounded-lg"
               >
                 <SignOut size={18} />
-                Logout
+                Đăng xuất
               </button>
             </div>
           </PopoverPanel>

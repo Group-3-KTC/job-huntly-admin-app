@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ArrowFatLeft, ArrowFatRight, CaretDown } from "@phosphor-icons/react";
 import { Listbox } from "@headlessui/react";
 import type { JSX } from "react/jsx-runtime";
 
 interface PaginationProps {
   currentPage: number;
-  totalPages: number;
+  totalPages?: number;
   totalItems: number;
   itemsPerPage: number;
   onPageChange: (page: number) => void;
@@ -22,13 +22,19 @@ const itemsPerPageOptions = [
 
 export default function Pagination({
   currentPage,
-  totalPages,
+  totalPages: propsTotalPages,
+  totalItems,
   itemsPerPage,
   onPageChange,
   onItemsPerPageChange,
   showItemsPerPage = true,
 }: PaginationProps) {
   const [jumpToPage, setJumpToPage] = useState<string>("");
+  
+  // Tính toán totalPages nếu không được cung cấp
+  const totalPages = useMemo(() => {
+    return propsTotalPages || Math.ceil(totalItems / itemsPerPage);
+  }, [propsTotalPages, totalItems, itemsPerPage]);
 
   const handleJumpToPage = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {

@@ -1,7 +1,7 @@
 import { Users, CheckCircle, Clock, Prohibit } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
-import type { Candidate } from "../mock/mockCandidates";
+import type { Candidate } from "../types/candidateTypes";
 import { t } from "ttag";
 
 interface Props {
@@ -16,8 +16,8 @@ const CandidateStatistics = ({ candidates }: Props) => {
   const pendingCandidates = candidates.filter(
     (c) => c.status === "pending",
   ).length;
-  const blockedCandidates = candidates.filter(
-    (c) => c.status === "blocked",
+  const bannedCandidates = candidates.filter(
+    (c) => c.status === "banned",
   ).length;
 
   const statisticData: StatisticCardProps[] = [
@@ -55,8 +55,8 @@ const CandidateStatistics = ({ candidates }: Props) => {
       colorScheme: "orange",
     },
     {
-      label: "Blocked Candidates",
-      value: blockedCandidates.toString(),
+      label: "Banned Candidates",
+      value: bannedCandidates.toString(),
       icon: <Prohibit size={24} />,
       change: {
         percentage: "1.5%",

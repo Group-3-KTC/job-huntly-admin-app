@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { CandidateTable } from "../components/CandidateTable";
-import { type Candidate, mockCandidates } from "../mock/mockCandidates";
+import { type Candidate } from "../types/candidateTypes";
 import {
   FilterBar,
   type FilterField,
 } from "../../../components/common/FilterBar";
 import CandidateStatistics from "../components/CandidateStatistics";
+import { candidateApi } from "../services/candidateApi";
 
 interface FilterValues {
   searchText: string;
@@ -20,8 +21,9 @@ interface FilterValues {
 export const CandidateListPage = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
 
   const [filterValues, setFilterValues] = useState<FilterValues>({
     searchText: "",
@@ -33,26 +35,76 @@ export const CandidateListPage = () => {
     created_to: "",
   });
 
+  const fetchCandidates = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await candidateApi.getCandidates({
+        page,
+        size: itemsPerPage,
+        searchText: filterValues.searchText,
+        status: filterValues.status,
+        sort: filterValues.sort,
+      });
+
+      const mappedCandidates: Candidate[] = response.content.map((profile) => ({
+        id: profile.id,
+        name: profile.fullName,
+        avatarUrl:
+          profile.avatarUrl || "https://randomuser.me/api/portraits/lego/1.jpg", // Fallback avatar
+        email: profile.email,
+        phone: profile.phone || "",
+        status:
+          (profile.status?.toLowerCase() === "blocked"
+            ? "banned"
+            : (profile.status?.toLowerCase() as
+                | "active"
+                | "inactive"
+                | "pending")) || "pending",
+        skills: profile.skills || [],
+        location_city: profile.city || "",
+        cvUrl: profile.cvUrl || "",
+      }));
+
+      setCandidates(mappedCandidates);
+      setTotalItems(response.totalElements);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+      setLoading(false);
+    }
+  }, [
+    page,
+    itemsPerPage,
+    filterValues.searchText,
+    filterValues.status,
+    filterValues.sort,
+  ]);
+
+  useEffect(() => {
+    fetchCandidates();
+  }, [fetchCandidates]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCandidates(mockCandidates);
-      setLoading(false);
-    }, 2000);
+      if (filterValues.searchText) {
+        fetchCandidates();
+      }
+    }, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [filterValues.searchText, fetchCandidates]);
 
   const candidateFilters: FilterField[] = [
     {
       key: "searchText",
       label: "Search",
       type: "text",
-      placeholder: "Search by name or username",
+      placeholder: "Search by name or email",
     },
     {
       key: "status",
       label: "Status",
       type: "select",
-      options: ["active", "blocked", "pending"],
+      options: ["active", "banned", "pending", "inactive"],
       placeholder: "Select status",
     },
     {
@@ -93,38 +145,13 @@ export const CandidateListPage = () => {
     },
   ];
 
-  const filtered = candidates
-    .filter((c) => {
-      const { searchText, status, skills, location_city } = filterValues;
-      const matchSearch =
-        c.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        c.username.toLowerCase().includes(searchText.toLowerCase());
-      const matchStatus = status ? c.status === status : true;
-      const matchSkills = skills.length
-        ? skills.every((s: string) => c.skills?.includes(s))
-        : true;
-      const matchLocation = location_city.length
-        ? location_city.includes(c.location_city)
-        : true;
-      return matchSearch && matchStatus && matchSkills && matchLocation;
-    })
-    .sort((a, b) => {
-      const sort = filterValues.sort;
-      if (sort === "asc") return a.name.localeCompare(b.name);
-      if (sort === "desc") return b.name.localeCompare(a.name);
-      if (sort === "id") return a.id - b.id;
-      if (sort === "recent") return b.id - a.id;
-      return 0;
-    });
-
-  const paginated = filtered.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
-  );
-
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
-    setPage(1);
+    setPage(0);
+  };
+
+  const handleCandidateUpdated = () => {
+    fetchCandidates();
   };
 
   return (
@@ -135,7 +162,7 @@ export const CandidateListPage = () => {
         initialValues={filterValues}
         onFilterChange={(filters) => {
           setFilterValues(filters as unknown as FilterValues);
-          setPage(1);
+          setPage(0); 
         }}
         onReset={() => {
           setFilterValues({
@@ -147,19 +174,20 @@ export const CandidateListPage = () => {
             created_from: "",
             created_to: "",
           });
-          setPage(1);
+          setPage(0);
         }}
       />
       <CandidateTable
-        candidates={paginated}
+        candidates={candidates}
         loading={loading}
         pagination={{
-          page,
+          page: page + 1,
           pageSize: itemsPerPage,
-          total: filtered.length,
-          onPageChange: setPage,
-          onItemsPerPageChange: handleItemsPerPageChange, // Pass handler to table
+          total: totalItems,
+          onPageChange: (newPage) => setPage(newPage - 1),
+          onItemsPerPageChange: handleItemsPerPageChange,
         }}
+        onCandidateUpdated={handleCandidateUpdated}
       />
     </div>
   );

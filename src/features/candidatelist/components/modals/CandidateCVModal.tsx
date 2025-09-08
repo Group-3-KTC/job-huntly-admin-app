@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from './Modal';
-import type { Candidate } from '../../mock/mockCandidates';
+import type { Candidate } from '../../types/candidateTypes';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -12,11 +12,12 @@ interface CandidateCVModalProps {
   candidate: Candidate | null;
 }
 
-const STATUS_LABEL = {
+const STATUS_LABEL: Record<Candidate['status'], { text: string; style: string }> = {
   active: { text: 'Active', style: 'bg-green-100 text-green-700' },
-  blocked: { text: 'Blocked', style: 'bg-red-100 text-red-700' },
+  banned: { text: 'Banned', style: 'bg-red-100 text-red-700' },
+  inactive: { text: 'Inactive', style: 'bg-yellow-100 text-yellow-700' },
   pending: { text: 'Pending', style: 'bg-purple-100 text-purple-700' },
-};
+} as const;
 
 /**
  * @param isOpen

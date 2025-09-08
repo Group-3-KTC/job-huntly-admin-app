@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from './Modal';
-import type { Candidate } from '../../mock/mockCandidates';
+import type { Candidate } from '../../types/candidateTypes';
 
 interface CandidateDetailsModalProps {
   isOpen: boolean;
@@ -9,11 +9,12 @@ interface CandidateDetailsModalProps {
   onViewCV: (candidate: Candidate) => void;
 }
 
-const statusLabel = {
+const statusLabel: Record<Candidate['status'], { text: string; style: string }> = {
   active: { text: "Active", style: "bg-green-100 text-green-700" },
-  blocked: { text: "Blocked", style: "bg-red-100 text-red-700" },
+  banned: { text: "Banned", style: "bg-red-100 text-red-700" },
+  inactive: { text: "Inactive", style: "bg-yellow-100 text-yellow-700" },
   pending: { text: "Pending", style: "bg-purple-100 text-purple-700" },
-};
+} as const;
 
 export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
   isOpen,
