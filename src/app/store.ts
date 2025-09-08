@@ -3,6 +3,7 @@ import { mockAuthApi } from "../features/auth/services/mockAuthApi.ts";
 import authReducer from "../features/auth/store/authSlice";
 import pageReducer from "../store/pageSlice.ts";
 import uiReducer from "../store/uiSlice.ts";
+import mailReducer from "../features/mail/store/mailSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     page: pageReducer,
     ui: uiReducer,
+    mail: mailReducer,
     [mockAuthApi.reducerPath]: mockAuthApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

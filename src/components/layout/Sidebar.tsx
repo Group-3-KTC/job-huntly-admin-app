@@ -15,6 +15,7 @@ import type { RootState } from "../../app/store";
 import { t } from "ttag";
 import { useCurrentLanguage } from "../../hooks/useCurrentLanguage";
 import { logout } from "../../features/auth/store/authSlice.ts";
+import {Envelope} from "phosphor-react";
 // import { useState } from "react";
 
 const Sidebar = () => {
@@ -61,6 +62,11 @@ const Sidebar = () => {
       to: "/admin/candidateList",
       label: t`Candidate List`,
       icon: <UsersFour size={20} />,
+    },
+    {
+      to: "/admin/mail",
+      label: t`Mail`,
+      icon: <Envelope size={20} />,
     },
   ];
 
