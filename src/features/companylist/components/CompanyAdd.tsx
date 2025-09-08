@@ -1,6 +1,6 @@
 import { Dialog } from "@headlessui/react";
 import { useEffect, useState } from "react";
-import type { Company } from "../mock/mockCompany";
+import type { Company } from "../types/companyType";
 
 interface Props {
   onClose: () => void;
@@ -24,16 +24,32 @@ interface Ward {
 }
 
 const defaultForm: Omit<Company, "id" | "userId"> = {
+  companyName: "",
   email: "",
   description: "",
   address: "",
-  location_city: [],
-  location_ward: "",
-  quantity_employee: 0,
-  status: "pending",
+  locationCity: "",
+  locationCountry: "",
+  website: "",
+  phoneNumber: "",
+  foundedYear: new Date().getFullYear(),
+  quantityEmployee: 0,
+  status: "inactive",
+  isProCompany: false,
+  followersCount: 0,
+  jobsCount: 0,
+  facebookUrl: null,
+  twitterUrl: null,
+  linkedinUrl: null,
+  mapEmbedUrl: null,
+  avatar: "",
+  avatarCover: "",
+  categories: [],
+  parentCategories: [],
+  categoryIds: null
 };
 
-const statusOptions: Company["status"][] = ["active", "blocked", "pending"];
+const statusOptions: Company["status"][] = ["active", "banned", "inactive"];
 
 export default function AddCompanyModal({ onClose }: Props) {
   const [form, setForm] = useState<Omit<Company, "id" | "userId">>(defaultForm);
@@ -58,13 +74,12 @@ export default function AddCompanyModal({ onClose }: Props) {
     const code = e.target.value;
     const selected = provinces.find((p) => p.code.toString() === code);
     if (!selected) return;
-    handleChange("location_city", [selected.name]);
+    handleChange("locationCity", selected.name);
     fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
       .then((res) => res.json())
       .then((data) => {
         setDistricts(data.districts);
         setWards([]);
-        handleChange("location_ward", "");
       });
   };
 
@@ -76,7 +91,6 @@ export default function AddCompanyModal({ onClose }: Props) {
       .then((res) => res.json())
       .then((data) => {
         setWards(data.wards);
-        handleChange("location_ward", "");
       });
   };
 
@@ -87,7 +101,7 @@ export default function AddCompanyModal({ onClose }: Props) {
       d.wards.some((w) => w.code.toString() === code)
     );
     if (!ward || !district) return;
-    handleChange("location_ward", `${ward.name}, ${district.name}`);
+    handleChange("locationCountry", `${ward.name}, ${district.name}`);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,10 +136,34 @@ export default function AddCompanyModal({ onClose }: Props) {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
+              placeholder="Company Name"
+              className="w-full px-3 py-2 border rounded"
+              value={form.companyName}
+              onChange={(e) => handleChange("companyName", e.target.value)}
+              required
+            />
+            
+            <input
               placeholder="Email"
               className="w-full px-3 py-2 border rounded"
               value={form.email}
               onChange={(e) => handleChange("email", e.target.value)}
+              required
+            />
+
+            <input
+              placeholder="Phone Number"
+              className="w-full px-3 py-2 border rounded"
+              value={form.phoneNumber}
+              onChange={(e) => handleChange("phoneNumber", e.target.value)}
+              required
+            />
+
+            <input
+              placeholder="Website"
+              className="w-full px-3 py-2 border rounded"
+              value={form.website}
+              onChange={(e) => handleChange("website", e.target.value)}
               required
             />
 
@@ -189,16 +227,30 @@ export default function AddCompanyModal({ onClose }: Props) {
               ))}
             </select>
 
+            <label className="block font-medium">Founded Year:</label>
+            <input
+              type="number"
+              min={1900}
+              max={new Date().getFullYear()}
+              className="w-full px-3 py-2 border rounded"
+              value={form.foundedYear}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleChange("foundedYear", val === "" ? new Date().getFullYear() : Number(val));
+              }}
+              required
+            />
+
             <label className="block font-medium">Employees:</label>
             <input
               type="number"
               min={0}
               step={1}
               className="w-full px-3 py-2 border rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              value={form.quantity_employee}
+              value={form.quantityEmployee}
               onChange={(e) => {
                 const val = e.target.value;
-                handleChange("quantity_employee", val === "" ? 0 : Number(val));
+                handleChange("quantityEmployee", val === "" ? 0 : Number(val));
               }}
               required
             />

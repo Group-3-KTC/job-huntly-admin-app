@@ -1,6 +1,5 @@
-import { Briefcase, Buildings, ReadCvLogo, User } from "@phosphor-icons/react";
+import { Briefcase, ReadCvLogo, User } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
-import { mockCandidates } from "../../candidatelist/mock/mockCandidates";
 import { mockReport } from "../../reportlist/mock/mockReport.ts";
 import { mockJob } from "../../jobpostlist/mock/mockJob.ts";
 import StatisCard from "../../../components/ui/StatisticCard";
@@ -11,17 +10,17 @@ export default function StatisticItem() {
   useCurrentLanguage();
 
   const statisticData: StatisticCardProps[] = [
-    {
-      label: t`Total Candidates`,
-      value: mockCandidates.length.toLocaleString(),
-      icon: <User />,
-      change: {
-        percentage: "8.5%",
-        direction: "up",
-        description: "Up from yesterday",
-      },
-      colorScheme: "green",
-    },
+    // {
+    //   label: t`Total Candidates`,
+    //   value: mockCandidates.length.toLocaleString(),
+    //   icon: <User />,
+    //   change: {
+    //     percentage: "8.5%",
+    //     direction: "up",
+    //     description: "Up from yesterday",
+    //   },
+    //   colorScheme: "green",
+    // },
     {
       label: t`Total Reports`,
       value: mockReport.length.toLocaleString(),

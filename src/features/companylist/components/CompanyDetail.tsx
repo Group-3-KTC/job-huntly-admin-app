@@ -39,14 +39,14 @@ export default function CompanyDetailModal({ company, onClose }: Props) {
                   className={`mt-2 px-3 py-1 rounded-full text-sm font-medium ${
                     company.status === "active"
                       ? "bg-green-100 text-green-700"
-                      : company.status === "blocked"
+                      : company.status === "banned"
                       ? "bg-red-100 text-red-700"
                       : "bg-purple-100 text-purple-700"
                   }`}
                 >
                   {company.status === "active"
                     ? "Active"
-                    : company.status === "blocked"
+                    : company.status === "banned"
                     ? "Blocked"
                     : "Pending"}
                 </span>

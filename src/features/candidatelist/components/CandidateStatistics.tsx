@@ -1,7 +1,7 @@
 import { Users, CheckCircle, Clock, Prohibit } from "@phosphor-icons/react";
 import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
-import type { Candidate } from "../mock/mockCandidates";
+import type { Candidate } from "../types/candidateTypes";
 import { t } from "ttag";
 
 interface Props {
