@@ -35,7 +35,6 @@ export const CandidateListPage = () => {
     created_to: "",
   });
 
-  // Lấy dữ liệu từ API
   const fetchCandidates = useCallback(async () => {
     setLoading(true);
     try {
@@ -48,7 +47,7 @@ export const CandidateListPage = () => {
         id: profile.id,
         name: profile.fullName,
         avatarUrl:
-          profile.avatarUrl || "https://randomuser.me/api/portraits/lego/1.jpg", // Fallback avatar
+          profile.avatarUrl || "https://randomuser.me/api/portraits/lego/1.jpg",
         email: profile.email,
         phone: profile.phone || "",
         status: profile.status 
@@ -76,36 +75,31 @@ export const CandidateListPage = () => {
 
   // Lọc dữ liệu theo tiêu chí
   const filtered = candidates.filter((c) => {
-    // Lọc theo text
+
     const matchSearch =
       c.email.toLowerCase().includes(filterValues.searchText.toLowerCase()) ||
       c.id.toString().includes(filterValues.searchText) ||
       c.name.toLowerCase().includes(filterValues.searchText.toLowerCase());
 
-    // Lọc theo trạng thái
     const matchStatus = filterValues.status 
       ? c.status === filterValues.status 
       : true;
 
-    // Lọc theo thành phố
     const matchCity =
       filterValues.location_city.length > 0
         ? c.location_city && filterValues.location_city.includes(c.location_city)
         : true;
 
-    // Lọc theo kỹ năng
     const matchSkills =
       filterValues.skills.length > 0
         ? c.skills.some(skill => filterValues.skills.includes(skill))
         : true;
 
-    // Lọc theo ngày tạo (đơn giản hóa, thực tế cần xử lý date)
-    const matchCreatedDate = true; // Cần xử lý thêm nếu có ngày tạo
 
+    const matchCreatedDate = true;
     return matchSearch && matchStatus && matchCity && matchSkills && matchCreatedDate;
   });
 
-  // Sắp xếp dữ liệu
   const sorted = [...filtered].sort((a, b) => {
     if (filterValues.sort === "name") return a.name.localeCompare(b.name);
     if (filterValues.sort === "email") return a.email.localeCompare(b.email);
@@ -181,7 +175,6 @@ export const CandidateListPage = () => {
         initialValues={filterValues}
         onFilterChange={(filters) => {
           setFilterValues(filters as unknown as FilterValues);
-          // Không gọi API ở đây, chỉ lọc dữ liệu local
         }}
         onReset={() => {
           setFilterValues({
