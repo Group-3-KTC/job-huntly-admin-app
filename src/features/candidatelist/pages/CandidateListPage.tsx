@@ -90,7 +90,7 @@ export const CandidateListPage = () => {
     // Lọc theo thành phố
     const matchCity =
       filterValues.location_city.length > 0
-        ? filterValues.location_city.includes(c.location_city)
+        ? c.location_city && filterValues.location_city.includes(c.location_city)
         : true;
 
     // Lọc theo kỹ năng
