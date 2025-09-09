@@ -1,38 +1,51 @@
-export interface TicketSummary {
-    id: number;
-    subject: string;
-    status: 'OPEN' | 'PENDING' | 'CLOSED' | string;
-    createdAt: string;
-    threadId: string;
-    lastMessageAt: string;
-    lastFrom: string;
-    lastSnippet: string;
-}
+export type TicketStatus = "OPEN" | "PENDING" | "CLOSED";
 
 export interface PageResp<T> {
     content: T[];
     totalElements: number;
     totalPages: number;
-    number: number;
+    number: number; // current page
     size: number;
+    first: boolean;
+    last: boolean;
 }
 
-export interface TicketMessage {
+export interface InboxItemDto {
     id: number;
-    from: string;
-    to: string[];
-    cc?: string[];
     subject: string;
-    bodyHtml?: string;
-    bodyText?: string;
+    status: TicketStatus;
+    customerEmail: string | null;
+    createdAt: string;
+    threadId: string;
+    lastMessageAt: string | null;
+    lastFrom: string | null;
+    lastSnippet: string | null;
+}
+
+export interface MessageDto {
+    id: number;
+    ticketId: number;
     messageId: string;
-    receivedAt: string;
+    inReplyTo: string | null;
+    fromEmail: string;
+    sentAt: string;
+    direction: "INBOUND" | "OUTBOUND";
+    bodyText: string | null;
+    bodyHtml: string | null;
 }
 
 export interface ReplyRequest {
     bodyHtml: string;
-    cc?: string[];
-    to?: string[];
-    subjectOverride?: string;
-    replyToMessageId?: string;
+    cc?: string[] | null;
+    to?: string[] | null;
+    subjectOverride?: string | null;
+    replyToMessageId?: string | null;
+}
+
+export interface ReplyResultDto {
+    ticketId: number;
+    ticketMessageId: number;
+    messageId: string;
+    direction: "OUTBOUND";
+    sentAt: string;
 }
