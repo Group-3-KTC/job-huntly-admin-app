@@ -60,19 +60,17 @@ export default function InboxList({
         if (!autoRefreshMs || autoRefreshMs < 1000) return;
 
         const tick = () => {
-            if (document.hidden) return; // không refresh khi tab ẩn
-            setLocalRefreshCount(k => k + 1); // 👈 tăng để trigger fetch
+            if (document.hidden) return;
+            setLocalRefreshCount(k => k + 1);
         };
 
         const id = window.setInterval(tick, autoRefreshMs);
 
-        // 👇 Nếu người dùng quay lại tab, auto refresh ngay
         const onVisible = () => {
             if (!document.hidden) tick();
         };
         document.addEventListener("visibilitychange", onVisible);
 
-        // gọi tick() ngay để không chờ 30s đầu tiên
         tick();
 
         return () => {
@@ -86,7 +84,7 @@ export default function InboxList({
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
             <div className="p-4 border-b border-gray-100 flex items-center gap-2">
                 <EnvelopeSimple size={24} />
-                <h2 className="text-lg font-semibold">Hộp thư</h2>
+                <h2 className="text-lg font-semibold">Inbox</h2>
                 <button
                     onClick={() => setLocalRefreshCount(k => k + 1)}
                     className="ml-auto inline-flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl border hover:bg-gray-50"
@@ -150,7 +148,7 @@ export default function InboxList({
             </div>
 
             <div className="p-3 border-t border-gray-100 flex items-center justify-between text-sm">
-                <div>Trang {data ? data.number + 1 : 0}/{data?.totalPages ?? 0}</div>
+                <div>Page {data ? data.number + 1 : 0}/{data?.totalPages ?? 0}</div>
                 <div className="flex gap-2">
                     <button
                         disabled={!data || data.first}
@@ -186,5 +184,5 @@ function ListSkeleton() {
     );
 }
 function EmptyState() {
-    return <div className="p-8 text-center text-gray-500">Chưa có ticket nào.</div>;
+    return <div className="p-8 text-center text-gray-500">No tickets yet.</div>;
 }

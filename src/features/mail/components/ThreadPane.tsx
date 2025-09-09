@@ -110,11 +110,11 @@ export default function ThreadPane({
             };
             setData(old => old ? { ...old, content: [...old.content, appended] } : old);
             setReply("");
-            setToast({ ok: true, msg: "Đã gửi trả lời." });
+            setToast({ ok: true, msg: "Reply sent successfully." });
             onReplied();
             setTimeout(() => setToast(null), 2000);
         } catch (e: unknown) {
-            let msg = "Gửi thất bại";
+            let msg = "Failed to send";
 
             if (e instanceof AxiosError) {
                 msg = e.response?.data?.message || e.message || msg;
@@ -133,7 +133,7 @@ export default function ThreadPane({
             <div className="flex-1 grid place-items-center text-gray-500">
                 <div className="text-center">
                     <EnvelopeSimple size={40} className="mx-auto mb-2" />
-                    <p>Chọn một cuộc hội thoại để xem</p>
+                    <p>Select a mail to view</p>
                 </div>
             </div>
         );
@@ -151,7 +151,7 @@ export default function ThreadPane({
             </div>
 
             <div className="flex-1 overflow-auto p-4 space-y-4">
-                {loading && <div className="text-gray-500">Đang tải hội thoại…</div>}
+                {loading && <div className="text-gray-500">Loading mail…</div>}
                 {error && <div className="m-3 p-3 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-sm">{error}</div>}
                 {data?.content.map((m) => (
                     <MessageBubble key={m.id} msg={m} me={m.direction === "OUTBOUND"} />
@@ -164,7 +164,7 @@ export default function ThreadPane({
           <textarea
               value={reply}
               onChange={(e) => setReply(e.target.value)}
-              placeholder="Nhập nội dung trả lời…"
+              placeholder="Enter your reply…"
               className="flex-1 border rounded-xl p-3 min-h-[80px] focus:outline-none focus:ring"
           />
                     <button
@@ -172,7 +172,7 @@ export default function ThreadPane({
                         disabled={!reply.trim() || sending}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white disabled:opacity-50 shadow"
                     >
-                        <PaperPlaneRight size={18} /> Gửi
+                        <PaperPlaneRight size={18} /> Send
                     </button>
                 </div>
                 {toast && (

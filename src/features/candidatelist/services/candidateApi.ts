@@ -1,4 +1,4 @@
-import api from "../../../config/api";
+import { api } from "../../../config/api";
 import { CANDIDATE_API, USER_API } from "../../../constants/apiUserConstants";
 import type {
   CandidateFilterParams,
