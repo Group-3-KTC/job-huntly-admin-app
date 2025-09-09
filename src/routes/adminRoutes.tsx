@@ -5,6 +5,7 @@ import ReportList from "../features/reportlist/pages/ReportList";
 import { CandidateListPage } from "../features/candidatelist/pages/CandidateListPage";
 import JobListPage from "../features/jobpostlist/pages/JobListPage";
 import Error404 from "../pages/error/Error404";
+import MailInboxPage from "../features/mail/pages/MailInboxPage.tsx";
 
 const AdminRoutes = (
   <>
@@ -14,6 +15,7 @@ const AdminRoutes = (
     <Route path="companyList" element={<CompanyList />} />
     <Route path="candidateList" element={<CandidateListPage />} />
     <Route path="jobList" element={<JobListPage />} />
+    <Route path="mail" element={<MailInboxPage />} />
     <Route path="*" element={<Error404 />} />
   </>
 );
