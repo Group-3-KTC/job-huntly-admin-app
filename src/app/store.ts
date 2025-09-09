@@ -1,21 +1,24 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { mockAuthApi } from "../features/auth/services/mockAuthApi.ts";
-import authReducer from "../features/auth/store/authSlice";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import authReducer from "../features/auth/store/authSlice.ts";
 import pageReducer from "../store/pageSlice.ts";
 import uiReducer from "../store/uiSlice.ts";
+import { authApi } from "../features/auth/services/authApi.ts";
+
+// Import khác nếu có...
 
 export const store = configureStore({
   reducer: {
-    // [authApi.reducerPath]: authApi.reducer,
     auth: authReducer,
     page: pageReducer,
     ui: uiReducer,
-    [mockAuthApi.reducerPath]: mockAuthApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    // getDefaultMiddleware().concat(authApi.middleware),
-    getDefaultMiddleware().concat(mockAuthApi.middleware),
+    getDefaultMiddleware().concat(authApi.middleware),
 });
+
+setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

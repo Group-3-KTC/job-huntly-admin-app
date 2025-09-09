@@ -1,83 +1,150 @@
 import { useEffect, useState } from "react";
 import { Table, type TableColumn } from "../../../components/ui/Table";
 import Pagination from "../../../components/common/Pagination";
-import type { Company } from "../mock/mockCompany";
+import type { Company } from "../types/companyType";
 import {
   EyeIcon,
   PencilSimpleIcon,
+  StarIcon,
   ProhibitIcon,
-  TrashIcon,
   CheckCircleIcon,
+  TrashIcon,
 } from "@phosphor-icons/react";
 import CompanyDetailModal from "./CompanyDetail";
-import CompanyEditModal from "./CompanyEdit";
+import { companyService } from "../services/companyService";
+import toast from "react-hot-toast";
 
 interface Props {
   companies: Company[];
   loading?: boolean;
+  onEdit?: (company: Company) => void;
+  onRefresh?: () => void; // Callback để refresh dữ liệu sau khi block/delete
   pagination?: {
     page: number;
     pageSize: number;
     total: number;
     onPageChange: (page: number) => void;
-    onItemsPerPageChange: (itemsPerPage: number) => void; // Add this
+    onItemsPerPageChange: (itemsPerPage: number) => void;
   };
 }
 
 const statusLabel = {
   active: { text: "Active", style: "bg-green-100 text-green-700" },
-  blocked: { text: "Blocked", style: "bg-red-100 text-red-700" },
-  pending: {
-    text: "Pending Confirmation",
-    style: "bg-purple-100 text-purple-700",
-  },
+  banned: { text: "Blocked", style: "bg-red-100 text-red-700" },
+  inactive: { text: "Pending", style: "bg-purple-100 text-purple-700" },
 };
 
-export const CompanyTable = ({ companies, loading, pagination }: Props) => {
+export const CompanyTable = ({
+  companies,
+  loading,
+  pagination,
+  onEdit,
+  onRefresh,
+}: Props) => {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [data, setData] = useState<Company[]>([]);
-  const [deletedIds, setDeletedIds] = useState<number[]>([]);
+  const [processingIds, setProcessingIds] = useState<number[]>([]); // Theo dõi ID của companies đang xử lý
   const [confirmAction, setConfirmAction] = useState<{
-    type: "delete" | "block";
+    type: "delete" | "block" | "activate";
     company: Company;
   } | null>(null);
 
   useEffect(() => {
-    const filtered = companies.filter((c) => !deletedIds.includes(c.id));
-    setData(filtered);
-  }, [companies, deletedIds]);
+    setData(companies);
+  }, [companies]);
 
-  const handleDelete = (id: number) => {
-    setDeletedIds((prev) => [...prev, id]);
-    setConfirmAction(null);
+  const getLocationDisplay = (city: string, country: string) => {
+    return `${city}${country ? `, ${country}` : ""}`;
   };
 
-  const handleBlock = (id: number) => {
-    setData((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: "blocked" } : c)),
-    );
-    setConfirmAction(null);
+  // Block công ty - set status thành banned
+  const handleBlockCompany = async (company: Company) => {
+    setProcessingIds((prev) => [...prev, company.id]);
+    try {
+      // Cập nhật status thành "banned"
+      await companyService.update(company.id, { status: "banned" });
+      toast.success(`Company ${company.companyName} has been blocked`);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error(`Error blocking company with id ${company.id}:`, error);
+      toast.error(`Failed to block company: ${(error as Error).message}`);
+    } finally {
+      setProcessingIds((prev) => prev.filter((id) => id !== company.id));
+      setConfirmAction(null);
+    }
   };
 
-  const handleSaveEdit = (updated: Company) => {
-    setData((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+  // Kích hoạt công ty - set status thành active
+  const handleActivateCompany = async (company: Company) => {
+    setProcessingIds((prev) => [...prev, company.id]);
+    try {
+      // Cập nhật status thành "active"
+      await companyService.update(company.id, { status: "active" });
+      toast.success(`Company ${company.companyName} has been activated`);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error(`Error activating company with id ${company.id}:`, error);
+      toast.error(`Failed to activate company: ${(error as Error).message}`);
+    } finally {
+      setProcessingIds((prev) => prev.filter((id) => id !== company.id));
+      setConfirmAction(null);
+    }
   };
+
+  const handleDeleteCompany = async (company: Company) => {
+    setProcessingIds((prev) => [...prev, company.id]);
+    try {
+      await companyService.delete(company.id);
+      toast.success(`Company ${company.companyName} has been deleted`);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error(`Error deleting company with id ${company.id}:`, error);
+      toast.error(`Failed to delete company: ${(error as Error).message}`);
+    } finally {
+      setProcessingIds((prev) => prev.filter((id) => id !== company.id));
+      setConfirmAction(null);
+    }
+  };
+
+  const isProcessing = (id: number) => processingIds.includes(id);
 
   const columns: TableColumn<Company>[] = [
-    { key: "id", title: "ID", width: "80px" },
+    { key: "id", title: "ID", width: "60px" },
+    { key: "companyName", title: "Company Name" },
     { key: "email", title: "Email" },
-    { key: "address", title: "Address", align: "left" },
+    { key: "phoneNumber", title: "Phone Number" },
+    { key: "address", title: "Address", align: "left", width: "180px" },
     {
-      key: "location_city",
+      key: "location",
       title: "City",
-      render: (cities) => cities.join(", "),
+      render: (_, record) =>
+        getLocationDisplay(record.locationCity, record.locationCountry),
     },
-    { key: "location_ward", title: "Ward" },
     {
-      key: "quantity_employee",
-      title: "Employees",
+      key: "parentCategories",
+      title: "Categories",
+      render: (categories) =>
+        Array.isArray(categories) ? categories.join(", ") : "",
+    },
+    {
+      key: "jobsCount",
+      title: "Jobs",
       align: "center",
+    },
+    {
+      key: "isProCompany",
+      title: "Pro",
+      align: "center",
+      render: (isPro) =>
+        isPro ? (
+          <StarIcon
+            size={16}
+            weight="fill"
+            className="text-yellow-500 mx-auto"
+          />
+        ) : (
+          <span className="text-xs text-gray-500">-</span>
+        ),
     },
     {
       key: "status",
@@ -112,19 +179,28 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
             title="Edit"
             onClick={(e) => {
               e.stopPropagation();
-              setEditingCompany(record);
+              if (onEdit) onEdit(record);
             }}
           >
             <PencilSimpleIcon size={18} />
           </button>
-          {record.status === "blocked" ? (
-            <span title="Blocked">
-              <CheckCircleIcon size={18} className="text-yellow-500" />
-            </span>
+          {record.status === "banned" ? (
+            <button
+              className="text-green-500 hover:text-green-700 cursor-pointer"
+              title="Activate"
+              disabled={isProcessing(record.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmAction({ type: "activate", company: record });
+              }}
+            >
+              <CheckCircleIcon size={18} />
+            </button>
           ) : (
             <button
               className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
               title="Block"
+              disabled={isProcessing(record.id)}
               onClick={(e) => {
                 e.stopPropagation();
                 setConfirmAction({ type: "block", company: record });
@@ -136,6 +212,7 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
           <button
             className="text-red-500 hover:text-red-700 cursor-pointer"
             title="Delete"
+            disabled={isProcessing(record.id)}
             onClick={(e) => {
               e.stopPropagation();
               setConfirmAction({ type: "delete", company: record });
@@ -174,25 +251,26 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
           onClose={() => setSelectedCompany(null)}
         />
       )}
-      {editingCompany && (
-        <CompanyEditModal
-          company={editingCompany}
-          onClose={() => setEditingCompany(null)}
-          onSave={handleSaveEdit}
-        />
-      )}
       {confirmAction && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/10 flex items-center justify-center">
           <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm">
             <h2 className="text-lg font-semibold mb-4">
               {confirmAction.type === "delete"
-                ? "Confirm company deletion"
-                : "Confirm company block"}
+                ? "Confirm Delete"
+                : confirmAction.type === "block"
+                ? "Confirm Block"
+                : "Confirm Activation"}
             </h2>
             <p className="mb-4">
-              Are you sure
-              {confirmAction.type === "delete" ? " Delete " : " Block "}
-              Company <strong>{confirmAction.company.email}</strong>?
+              Are you sure you want to
+              {confirmAction.type === "delete"
+                ? " delete "
+                : confirmAction.type === "block"
+                ? " block "
+                : " activate "}
+              <strong>{confirmAction.company.companyName}</strong>?
+              {confirmAction.type === "delete" &&
+                " This action cannot be undone."}
             </p>
             <div className="flex justify-end gap-2">
               <button
@@ -202,14 +280,31 @@ export const CompanyTable = ({ companies, loading, pagination }: Props) => {
                 Cancel
               </button>
               <button
-                onClick={() =>
+                onClick={() => {
+                  if (confirmAction.type === "delete") {
+                    handleDeleteCompany(confirmAction.company);
+                  } else if (confirmAction.type === "block") {
+                    handleBlockCompany(confirmAction.company);
+                  } else {
+                    handleActivateCompany(confirmAction.company);
+                  }
+                }}
+                className={`px-4 py-2 ${
                   confirmAction.type === "delete"
-                    ? handleDelete(confirmAction.company.id)
-                    : handleBlock(confirmAction.company.id)
-                }
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : confirmAction.type === "block"
+                    ? "bg-yellow-500 hover:bg-yellow-600"
+                    : "bg-green-500 hover:bg-green-600"
+                } text-white rounded`}
+                disabled={isProcessing(confirmAction.company.id)}
               >
-                Agree
+                {isProcessing(confirmAction.company.id)
+                  ? "Processing..."
+                  : confirmAction.type === "delete"
+                  ? "Delete"
+                  : confirmAction.type === "block"
+                  ? "Block"
+                  : "Activate"}
               </button>
             </div>
           </div>
