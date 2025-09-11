@@ -1,4 +1,4 @@
-import api from "../../../config/api";
+import { api } from "../../../config/api";
 import type {
   Company,
   CompanyResponse,
@@ -14,6 +14,7 @@ import {
   API_COMPANY_PAGINATION,
   API_COMPANY_LOCATIONS,
 } from "../../../constants/apiCompanyConstants";
+import type {AxiosError} from "axios";
 
 // Sử dụng instance đã được cấu hình từ config/api.ts
 const axiosInstance = api;
@@ -21,7 +22,7 @@ const axiosInstance = api;
 // Thêm interceptor để xử lý lỗi
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (error: AxiosError) => {
     // Xử lý lỗi 401 (Unauthorized)
     if (error.response && error.response.status === 401) {
       console.log('Phiên đăng nhập hết hạn, chuyển hướng đến trang login...');

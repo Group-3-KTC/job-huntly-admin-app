@@ -1,11 +1,22 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosError } from "axios";
 
+const baseURL  = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
+
+
+const apiClient = axios.create({
+    baseURL,
+    withCredentials: true,
+});
+
+export default apiClient;
+
 interface AxiosBaseQueryArgs {
   url: string;
   method: AxiosRequestConfig["method"];
   data?: unknown;
   params?: Record<string, unknown>;
+  headers?: Record<string, string>;
 }
 
 export const axiosBaseQuery =

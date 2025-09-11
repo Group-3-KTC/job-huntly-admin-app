@@ -7,7 +7,6 @@ import {
   ReadCvLogo,
   SignOut,
   SidebarSimple, 
-  UsersThree,
 } from "@phosphor-icons/react";
 import { assets } from "../../assets/assets";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +15,7 @@ import type { RootState } from "../../app/store";
 import { t } from "ttag";
 import { useCurrentLanguage } from "../../hooks/useCurrentLanguage";
 import { logout } from "../../features/auth/store/authSlice.ts";
+import {Envelope} from "phosphor-react";
 // import { useState } from "react";
 
 const Sidebar = () => {
@@ -64,9 +64,9 @@ const Sidebar = () => {
       icon: <UsersFour size={20} />,
     },
     {
-      to: "/admin/recruiterList",
-      label: t`Recruiter List`,
-      icon: <UsersThree size={20} />,
+      to: "/admin/mail",
+      label: t`Mail`,
+      icon: <Envelope size={20} />,
     },
   ];
 
