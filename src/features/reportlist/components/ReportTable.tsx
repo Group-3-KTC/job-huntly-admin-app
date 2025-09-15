@@ -29,7 +29,7 @@ const ReportTable = () => {
 
   // --- modal
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-  const [updatedStatus, setUpdatedStatus] = useState<ReportStatus>("Process");
+  const [updatedStatus, setUpdatedStatus] = useState<ReportStatus>("PROCESS");
   const [reportToDelete, setReportToDelete] = useState<Report | null>(null);
 
   // filter options: nếu cần bạn có thể fetch từ API; tạm thời lấy uniq từ data hiện tại
