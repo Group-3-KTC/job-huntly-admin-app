@@ -1,4 +1,4 @@
-name: Build and Deploy Jobhuntly Admin App 
+name: Build and Deploy Jobhuntly Admin App
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      
+
       - name: Cache npm
         uses: actions/cache@v3
         with:
@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-              
+
       - name: Install dependencies
         run: npm ci
 
@@ -57,6 +57,10 @@ jobs:
             echo "No test script found, skipping tests"
           fi
         continue-on-error: true
+
+      - name: Check PRODUCTION_API_BASE_URL
+        run: |
+          echo "VITE_API_BASE_URL=${{ secrets.PRODUCTION_API_BASE_URL }}"
 
   docker-build-push:
     if: github.event_name == 'push'
