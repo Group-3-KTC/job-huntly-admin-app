@@ -4,7 +4,7 @@ import { PageTracker } from "../components/common/PageTracker";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useRef } from "react"; // Add useRef
+import { useEffect, useRef } from "react"; 
 import "../styles/global.css";
 import { useCurrentLanguage } from "../hooks/useCurrentLanguage";
 import { toggleSidebarOpen } from "../store/uiSlice";
