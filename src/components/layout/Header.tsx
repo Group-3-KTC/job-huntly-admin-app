@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../app/store.ts";
 import UserMenu from "../common/UserMenu.tsx";
-import NotificationMenu from "../common/NotificationMenu.tsx";
+// import NotificationMenu from "../common/NotificationMenu.tsx";
 import { LanguageSelector } from "../common/LanguageSelector.tsx";
 import { List, SignIn } from "@phosphor-icons/react";
 import { toggleSidebarOpen } from "../../store/uiSlice";
