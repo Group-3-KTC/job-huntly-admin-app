@@ -6,7 +6,6 @@ import {
   MagnifyingGlassPlus,
   ArrowsOutSimple,
   ArrowCounterClockwise,
-  Camera,
 } from "phosphor-react";
 import html2canvas from "html2canvas";
 import { getScaledHtml } from "../../../hooks/getScaledHtml";
@@ -92,8 +91,6 @@ export default function CvPreview({
         return;
       }
 
-      // Lấy kích thước thực của content (loại bỏ khoảng trắng)
-      const rect = wrapper.getBoundingClientRect();
       const contentWidth = wrapper.scrollWidth ;
       const contentHeight = wrapper.scrollHeight;
 

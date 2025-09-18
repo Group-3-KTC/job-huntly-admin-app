@@ -33,9 +33,9 @@ const CvTemplateTable = () => {
 
       const data = await fetchCvTemplates();
       setAllTemplates(data || []);
-    } catch (err) {
+    } catch (error) {
       setError("Failed to load templates.");
-      console.error(err);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -247,6 +247,15 @@ const CvTemplateTable = () => {
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div
+          className="p-4 bg-red-100 text-red-700 rounded"
+          role="alert"
+          aria-live="polite"
+        >
+          {error}
+        </div>
+      )}
       <FilterBar filters={filterFields} onFilterChange={handleFilter} />
 
       <Table<CvTemplateDto>
