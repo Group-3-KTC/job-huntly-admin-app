@@ -34,9 +34,9 @@ const Header = () => {
         
         {isAuthenticated ? (
           <>
-            <div className="cursor-pointer">
+            {/* <div className="cursor-pointer">
               <NotificationMenu />
-            </div>
+            </div> */}
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="text-sm text-right">
                 <p className="font-medium">{user?.name || 'Người dùng'}</p>
