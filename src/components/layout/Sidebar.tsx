@@ -68,6 +68,11 @@ const Sidebar = () => {
       label: t`Mail`,
       icon: <Envelope size={20} />,
     },
+    {
+      to: "/admin/manageCv",
+      label: t`Manage Cv`,
+      icon: <Envelope size={20} />,
+    },
   ];
 
   return (
