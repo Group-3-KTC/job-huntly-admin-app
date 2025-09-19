@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { InboxItemDto, MessageDto, ReplyRequest, ReplyResultDto } from "../../../types/mail.type.ts";
-import { fetchMessages, replyTicket } from "../services/mailApi";
+import {fetchMessages, replyTicket, updateTicketStatus} from "../services/mailApi";
 import MessageBubble from "./MessageBubble";
 import { CheckCircle, EnvelopeSimple, PaperPlaneRight, XCircle } from "phosphor-react";
 import {AxiosError} from "axios";
+import StatusDropdown from "./StatusDropdown.tsx";
 
 const cls = (...xs: (string | false | undefined | null)[]) => xs.filter(Boolean).join(" ");
 const fmtTime = (iso?: string | null) => iso ? new Date(iso).toLocaleString() : "";
@@ -37,6 +38,22 @@ export default function ThreadPane({
     const [sending, setSending] = useState(false);
     const [toast, setToast] = useState<{ ok: boolean; msg: string } | null>(null);
     const bottomRef = useRef<HTMLDivElement | null>(null);
+    const [, setChangingStatus] = useState(false);
+
+    const changeStatus = async (status: "OPEN"|"PENDING"|"CLOSED") => {
+        if (!selected?.id) return;
+        try {
+            setChangingStatus(true);
+            await updateTicketStatus(selected.id, status);
+            onReplied();
+            setToast({ ok: true, msg: `Status changed to ${status}.` });
+            setTimeout(() => setToast(null), 1500);
+        } catch (e) {
+            setToast({ ok: false, msg: "Failed to change status" });
+        } finally {
+            setChangingStatus(false);
+        }
+    };
 
     // load messages
     useEffect(() => {
@@ -88,7 +105,6 @@ export default function ThreadPane({
 
     const submit = async () => {
         if (!selected?.id || !reply.trim()) return;
-
         try {
             setSending(true);
             const payload: ReplyRequest = {
@@ -111,9 +127,12 @@ export default function ThreadPane({
             setData(old => old ? { ...old, content: [...old.content, appended] } : old);
             setReply("");
             setToast({ ok: true, msg: "Reply sent successfully." });
+
+            try { await updateTicketStatus(selected.id, "PENDING"); } catch {}
+
             onReplied();
             setTimeout(() => setToast(null), 2000);
-        } catch (e: unknown) {
+        } catch (e) {
             let msg = "Failed to send";
 
             if (e instanceof AxiosError) {
@@ -141,13 +160,19 @@ export default function ThreadPane({
 
     return (
         <div className="flex-1 flex flex-col">
-            <div className="p-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold">{selected.subject || "(no subject)"}</h3>
-                <div className="text-sm text-gray-600 flex items-center gap-2">
-                    <span>{selected.customerEmail || selected.lastFrom || ""}</span>
-                    <span>•</span>
-                    <span>{fmtTime(selected.lastMessageAt || selected.createdAt)}</span>
+            <div className="p-4 border-b border-gray-100 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold truncate">{uiSubject(selected.subject)}</h3>
+                    <div className="text-sm text-gray-600 flex items-center gap-2">
+                        <span>{selected.customerEmail || selected.lastFrom || ""}</span>
+                        <span>•</span>
+                        <span>{fmtTime(selected.lastMessageAt || selected.createdAt)}</span>
+                    </div>
                 </div>
+                <StatusDropdown
+                    value={selected.status}
+                    onChange={(s) => changeStatus(s)}
+                />
             </div>
 
             <div className="flex-1 overflow-auto p-4 space-y-4">
@@ -186,4 +211,11 @@ export default function ThreadPane({
             </div>
         </div>
     );
+}
+
+function uiSubject(s?: string | null) {
+    if (!s) return "(no subject)";
+    let out = s.trim();
+    while (/^(re|fwd?|fw)\s*:/i.test(out)) out = out.replace(/^(re|fwd?|fw)\s*:/i, "").trim();
+    return out || "(no subject)";
 }

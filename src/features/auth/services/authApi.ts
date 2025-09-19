@@ -13,9 +13,8 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({ 
     baseUrl: API_CONFIG.BASE_URL,
-    credentials: 'include', // Để nhận và gửi cookie từ backend
+    credentials: 'include',
     prepareHeaders: (headers) => {
-      // Token được xử lý tự động bằng cookie, không cần thêm vào header
       return headers;
     }
   }),
@@ -31,8 +30,6 @@ export const authApi = createApi({
         }
       }),
       transformResponse: (response: AuthResponse) => {
-        // Cookie access_token đã được browser tự động lưu trữ
-        // Chỉ cần trả về thông tin người dùng để hiển thị trong ứng dụng
         return {
           user: {
             id: '1', // Backend có thể không trả về id
@@ -51,16 +48,15 @@ export const authApi = createApi({
       })
     }),
 
-    // Kiểm tra trạng thái đăng nhập
     checkAuth: builder.query<LoginResponse, void>({
       query: () => ({
         url: '/auth/me',
-        credentials: 'include'  // Đảm bảo gửi cookie trong request này
+        credentials: 'include'
       }),
       transformResponse: (response: AuthResponse) => {
         return {
           user: {
-            id: '1', // Backend có thể không trả về id
+            id: '1',
             name: response.fullName || '',
             email: response.email || '',
             role: response.role || 'ADMIN'

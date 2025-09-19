@@ -56,17 +56,36 @@ const authSlice = createSlice({
     setAuthInitialized: (state) => {
       state.authInitialized = true;
     },
-    logout: (state) => {
-      state.isAuthenticated = false;
-      state.user = null;
-      state.token = null;
-      // Xóa thông tin user lưu trữ
-      localStorage.removeItem("admin_user");
-      sessionStorage.removeItem("admin_user");
-      
-      // Redirect đến API logout endpoint để backend xóa cookie
-      window.location.href = `${API_CONFIG.BASE_URL}/auth/logout`;
-    },
+      logout: (state) => {
+          state.isAuthenticated = false;
+          state.user = null;
+          state.token = null;
+
+          // Xóa thông tin user lưu trữ
+          localStorage.removeItem("admin_user");
+          sessionStorage.removeItem("admin_user");
+
+          // Gửi POST request đến API logout
+          fetch(`${API_CONFIG.BASE_URL}/auth/logout`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  // Bạn có thể thêm Authorization header nếu cần
+                  'Authorization': `Bearer ${state.token}`,
+              },
+              credentials: 'include',  // Nếu bạn sử dụng cookie (có thể cần nếu đang sử dụng cookie Auth)
+          })
+              .then(response => {
+                  if (response.ok) {
+                      console.log("Logout thành công!");
+                      // Sau khi logout thành công, bạn có thể chuyển hướng người dùng tới trang đăng nhập hoặc trang chính
+                      window.location.href = '/login'; // hoặc trang bạn muốn
+                  } else {
+                      console.error("Lỗi khi logout!");
+                  }
+              })
+              .catch(error => console.error("Đã xảy ra lỗi khi logout", error));
+      },
   },
 });
 
