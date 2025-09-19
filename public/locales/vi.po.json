@@ -41,6 +41,10 @@
       "Total Job Applications": {
         "msgid": "Total Job Applications",
         "msgstr": ["Tổng đơn ứng tuyển"]
+      },
+      "Manage Cv": {
+        "msgid": "Manage Cv",
+        "msgstr": ["Quản lý CV"]
       }
     }
   }
