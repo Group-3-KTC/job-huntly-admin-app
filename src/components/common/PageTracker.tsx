@@ -17,6 +17,7 @@ export const PageTracker = () => {
         "/admin/companyList": t`Company List`,
         "/admin/listReport": t`Report List`,
         "/admin/jobList": t`Job List`,
+        "/admin/manageCv": t`Manage Cv`,
       } as Record<string, string>),
     [],
   );

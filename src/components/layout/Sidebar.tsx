@@ -15,7 +15,7 @@ import type { RootState } from "../../app/store";
 import { t } from "ttag";
 import { useCurrentLanguage } from "../../hooks/useCurrentLanguage";
 import { logout } from "../../features/auth/store/authSlice.ts";
-import {Envelope} from "phosphor-react";
+import {Envelope, FilePdf} from "phosphor-react";
 // import { useState } from "react";
 
 const Sidebar = () => {
@@ -68,6 +68,11 @@ const Sidebar = () => {
       label: t`Mail`,
       icon: <Envelope size={20} />,
     },
+    {
+      to: "/admin/manageCv",
+      label: t`Manage Cv`,
+      icon: <FilePdf size={20} />,
+    },
   ];
 
   return (
@@ -108,28 +113,27 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <nav className="flex flex-col gap-[12px] font-medium text-md flex-grow">
-        {navItems.map(({ to, label, icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            onClick={() => dispatch(toggleSidebarOpen(false))}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-[12px] rounded-lg transition
+      <div className="flex min-h-full flex-col justify-between flex-1">
+        <nav className="flex flex-col gap-[12px] font-medium text-md flex-grow ">
+          {navItems.map(({ to, label, icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={() => dispatch(toggleSidebarOpen(false))}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-[12px] rounded-lg transition
               ${
                 isActive
                   ? "bg-blue-500 text-white font-semibold shadow"
                   : "text-gray-500 hover:bg-blue-100 hover:text-blue-600"
               }`
-            }
-          >
-            {icon}
-            {!isCollapsed && <span>{label}</span>}
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="pt-4 border-t border-gray-200">
+              }
+            >
+              {icon}
+              {!isCollapsed && <span>{label}</span>}
+            </NavLink>
+          ))}
+        </nav>
         <button
           className="cursor-pointer flex items-center gap-3 px-4 py-3 w-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 rounded-lg transition-colors"
           onClick={() => dispatch(toggleSidebarCollapse())}
@@ -138,6 +142,8 @@ const Sidebar = () => {
           <SidebarSimple size={20} />
           {!isCollapsed && <span>Collapse</span>}
         </button>
+      </div>
+      <div className="pt-4 border-t border-gray-200">
         <button
           className="cursor-pointer flex items-center gap-3 px-4 py-3 w-full text-gray-500 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
           onClick={() => handleLogout()}

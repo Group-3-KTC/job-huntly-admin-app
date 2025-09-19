@@ -7,6 +7,9 @@ import { RecruiterListPage } from "../features/recruiterlist/pages/RecruiterList
 import JobListPage from "../features/jobpostlist/pages/JobListPage";
 import Error404 from "../pages/error/Error404";
 import MailInboxPage from "../features/mail/pages/MailInboxPage.tsx";
+import CvTemplateList from "../features/manageCv/pages/CvTemplateList.tsx";
+import CvTemplateDetail from "../features/manageCv/components/CvTemplateDetail.tsx";
+import CvTemplateFormPage from "../features/manageCv/components/CvTemplateFormPage.tsx";
 
 const AdminRoutes = (
   <>
@@ -18,6 +21,11 @@ const AdminRoutes = (
     <Route path="recruiterList" element={<RecruiterListPage />} />
     <Route path="jobList" element={<JobListPage />} />
     <Route path="mail" element={<MailInboxPage />} />
+    <Route path="manageCv" element={<CvTemplateList />} />
+    <Route path="manageCv/:id" element={<CvTemplateDetail />} />
+    <Route path="manageCv/create" element={<CvTemplateFormPage />} />
+    <Route path="manageCv/:id/edit" element={<CvTemplateFormPage />} />
+
     <Route path="*" element={<Error404 />} />
   </>
 );
