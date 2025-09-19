@@ -1,16 +1,19 @@
 import { EnvelopeSimple, ArrowClockwise, ChatsCircle } from "phosphor-react";
 import { useEffect, useState } from "react";
-import { fetchTickets } from "../services/mailApi";
+import { fetchTickets, triggerPollNow } from "../services/mailApi";
 import type { InboxItemDto, TicketStatus } from "../../../types/mail.type.ts";
 import StatusDropdown from "./StatusDropdown";
 
 const cls = (...xs: (string | false | undefined | null)[]) => xs.filter(Boolean).join(" ");
-const fmtTime = (iso?: string | null) => iso ? new Date(iso).toLocaleString() : "";
+const fmtTime = (iso?: string | null) => (iso ? new Date(iso).toLocaleString() : "");
 const stripHtml = (html?: string | null) =>
-    html ? html
-        .replace(/<[^>]+>/g, " ")
-        .replace(/&nbsp;/g, " ")
-        .trim() : "";
+    html ? html.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").trim() : "";
+const uiSubject = (s?: string | null) => {
+    if (!s) return "(no subject)";
+    let out = s.trim();
+    while (/^(re|fwd?|fw)\s*:/i.test(out)) out = out.replace(/^(re|fwd?|fw)\s*:/i, "").trim();
+    return out || "(no subject)";
+};
 
 export default function InboxList({
                                       onSelect,
@@ -26,6 +29,7 @@ export default function InboxList({
     const [status, setStatus] = useState<TicketStatus>("OPEN");
     const [q, setQ] = useState("");
     const [page, setPage] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
     const [data, setData] = useState<{
         content: InboxItemDto[];
         number: number;
@@ -43,17 +47,19 @@ export default function InboxList({
         let mounted = true;
         setLoading(true);
         setErr(null);
-        fetchTickets({ status, q: q || undefined, page, size: 20, sort: "createdAt,DESC" })
-            .then(res => {
+        fetchTickets({ status, q: q || undefined, page, size: 5, sort: "createdAt,DESC" })
+            .then((res) => {
                 if (!mounted) return;
                 setData(res);
                 if (res.content.length > 0 && !selectedId) {
                     onSelect(res.content[0]);
                 }
             })
-            .catch(e => setErr(e?.response?.data?.message || e.message))
+            .catch((e) => setErr(e?.response?.data?.message || e.message))
             .finally(() => mounted && setLoading(false));
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, [status, q, page, combinedRefreshKey]); // eslint-disable-line
 
     useEffect(() => {
@@ -61,7 +67,7 @@ export default function InboxList({
 
         const tick = () => {
             if (document.hidden) return;
-            setLocalRefreshCount(k => k + 1);
+            setLocalRefreshCount((k) => k + 1);
         };
 
         const id = window.setInterval(tick, autoRefreshMs);
@@ -79,6 +85,28 @@ export default function InboxList({
         };
     }, [autoRefreshMs]);
 
+    async function handleRefreshClick() {
+        if (refreshing) return;
+        setRefreshing(true);
+        const started = Date.now();
+
+        try {
+            const res = await triggerPollNow();
+            if (res?.status && res.status >= 400) {
+                console.warn("poll-now non-2xx:", res.status);
+            }
+        } catch (e) {
+            console.warn("poll-now error:", e);
+        } finally {
+            const MIN_WAIT_MS = 1500;
+            const elapsed = Date.now() - started;
+            const remain = Math.max(0, MIN_WAIT_MS - elapsed);
+            await new Promise((r) => setTimeout(r, remain));
+
+            setLocalRefreshCount((k) => k + 1);
+            setRefreshing(false);
+        }
+    }
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
@@ -86,11 +114,13 @@ export default function InboxList({
                 <EnvelopeSimple size={24} />
                 <h2 className="text-lg font-semibold">Inbox</h2>
                 <button
-                    onClick={() => setLocalRefreshCount(k => k + 1)}
-                    className="ml-auto inline-flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl border hover:bg-gray-50"
+                    onClick={handleRefreshClick}
+                    className="ml-auto inline-flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl border hover:bg-gray-50 disabled:opacity-50"
                     title="Làm mới"
+                    disabled={refreshing}
                 >
-                    <ArrowClockwise size={16} /> Refresh
+                    <ArrowClockwise size={16} className={refreshing ? "animate-spin" : undefined} />
+                    {refreshing ? "Refreshing..." : "Refresh"}
                 </button>
             </div>
 
@@ -98,17 +128,28 @@ export default function InboxList({
                 <div className="relative flex-1">
                     <input
                         value={q}
-                        onChange={(e) => setQ(e.target.value)}
+                        onChange={(e) => {
+                            setQ(e.target.value);
+                            setPage(0);
+                        }}
                         placeholder="Tìm theo subject..."
                         className="w-full pl-3 pr-3 py-2 border rounded-xl focus:outline-none focus:ring"
                     />
                 </div>
-                <StatusDropdown value={status} onChange={(s) => { setStatus(s); setPage(0); }} />
+                <StatusDropdown
+                    value={status}
+                    onChange={(s) => {
+                        setStatus(s);
+                        setPage(0);
+                    }}
+                />
             </div>
 
             <div className="flex-1 overflow-auto">
                 {loading && <ListSkeleton />}
-                {err && <div className="m-3 p-3 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-sm">{err}</div>}
+                {err && (
+                    <div className="m-3 p-3 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-sm">{err}</div>
+                )}
                 {!loading && data && data.content.length === 0 && <EmptyState />}
 
                 <ul className="divide-y">
@@ -116,22 +157,23 @@ export default function InboxList({
                         <li key={t.id}>
                             <button
                                 onClick={() => onSelect(t)}
-                                className={cls(
-                                    "w-full text-left px-4 py-3 hover:bg-gray-50",
-                                    selectedId === t.id && "bg-indigo-50"
-                                )}
+                                className={cls("w-full text-left px-4 py-3 hover:bg-gray-50", selectedId === t.id && "bg-indigo-50")}
                             >
                                 <div className="flex items-center gap-2">
                                     <ChatsCircle size={22} className="text-indigo-500" />
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-2">
-                                            <p className="font-medium truncate">{t.subject || "(no subject)"}</p>
-                                            <span className={cls(
-                                                "text-xxs px-2 py-0.5 rounded-full border",
-                                                t.status === "OPEN" && "bg-emerald-50 text-emerald-700 border-emerald-200",
-                                                t.status === "PENDING" && "bg-amber-50 text-amber-700 border-amber-200",
-                                                t.status === "CLOSED" && "bg-gray-100 text-gray-700 border-gray-200",
-                                            )}>{t.status}</span>
+                                            <p className="font-medium truncate">{uiSubject(t.subject)}</p>
+                                            <span
+                                                className={cls(
+                                                    "text-xxs px-2 py-0.5 rounded-full border",
+                                                    t.status === "OPEN" && "bg-emerald-50 text-emerald-700 border-emerald-200",
+                                                    t.status === "PENDING" && "bg-amber-50 text-amber-700 border-amber-200",
+                                                    t.status === "CLOSED" && "bg-gray-100 text-red-600 border-red-300"
+                                                )}
+                                            >
+                        {t.status}
+                      </span>
                                         </div>
                                         <p className="text-sm text-gray-600 truncate">{t.lastSnippet || stripHtml(t.subject)}</p>
                                         <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
@@ -148,18 +190,20 @@ export default function InboxList({
             </div>
 
             <div className="p-3 border-t border-gray-100 flex items-center justify-between text-sm">
-                <div>Page {data ? data.number + 1 : 0}/{data?.totalPages ?? 0}</div>
+                <div>
+                    Page {data ? data.number + 1 : 0}/{data?.totalPages ?? 0}
+                </div>
                 <div className="flex gap-2">
                     <button
                         disabled={!data || data.first}
-                        onClick={() => setPage(p => Math.max(0, p - 1))}
+                        onClick={() => setPage((p) => Math.max(0, p - 1))}
                         className="px-3 py-1.5 rounded-lg border disabled:opacity-50"
                     >
                         Prev
                     </button>
                     <button
                         disabled={!data || data.last}
-                        onClick={() => setPage(p => p + 1)}
+                        onClick={() => setPage((p) => p + 1)}
                         className="px-3 py-1.5 rounded-lg border disabled:opacity-50"
                     >
                         Next
