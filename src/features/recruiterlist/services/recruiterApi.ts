@@ -1,4 +1,4 @@
-import api from "../../../config/api";
+import { api } from "../../../config/api";
 import { RECRUITER_API, USER_API } from "../../../constants/apiUserConstants";
 import type {
   RecruiterFilterParams,
@@ -138,4 +138,4 @@ export const recruiterApi = {
   async unlockRecruiter(id: number): Promise<RecruiterProfile> {
     return this.updateRecruiterStatus(id, "ACTIVE");
   },
-}; 
+};
