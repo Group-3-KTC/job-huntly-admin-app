@@ -14,7 +14,7 @@ import {
   API_COMPANY_PAGINATION,
   API_COMPANY_LOCATIONS,
 } from "../../../constants/apiCompanyConstants";
-import type {AxiosError} from "axios";
+import type { AxiosError } from "axios";
 
 // Sử dụng instance đã được cấu hình từ config/api.ts
 const axiosInstance = api;
@@ -25,9 +25,9 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError) => {
     // Xử lý lỗi 401 (Unauthorized)
     if (error.response && error.response.status === 401) {
-      console.log('Phiên đăng nhập hết hạn, chuyển hướng đến trang login...');
+      console.log("Phiên đăng nhập hết hạn, chuyển hướng đến trang login...");
       // Chuyển hướng đến trang login
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -142,7 +142,7 @@ export const companyService = {
     }
   },
 
-  // Phương thức chuyên biệt để khóa công ty (isActive = false) 
+  // Phương thức chuyên biệt để khóa công ty (isActive = false)
   setInactive: async (id: number): Promise<Company> => {
     try {
       const response = await axiosInstance.patch<Company>(
@@ -154,5 +154,5 @@ export const companyService = {
       console.error(`Error deactivating company with id ${id}:`, error);
       throw error;
     }
-  }
+  },
 };
