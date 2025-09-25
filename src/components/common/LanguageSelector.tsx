@@ -7,7 +7,7 @@ import {
 import "flag-icons/css/flag-icons.min.css";
 
 
-type LangCode = "en" | "vi";
+type LangCode = "en" | "vi" | "ko";
 
 export const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +17,7 @@ export const LanguageSelector = () => {
   const languages = [
   { code: "en" as const, name: "English",     flag: "fi-us" },
   { code: "vi" as const, name: "Tiếng Việt",  flag: "fi-vn" },
-  { code: "ko" as const, name: "한국어",        flag: "fi-kr" }, // <- thêm tiếng Hàn + cờ Hàn
+  { code: "ko" as const, name: "한국어",        flag: "fi-kr" },
 ];
 
 
