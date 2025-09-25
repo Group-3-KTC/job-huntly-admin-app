@@ -213,7 +213,7 @@ export const FilterBar = ({
                               <input
                                 type="text"
                                 className="pl-8 pr-2 py-1.5 border border-gray-300 rounded w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Tìm kiếm..."
+                                placeholder="Searching..."
                                 value={searchQueries[field.key] || ""}
                                 onChange={(e) => handleSearchChange(field.key, e.target.value)}
                                 onClick={(e) => e.stopPropagation()}
@@ -221,7 +221,7 @@ export const FilterBar = ({
                             </div>
                             {(searchQueries[field.key] && getFilteredOptions(field.options || [], field.key).length === 0) && (
                               <div className="text-gray-500 text-center py-2 text-xs">
-                                Không tìm thấy kết quả
+                                Not found!
                               </div>
                             )}
                           </div>

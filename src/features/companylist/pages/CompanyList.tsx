@@ -234,40 +234,40 @@ const CompanyListPage = () => {
           change={{
             direction: "up",
             percentage: "3.5%",
-            description: "Up from last month",
+            description: t`Up from last month`,
           }}
           colorScheme="green"
         />
         <StatisCard
-          label="Company in HCM"
+          label={t`Company in Ho Chi Minh`}
           value={stats.hcmCount}
           icon={<Buildings size={24} />}
           change={{
             direction: "up",
             percentage: "12%",
-            description: "Up from last month",
+            description: t`Up from last month`,
           }}
           colorScheme="green"
         />
         <StatisCard
-          label="Company in Hà Nội"
+          label={t`Company in Ha Noi`}
           value={stats.hanoiCount}
           icon={<Buildings size={24} />}
           change={{
             direction: "down",
             percentage: "5.5%",
-            description: "Down from last month",
+            description: t`Down from last month`,
           }}
           colorScheme="orange"
         />
         <StatisCard
-          label="Company in Đà Nẵng"
+          label={t`Company in Da Nang`}
           value={stats.danangCount}
           icon={<Buildings size={24} />}
           change={{
             direction: "down",
             percentage: "3%",
-            description: "Down from last month",
+            description: t`Down from last month`,
           }}
           colorScheme="red"
         />
