@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "i18n:mkdir": "node -e \"require('fs').mkdirSync('public/locales',{recursive:true})\"",
+    "i18n:build:ps": "powershell -NoProfile -Command \"ttag po2json ./src/i18n/locales/en.po | Set-Content ./public/locales/en.po.json -Encoding utf8; ttag po2json ./src/i18n/locales/vi.po | Set-Content ./public/locales/vi.po.json -Encoding utf8\"",
+    "i18n:build": "npm run i18n:mkdir && npm run i18n:build:ps"  
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -20,6 +23,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
+    "flag-icons": "^7.5.0",
     "html2canvas": "^1.4.1",
     "pdfjs-dist": "^3.4.120",
     "phosphor-react": "^1.4.1",
@@ -53,4 +57,5 @@
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
   }
+  
 }

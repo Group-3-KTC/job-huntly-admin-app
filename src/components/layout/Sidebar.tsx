@@ -16,7 +16,7 @@ import { t } from "ttag";
 import { useCurrentLanguage } from "../../hooks/useCurrentLanguage";
 import { logout } from "../../features/auth/store/authSlice.ts";
 import {Envelope, FilePdf} from "phosphor-react";
-// import { useState } from "react";
+
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -140,7 +140,7 @@ const Sidebar = () => {
           aria-label="Toggle Sidebar Collapse"
         >
           <SidebarSimple size={20} />
-          {!isCollapsed && <span>Collapse</span>}
+          {!isCollapsed && <span>{t`Collapse`}</span>}
         </button>
       </div>
       <div className="pt-4 border-t border-gray-200">
@@ -150,7 +150,7 @@ const Sidebar = () => {
           aria-label="Logout"
         >
           <SignOut size={20} />
-          {!isCollapsed && <span>Logout</span>}
+          {!isCollapsed && <span>{t`Logout`}</span>}
         </button>
       </div>
     </div>

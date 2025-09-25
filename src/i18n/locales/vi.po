@@ -32,3 +32,67 @@ msgstr "Tổng báo cáo"
 
 msgid "Total Job Applications"
 msgstr "Tổng đơn ứng tuyển"
+
+msgid "Done Reports"
+msgstr "Báo cáo hoàn thành"
+
+msgid "Processing Reports"
+msgstr "Báo cáo đang xử lý"
+
+msgid "Rejected Reports"
+msgstr "Báo cáo bị từ chối"
+
+msgid "Up from yesterday"
+msgstr "Tăng so với hôm qua"
+
+msgid "Up from last week"
+msgstr "Tăng so với tuần trước"
+
+msgid "Down from yesterday"
+msgstr "Giảm so với hôm qua"
+
+msgid "Down from last month"
+msgstr "Giảm so với tháng trước"
+
+msgid "Company in Ho Chi Minh"
+msgstr "Công ty tại TP. Hồ Chí Minh"
+
+msgid "Company in Ha Noi"
+msgstr "Công ty tại Hà Nội"
+
+msgid "Company in Da Nang"
+msgstr "Công ty tại Đà Nẵng"
+
+msgid "Total Jobs"
+msgstr "Tổng số việc làm"
+
+msgid "Ho Chi Minh Jobs"
+msgstr "Việc làm tại TP. Hồ Chí Minh"
+
+msgid "Ha noi Jobs"
+msgstr "Việc làm tại Hà Nội"
+
+msgid "Da Nang Jobs"
+msgstr "Việc làm tại Đà Nẵng"
+
+msgid "Active Candidates"
+msgstr "Ứng viên hoạt động"
+
+msgid "Inactive Candidates"
+msgstr "Ứng viên không hoạt động"
+
+msgid "Banned Candidates"
+msgstr "Ứng viên bị cấm"
+
+msgid "Up from last month"
+msgstr "Tăng so với tháng trước"
+
+msgid "Manage Cv"
+msgstr "Quản lý CV"
+
+msgid "Collapse"
+msgstr "Thu gọn"
+
+msgid "Logout"
+msgstr "Đăng xuất"
+

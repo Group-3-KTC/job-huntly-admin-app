@@ -17,7 +17,7 @@ export default function StatisticItem() {
     //   change: {
     //     percentage: "8.5%",
     //     direction: "up",
-    //     description: "Up from yesterday",
+    //     description: t`Up from yesterday`,
     //   },
     //   colorScheme: "green",
     // },
@@ -28,7 +28,7 @@ export default function StatisticItem() {
       change: {
         percentage: "4.3%",
         direction: "down",
-        description: "Down from yesterday",
+        description: t`Down from yesterday`,
       },
       colorScheme: "blue",
     },
@@ -39,7 +39,7 @@ export default function StatisticItem() {
       change: {
         percentage: "1.8%",
         direction: "up",
-        description: "Up from yesterday",
+        description: t`Up from yesterday`,
       },
       colorScheme: "orange",
     },

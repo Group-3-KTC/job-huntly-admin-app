@@ -2,6 +2,7 @@ import type { StatisticCardProps } from "../../../types/statistics.type";
 import StatisCard from "../../../components/ui/StatisticCard";
 import { mockJob } from "../mock/mockJob";
 import { Files, City } from "@phosphor-icons/react";
+import { t } from "ttag";
 
 const JobListStatic = () => {
   const totalJob = mockJob.length;
@@ -17,46 +18,46 @@ const JobListStatic = () => {
 
   const statisticData: StatisticCardProps[] = [
     {
-      label: "Total Jobs",
+      label: t`Total Jobs`,
       value: totalJob.toString(),
       icon: <Files size={24} />,
       change: {
         percentage: "8.5%",
         direction: "up",
-        description: "Up from yesterday",
+        description: t`Up from yesterday`,
       },
       colorScheme: "blue",
     },
     {
-      label: "Hồ Chí Minh Jobs",
+      label: t`Ho Chi Minh Jobs`,
       value: HCMJob.toString(),
       icon: <City size={24} />,
       change: {
         percentage: "5.2%",
         direction: "up",
-        description: "Up from last week",
+        description: t`Up from last week`,
       },
       colorScheme: "green",
     },
     {
-      label: "Hà nội Jobs",
+      label: t`Ha noi Jobs`,
       value: HNJob.toString(),
       icon: <City size={24} />,
       change: {
         percentage: "2.1%",
         direction: "down",
-        description: "Down from yesterday",
+        description: t`Down from yesterday`,
       },
       colorScheme: "orange",
     },
     {
-      label: "Đà Nẵng Jobs",
+      label: t`Da Nang Jobs`,
       value: DNJob.toString(),
       icon: <City size={24} />,
       change: {
         percentage: "1.3%",
         direction: "down",
-        description: "Down from last month",
+        description: t`Down from last month`,
       },
       colorScheme: "red",
     },

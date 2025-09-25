@@ -1,44 +1,38 @@
 import { addLocale, t, useLocale } from "ttag";
 
-export const getCurrentLanguage = (): LocaleType => {
-  const savedLang = localStorage.getItem("lang");
-  if (savedLang && ["en", "vi"].includes(savedLang)) {
-    return savedLang as LocaleType;
-  }
-  // lấy ngôn ngữ của trình duyệt khi chưa lưu localstorage vi-VN
-  const browserLang = navigator.language.split("-")[0] as LocaleType;
-  return ["en", "vi"].includes(browserLang) ? browserLang : "en";
-};
+type LocaleType = "en" | "vi" | "ko";
 
-type LocaleType = "en" | "vi";
+export const getCurrentLanguage = (): LocaleType => {
+  const savedLang = localStorage.getItem("lang") as LocaleType | null;
+  if (savedLang && ["en", "vi", "ko"].includes(savedLang)) return savedLang;
+
+  // lấy ngôn ngữ của trình duyệt khi chưa lưu localStorage
+  const browser = (navigator.language || "en").split("-")[0] as LocaleType;
+  return (["en", "vi", "ko"] as const).includes(browser) ? browser : "en";
+};
 
 const listeners: (() => void)[] = [];
 
 export const initI18n = async () => {
   let langCode = localStorage.getItem("lang") as LocaleType | null;
-
-  if (!langCode || !["en", "vi"].includes(langCode)) {
+  if (!langCode || !["en", "vi", "ko"].includes(langCode)) {
     langCode = getCurrentLanguage();
   }
-
   await setLanguage(langCode);
 };
 
-const loadLanguage = async (lang: string = "en") => {
+const loadLanguage = async (lang: LocaleType = "en") => {
   try {
-    console.log("load language", lang);
-    const response = await fetch(`/locales/${lang}.po.json`);
-    if (!response.ok) throw new Error(`Failed to load ${lang}`);
-    const translationsObj = await response.json();
-    addLocale(lang, translationsObj);
-  } catch (error) {
-    console.error("Error loading language:", error);
+    const res = await fetch(`/locales/${lang}.po.json`, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`Failed to load ${lang}`);
+    const dict = await res.json();
+    addLocale(lang, dict);
+  } catch (err) {
+    console.error("Error loading language:", err);
   }
 };
 
 export const setLanguage = async (lang: LocaleType) => {
-  // if (lang === currentLang) return;
-
   await loadLanguage(lang);
   localStorage.setItem("lang", lang);
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -46,11 +40,11 @@ export const setLanguage = async (lang: LocaleType) => {
   listeners.forEach((cb) => cb());
 };
 
-export const subscribeToLanguageChange = (callback: () => void) => {
-  listeners.push(callback);
+export const subscribeToLanguageChange = (cb: () => void) => {
+  listeners.push(cb);
   return () => {
-    const index = listeners.indexOf(callback);
-    if (index !== -1) listeners.splice(index, 1);
+    const i = listeners.indexOf(cb);
+    if (i !== -1) listeners.splice(i, 1);
   };
 };
 

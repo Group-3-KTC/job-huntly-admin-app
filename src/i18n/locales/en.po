@@ -32,3 +32,66 @@ msgstr "Total Reports"
 
 msgid "Total Job Applications"
 msgstr "Total Job Applications"
+
+msgid "Done Reports"
+msgstr "Done Reports"
+
+msgid "Processing Reports"
+msgstr "Processing Reports"
+
+msgid "Rejected Reports"
+msgstr "Rejected Reports"
+
+msgid "Up from yesterday"
+msgstr "Up from yesterday"
+
+msgid "Up from last week"
+msgstr "Up from last week"
+
+msgid "Down from yesterday"
+msgstr "Down from yesterday"
+
+msgid "Down from last month"
+msgstr "Down from last month"
+
+msgid "Company in Ho Chi Minh"
+msgstr "Company in Ho Chi Minh"
+
+msgid "Company in Ha Noi"
+msgstr "Company in Ha Noi"
+
+msgid "Company in Da Nang"
+msgstr "Company in Da Nang"
+
+msgid "Total Jobs"
+msgstr "Total Jobs"
+
+msgid "Ho Chi Minh Jobs"
+msgstr "Ho Chi Minh Jobs"
+
+msgid "Ha noi Jobs"
+msgstr "Ha noi Jobs"
+
+msgid "Da Nang Jobs"
+msgstr "Da Nang Jobs"
+
+msgid "Active Candidates"
+msgstr "Active Candidates"
+
+msgid "Inactive Candidates"
+msgstr "Inactive Candidates"
+
+msgid "Banned Candidates"
+msgstr "Banned Candidates"
+
+msgid "Up from last month"
+msgstr "Up from last month"
+
+msgid "Manage Cv"
+msgstr "Manage Cv"
+
+msgid "Collapse"
+msgstr "Collapse"
+
+msgid "Logout"
+msgstr "Logout"
