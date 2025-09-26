@@ -37,20 +37,21 @@ const useFetchChartData = (url: string, colors?: string[]) => {
         const ctx = canvas.getContext("2d");
 
         const datasets: ChartDataset[] = raw.series.map((s, i) => {
-          let gradient: string | CanvasGradient = colors?.[i] ?? "#888";
+          const c = colors?.[i] ?? "#888";    
+          // let gradient: string | CanvasGradient = colors?.[i] ?? "#888";
 
           if (ctx && colors) {
             const g = ctx.createLinearGradient(0, 0, 0, 200);
             g.addColorStop(0, colors[i]);
             g.addColorStop(1, "transparent");
-            gradient = g;
+            // gradient = g;
           }
 
           return {
             label: s.name,
             data: s.values,
-            borderColor: gradient,
-            backgroundColor: colors ? "transparent" : "#FCA5A5",
+            borderColor: c ,
+            backgroundColor: colors ? colors[i] : "#FCA5A5",
             tension: 0.4,
             pointHoverRadius: 7,
           };
